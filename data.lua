@@ -1,0 +1,234 @@
+-- Data like id's and dopdown keys
+
+DD_TYPES = 
+{
+    --[[ALL_TYPES =
+    {
+    	skips = {res = true, skipFrameCheck = true},
+        sortID = 1
+    },]]
+    PRIMARY_WEAPON =
+    {
+		typeName = "weapon",
+		slotIdx = 1,
+		skips = {res = true, skipFrameCheck = false},
+        sortID = 2,
+	},
+    SECONDARY_WEAPON =
+    {
+		typeName = "weapon",
+		slotIdx = 2,
+		skips = {res = true, skipFrameCheck = true},
+        sortID = 3
+    },
+    ABILITY =
+    {
+        typeName = "ablity",
+        skips = {res = true, skipFrameCheck = false},
+        sortID = 4
+    },
+    WEAPON_MODULE =
+    {
+        typeName = "module",
+        module_location = "weapon",
+        skips = {res = true, skipFrameCheck = true},
+        sortID = 5
+    },
+    ABILITY_MODULE =
+    {
+        typeName = "module",
+        module_location = "ability_module",
+        skips = {res = true, skipFrameCheck = true},
+        sortID = 6
+    },
+    BATTLEFRAME_CORE =
+    {
+		typeName = "frame_module",
+		all = true,
+		skips = {res = true, skipFrameCheck = true},
+        sortID = 7
+    },
+    JUNK_SALVAGE =
+    {
+		typeName = "salvage",
+		subTypeIds = {"3617"},
+		skips = {res = true, skipFrameCheck = true, skipRarityCheck = true},
+        sortID = 8
+    }
+};
+
+-- I could get this from the api  >,>
+DD_FRAMES = 
+{
+	ANY_FRAME = 
+	{
+		certId = "",
+        sortID = 1
+	},
+	ACCORD_BIOTECH = 
+	{
+        certId = 738,
+        sortID = 2
+	},
+	DRAGONFLY = 
+	{
+        certId = 739,
+		baseFrame = "ACCORD_BIOTECH",
+        sortID = 3
+	},
+	RECLUSE = 
+	{
+        certId = 740,
+		baseFrame = "ACCORD_BIOTECH",
+        sortID = 4
+	},
+	ACCORD_ASSAULT = 
+	{
+        certId = 732,
+        sortID = 5
+	},
+	FIRECAT = 
+	{
+        certId = 733,
+		baseFrame = "ACCORD_ASSAULT",
+        sortID = 6
+	},
+	TIGERCLAW = 
+	{
+        certId = 734,
+		baseFrame = "ACCORD_ASSAULT",
+        sortID = 7
+	},
+	ACCORD_DREADNAUGHT = 
+	{
+        certId = 741,
+        sortID = 8
+	},
+	ARSENAL = 
+	{
+        certId = 748,
+		baseFrame = "ACCORD_DREADNAUGHT",
+        sortID = 9
+	},
+	MAMMOTH = 
+	{
+        certId = 742,
+		baseFrame = "ACCORD_DREADNAUGHT",
+        sortID = 10
+	},
+	RHINO = 
+	{
+        certId = 743,
+		baseFrame = "ACCORD_DREADNAUGHT",
+        sortID = 11
+	},
+	ACCORD_ENGINEER = 
+	{
+        certId = 735,
+        sortID = 12
+	},
+	BASTION = 
+	{
+        certId = 737,
+		baseFrame = "ACCORD_ENGINEER",
+        sortID = 13
+	},
+	ELECTRON = 
+	{
+        certId = 736,
+		baseFrame = "ACCORD_ENGINEER",
+        sortID = 14
+	},
+	ACCORD_RECON = 
+	{
+        certId = 744,
+        sortID = 15
+	},
+	NIGHTHAWK = 
+	{
+        certId = 745,
+		baseFrame = "ACCORD_RECON",
+        sortID = 16
+	},
+	RAPTOR = 
+	{
+        certId = 746,
+		baseFrame = "ACCORD_RECON",
+        sortID = 17
+	},
+};
+
+DD_COLORS = 
+{
+	ORANGE =
+    {
+        sortID = 1,
+		raritys = {"prototype"}
+    },
+	ORANGE_AND_BELOW =
+    {
+        sortID = 2,
+		raritys = {"prototype", "epic", "rare", "uncommon", "common"}
+    },
+	PURPLE =
+    {
+        sortID = 3,
+		raritys = {"epic"}
+    },
+	PURPLE_AND_BELOW =
+    {
+        sortID = 4,
+		raritys = {"epic", "rare", "uncommon", "common"}
+    },
+	BLUE =
+    {
+        sortID = 5,
+		raritys = {"rare"}
+    },
+	BLUE_AND_BELOW =
+    {
+        sortID = 6,
+		raritys = {"rare", "uncommon", "common"}
+    },
+	GREEN =
+    {
+        sortID = 7,
+		raritys = {"uncommon"}
+    },
+	GREEN_AND_BELOW =
+    {
+        sortID = 8,
+		raritys = {"uncommon", "common"}
+    },
+	WHITE =
+    {
+        sortID = 9,
+		raritys = {"common"}
+    },
+};
+
+DD_WHEN = 
+{
+	"ON_PICKUP",
+	"INV_PCT_FULL"
+};
+
+DD_ACTIONS = 
+{
+	"SALVAGE",
+	"PROMPT",
+	"Q_FOR_REVIEW"
+};
+
+-- Default filter settings
+DEFAULT_FILTER_DATA =
+{
+	type = nil,
+	frame = "ANY_FRAME",
+	levelFrom = 1,
+	levelTo = 20,
+	color = #DD_COLORS,
+	when = "ON_PICKUP",
+	action = "SALVAGE",
+	precentFull = 80
+};

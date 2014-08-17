@@ -1,0 +1,451 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Component xmlns="http://www.red5studios.com/"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://www.red5studios.com/ ../../../../schemas/component.xsd">
+    <Info
+        title="Scrapii"
+        author="Arkii"
+        description="An auto slavager"
+        url=""
+        uiVersion="1000"
+    />
+
+    <Events>
+        <Event name="ON_COMPONENT_LOAD"             bind="OnComponentLoad" />
+        <Event name="ON_PLAYER_READY"               bind="OnPlayerReady" />
+        <Event name="ON_LOOT_COLLECTED"             bind="OnLootCollected"/>
+        <Event name="ON_SALVAGE_RESPONSE"           bind="OnsalvageResponce"/>
+        <Event name="ON_INVENTORY_WEIGHT_CHANGED"   bind="OnInventoryWeightChanged"/>
+        <Event name="ON_ENCOUNTER_REWARD"           bind="OnEncounterReward"/>
+    </Events>
+    
+<Strings>
+        <String key="WINDOW_TITE"       text="- Scrapii -"              lang="EN"/>
+        <String key="GLOBAL_SETTINGS"   text="Global Settings"          lang="EN"/>
+        <String key="ACTIONS"           text="Actions"                  lang="EN"/>
+        <String key="ADD_FILTER"        text="Add Filter"               lang="EN"/>
+        <String key="SAVE_FILTER"       text="Save Changes"             lang="EN"/>
+        <String key="TEST_FILTER"       text="Test Filters"             lang="EN"/>
+        <String key="OPEN_REVIEW_LIST"  text="Review List"              lang="EN"/>
+        <String key="FILTER_OPTIONS"    text="Filter Options"           lang="EN"/>
+        <String key="EDIT_FILTER"       text="Edit Filter"              lang="EN"/>
+        <String key="DELETE_FILTER"     text="Delete Filter"            lang="EN"/>
+        <String key="FLT_TYPE"          text="Type"                     lang="EN"/>
+        <String key="FLT_FRAME"         text="Frame"                    lang="EN"/>
+        <String key="FLT_LEVEL_RANGE"   text="Level Range"              lang="EN"/>
+        <String key="FLT_COLOR"         text="Color"                    lang="EN"/>
+        <String key="FLT_WHEN"          text="When"                     lang="EN"/>
+        <String key="FLT_ACTION"        text="Action"                   lang="EN"/>
+        <String key="DELETE_FILTER_PROMPT" text="Delete Filter?\n Are you sure?"        lang="EN"/>
+        <String key="ARE_YOU_SURE"      text="Yes"                      lang="EN"/>
+        <String key="ABORT"             text="Nope, Abort"              lang="EN"/>
+        <String key="ADD_FILTER_HEADER" text="Add New Filter"           lang="EN"/>
+        <String key="ADD_FILTER_DESC"   text="Fill out the options below to add a new filter to the chain and then click &quot;Add Filter&quot; :>"         lang="EN"/>
+        <String key="FROM"              text="From"                     lang="EN" />
+        <String key="TO"                text="To"                       lang="EN" />
+        <String key="PERCENT"           text="Percent"                  lang="EN" />
+        <String key="OK"                text="Ok"                       lang="EN" />
+        <String key="PCT"               text="%"                        lang="EN" />
+        <String key="INV_PCT_FULL_FMT"  text="Over %i%% full"           lang="EN" />
+        <String key="REVIEW_LIST"       text="Review List"              lang="EN" />
+        <String key="INCLUDE_ARCHTYPE"  text="Include Archetype"        lang="EN" />
+        <String key="PROFIT_LIST_TITLE" text="Profits:"                 lang="EN" />
+        <String key="GOT_LOOTS"         text="Sweets loots"             lang="EN" />
+        <String key="SALVAGE"           text="Salvage"                  lang="EN" />
+        <String key="DONT_SALVAGE"      text="Don't Salvage"            lang="EN" />
+        <String key="CHECK_UNCHECK_ALL" text="Check/Uncheck All"        lang="EN" />
+        <String key="PROCESS_LOOT"      text="Process loot drops"       lang="EN" />
+        <String key="PROCESS_LOOT_TT"   text="If enabled Scrapii will salvage loot from drops"        lang="EN" />
+        <String key="PROCESS_REWARDS"   text="Process rewards"        lang="EN" />
+        <String key="PROCESS_REWARDS_TT" text="If enabled Scrapii will salvage loot from A.R.E.S Job and events, pretty much anything that pops a reward notification."        lang="EN" />
+        <String key="SAVLVAGE_SELCECTED" text="Salvage Selected"         lang="EN" />
+        <String key="KEEP_SELECTED"     text="Keep Selected"            lang="EN" />
+        <String key="KEEP_ARE_SURE"     text="Are you sure you want to keep these %s items?"            lang="EN" />
+        <String key="SALVAGE_ARE_SURE"  text="Are you sure you want to salvage these %s items?"            lang="EN" />
+        <String key="ENABLE_DEBUG"      text="Enable Debug"             lang="EN" />
+        <String key="PRINT_SUMMARY"     text="Print Summary"            lang="EN" />
+        <String key="PRINT_SUMMARY_TT"  text="If checked will print a summary of what is being salvaged and the salvage rewards to the loot window"             lang="EN" />
+        <String key="PRINT_SUMMARY_CHAN" text="Print summary output channel" lang="EN" />
+        <String key="REPORT_REWARDS"     text="Report Savlage Rewards"            lang="EN" />
+        <String key="REPORT_REWARDS_TT"  text="If checked your salvage rewards will be logged on to my sever, this is purely for stats. So users can see the total 'profits' of all the addon users added together, no personal data is stored, just the rewards for that salvage operation (e.g. 50 crystiste and 1,000 Reserach points), this is opt-in so you don't have to :> (I though it could make for some semi intresting numbers)"             lang="EN" />
+
+        <!-- Type Strings -->
+        <String key="ALL_TYPES"             text="All Types" lang="EN" />
+        <String key="PRIMARY_WEAPON"        text="Primary Weapon" lang="EN" />
+        <String key="SECONDARY_WEAPON"      text="Secondary Weapon" lang="EN" />
+        <String key="ABILITY"               text="Ability" lang="EN" />
+        <String key="WEAPON_MODULE"         text="Weapon Module" lang="EN" />
+        <String key="ABILITY_MODULE"        text="Ability Module" lang="EN" />
+        <String key="BATTLEFRAME_CORE"      text="Battleframe Core" lang="EN" />
+        <String key="JUNK_SALVAGE"          text="Junk Salvage" lang="EN" />
+
+        <!-- Frame Strings -->
+        <String key="ANY_FRAME"             text="Any Frame" lang="EN" />
+        <String key="ACCORD_BIOTECH"        text="Accord Biotech" lang="EN" />
+        <String key="DRAGONFLY"             text="Dragonfly" lang="EN" />
+        <String key="RECLUSE"               text="Recluse" lang="EN" />
+        <String key="ACCORD_ASSAULT"        text="Accord Assault" lang="EN" />
+        <String key="FIRECAT"               text="Firecat" lang="EN" />
+        <String key="TIGERCLAW"             text="Tigerclaw" lang="EN" />
+        <String key="ACCORD_DREADNAUGHT"    text="Accord Dreadnaught" lang="EN" />
+        <String key="ARSENAL"               text="Arsenal" lang="EN" />
+        <String key="MAMMOTH"               text="Mammoth" lang="EN" />
+        <String key="RHINO"                 text="Rhino" lang="EN" />
+        <String key="ACCORD_ENGINEER"       text="Accord Engineer" lang="EN" />
+        <String key="BASTION"               text="Bastion" lang="EN" />
+        <String key="ELECTRON"              text="Electron" lang="EN" />
+        <String key="ACCORD_RECON"          text="Accord Recon" lang="EN" />
+        <String key="NIGHTHAWK"             text="Nighthawk" lang="EN" />
+        <String key="RAPTOR"                text="Raptor" lang="EN" />
+        
+        <!-- Color Strings -->
+        <String key="ORANGE"                text="Orange" lang="EN" />
+        <String key="ORANGE_AND_BELOW"      text="Orange and below" lang="EN" />
+        <String key="PURPLE"                text="Purple" lang="EN" />
+        <String key="PURPLE_AND_BELOW"      text="Purple and below" lang="EN" />
+        <String key="BLUE"                  text="Blue" lang="EN" />
+        <String key="BLUE_AND_BELOW"        text="Blue and below" lang="EN" />
+        <String key="GREEN"                 text="Green" lang="EN" />
+        <String key="GREEN_AND_BELOW"       text="Green and below" lang="EN" />
+        <String key="WHITE"                 text="White" lang="EN" />
+        
+        <!-- When Strings -->
+        <String key="ON_PICKUP"             text="On pick-up" lang="EN" />
+        <String key="INV_PCT_FULL"          text="Percent Inventory full" lang="EN" />
+        
+        <!-- Actions Strings -->
+        <String key="SALVAGE"               text="Salvage" lang="EN" />
+        <String key="PROMPT"                text="Prompt" lang="EN" />
+        <String key="Q_FOR_REVIEW"          text="Queue for review" lang="EN" />
+    </Strings>
+    
+    <Textures>
+		<Texture name="Inventory" src="components/MainUI/Panels/Inventory/Inventory.dds" premultiplied="false" minScale="1">
+			<Region name="backpack" top="24" bottom="43" left="0" right="21" />
+		</Texture>
+        
+        <Texture name="filterArrow" src="components\MainUI\Panels\Market\ShowFilterArrow.dds" premultiplied="false">
+			<Region name="normal" top="1" bottom="11" left="1" right="15" />
+			<Region name="mirrored" top="11" bottom="1" left="1" right="15" />
+		</Texture>
+        
+        <Texture name="Divider" src="components\MainUI\Panels\Inventory\HR.png" premultiplied="false"/>
+        <Texture name="dash_lines" src="components\MainUI\Panels\Inventory\dashLineMask.png" premultiplied="false"/>
+    </Textures>
+        
+    <Colors>
+        <Color name="textColor"     value="#FFFFFF"/>
+        <Color name="RowDefault"    value="#000000"/>
+        <Color name="RowHover"      value="#0E89C7"/>
+    </Colors>
+    
+    <Styles>
+        <StyleSheet name="panelBG" parent="PanelBackDrop">
+            clip-children:false;
+            alpha:0.7;
+			tint:#222222;
+        </StyleSheet>
+        
+        <StyleSheet name="HeaderText">
+            font:Demi_9;
+            halign: center;
+            valign: center;
+            shadow:0;
+            color: textColor;
+        </StyleSheet>
+        
+        <StyleSheet name="FadedBorder" parent="ButtonSolid">
+            tint:#121318;
+            exposure:1.0;
+        </StyleSheet>
+        
+        <StyleSheet name="FilterRowText">
+            font:Demi_10;
+            halign: left;
+            valign: center;
+            shadow:0;
+            color: textColor;
+        </StyleSheet>
+		
+		<StyleSheet name="AddFilterText" parent="FilterRowText">
+            halign: center;
+            valign: center;
+        </StyleSheet>
+		
+		<StyleSheet name="AddFilterDesc">
+            font:Demi_12;
+            halign: center;
+            valign: center;
+            shadow:0;
+            color: textColor;
+        </StyleSheet>
+		
+		<StyleSheet name="TextInput" parent="#TextInput">
+			texture:colors;
+			region:transparent;
+            font:Demi_12;
+            halign: center;
+            valign: center;
+            shadow:0;
+            color: textColor;
+			maxlen:3;
+			multiline:false;
+			numeric:true;
+        </StyleSheet>
+		
+		<StyleSheet name="Reviewlist">
+            font:Demi_12;
+            halign: left;
+            valign: center;
+            shadow:0;
+            color: textColor;
+        </StyleSheet>
+     </Styles>
+
+     <BluePrints>
+        <BluePrint name="Panel" >
+            <Border dimensions="dock:fill" class="panelBG" style="clip-children:false;"/>
+        </BluePrint>
+        
+        <BluePrint name="FilterRow" instantiable="true">
+            <Group name="type" dimensions="left:0; top:0; height:100%; width:20%-4"/>
+            <Group name="frame" dimensions="left:20%; top:0; height:100%; width:15%-4"/>
+            <Group name="levelRange" dimensions="left:35%; top:0; height:100%; width:20%-4"/>
+            <Group name="color" dimensions="left:55%; top:0; height:100%; width:15%-4"/>
+            <Group name="when" dimensions="left:70%; top:0; height:100%; width:15%-4"/>
+            <Group name="action" dimensions="left:85%; top:0; height:100%; width:15%-4"/>
+        </BluePrint>
+        
+        <BluePrint name="FilterHeaderTab" instantiable="true">
+			<Text name="text" dimensions="left:5; right:100%-20; top:0%; height:100%" style="font:Demi_9; halign:center; valign:center; eatsmice:false; clip:true;"/>
+			<StillArt name="icon" dimensions="left:100%-20; top:50%-6; height:11; width:15;" style="texture:filterArrow; region:normal; eatsmice:false"/>
+		</BluePrint>
+        
+        <BluePrint name="Header" instantiable="true">
+            <StillArt name="Divider" dimensions="left:0%; right:100%; top:4; height:7" style="texture:Divider; exposure:1"/>
+            <StillArt name="Divider2" dimensions="left:0%; right:100%; top:9; height:7" style="texture:Divider; exposure:1"/>
+            <Border name="textBG" class="FadedBorder" dimensions="center-x:50%; top:2; height:18; width:50" style="alpha:.4; tint:#0B0B0B; exposure:1"/>
+            <Text     name="name"   key="WINDOW_TITE"       dimensions="top:3; left:0; width:100%; height:16" class="HeaderText" />
+		</BluePrint>
+        
+        <BluePrint name="RowField" instantiable="true">
+            <StillArt name="bg" dimensions="dock:fill" style="texture:colors; tint:#ff000000; region:white; alpha:0.2;"/>
+            <Text    name="text"   key="WINDOW_TITE"  dimensions="dock:fill" class="FilterRowText" />
+        </BluePrint>
+        
+        <BluePrint name="ListRow" instantiable="true">
+            <StillArt name="bg" dimensions="dock:fill" style="texture:colors; tint:RowDefault; region:white; alpha:0.4;"/>
+            <Group name="content" dimensions="dock:fill" blueprint="FilterRow"/>
+            <FocusBox name="focusBox"   dimensions="dock:fill" />
+        </BluePrint>
+		
+		<BluePrint name="AddFilterHeader" instantiable="true">
+            <Border dimensions="dock:fill;" class="RoundedBorders" style="padding:6; tint:#27333F; alpha:1;" />
+            <Text    name="text"   key="WINDOW_TITE"  dimensions="dock:fill" class="AddFilterText" />
+        </BluePrint>
+		
+		<!-- Positioned in Lua to match with text -->
+		<BluePrint name="EnterLevelRange" instantiable="true">
+            <Text  name="text1" key="FROM" dimensions="left:0; top:0; width:50; height:100%;" class="AddFilterText" />
+			<Group name="dropDown1" dimensions="left:0; top:0; width:60; height:100%;"/>
+			<Text  name="text2" key="TO" dimensions="left:0; top:0; width:50; height:100%;" class="AddFilterText" />
+			<Group name="dropDown2" dimensions="left:0; top:0; width:60; height:100%;"/>
+        </BluePrint>
+		
+		<BluePrint name="AddFilterBody" instantiable="true">
+            <Text name="name" key="ADD_FILTER_DESC"	dimensions="top:5; left:20; width:100%-20; height:16" class="AddFilterDesc" />
+			
+			<Group name="cont" dimensions="left:20; bottom:100%-85; height:24; width:100%-40">
+				<Group name="header" dimensions="left:0; top:0; height:24; width:100%" blueprint="FilterRow"/>
+				<Group name="cont" dimensions="left:0; top:30; height:24; width:100%" blueprint="FilterRow"/>
+			</Group>
+			 
+			<Group name="AddButt" dimensions="center-x:50%; bottom:100%-5; height:25; width:250"/>
+        </BluePrint>
+		
+		<BluePrint name="PercentPopUp" instantiable="true">
+			<!-- <Text name="name" key="INV_PCT_FULL"	dimensions="top:5; left:20; width:100%-20; height:16" class="AddFilterDesc" /> -->
+			
+			<Group name="Controls" dimensions="center-x:50%; top:15; width:100%-20; height:24">
+				<Group name="Slider" dimensions="top:0; left:0; width:70%; height:24" />
+				<Border name="InputGroup" class="ButtonBorder" dimensions="top:-3; left:70%+10; width:70; height:30;" style="eatsmice:false; alpha:1; exposure:1; tint:#30B9B9B9" style="clip-children:true; padding:0">
+					<TextInput name="TextInput" dimensions="dock:fill;" class="TextInput"/>
+				</Border>
+				<Text name="Text" key="PCT" dimensions="top:0; left:70%+85; width:20; height:24" class="AddFilterText" style="font:Demi_12;"/>
+			</Group>
+			
+			<Group name="OkButt" dimensions="center-x:50%; bottom:100%-5; width:70%; height:24"/>
+		</BluePrint>
+
+         <BluePrint name="ReviewLine" instantiable="true">
+             <StillArt name="bg" dimensions="dock:fill" style="texture:colors; tint:#ff000000; region:white; alpha:0.2;"/>
+			 <StillArt name="bg" dimensions="left:0; top:0; width:40; height:40;" style="texture:ItemPlate; region:Square; visible:true; eatsmice:false"/>
+			 <WebImage name="icon" dimensions="left:0; top:0; width:40; height:40;" style="fixed-bounds:true;"/>
+			 <Text name="level" key="PCT" dimensions="left:42; top:0; width:40; height:100%;" class="Reviewlist" style="halign: center;"/>
+             <Text name="text" key="PCT" dimensions="left:85; top:0; width:100%; height:100%;" class="Reviewlist" style=""/>
+			 <FocusBox name="focusBox"   dimensions="dock:fill" />
+             <Group name="checkbox" dimensions="top:10; right:100%-10; width:18; height:18" />
+         </BluePrint>
+
+         <BluePrint name="ProfitLine" instantiable="true">
+            <Text name="Name" dimensions="left:5; width:0; height:22; top:0" style="halign:left; valign:center; font:Demi_9; shadow:0; color:PanelTitle"/>
+            <Mask name="dash_lines" dimensions="left:0; right:100%; height:22; center-y:25%" maskdims="left:75; right:100%-85; height:100%; top:0" style="texture:dash_lines; tint:#FFFFFF"/>
+            <Text name="Quantity" dimensions="right:100%-25; width:0; height:22; top:0" style="halign:right; valign:center; font:Demi_9; shadow:0; color:#DADADA"/>
+         </BluePrint>
+
+         <BluePrint name="PromptBody" instantiable="true">
+            <Border name="tooltip" dimensions="left:0; width:250; top:0; height:500" class="PanelBackDrop" />
+            <WebImage name="icon" dimensions="dock:fill" style="fixed-bounds:true"/>
+        </BluePrint>
+    </BluePrints>
+    
+    <Frames>
+        <PanelFrame name="Main" dimensions="center-x:36%; center-y:40%; width:70%; height:60%" visible="false" depth="0"><!-- PanelLayer3 -->
+			<Children>	
+				<Group id="Window" dimensions="right:100%; top:0; height:100%; left:0" style="alpha:1">
+					<!-- Title -->
+					<Group dimensions="left:0; top:0; height:38; width:100%" blueprint="Panel">
+						<Group id="MovableParent" dimensions="dock:fill"/>
+						<Text id="title" key="WINDOW_TITE" dimensions="top:0; left:0; width:100%; height:38" style="font:Demi_15; halign:center; valign:center; shadow:0; color:PanelTitle;" />
+						<FocusBox id="close" dimensions="left:100%-48; right:100%; top:0; bottom:100%" class="ui_button">
+							<Border dimensions="dock:fill" style="tint:000000; alpha:0.5; padding:3; shadow:0"/>
+							<StillArt name="X" dimensions="center-x:50%; center-y:50%; width:16; height:16" style="texture:DialogWidgets; region:close; eatsmice:false"/>
+						</FocusBox>
+					</Group>
+					<!-- Title -->
+                    
+                    <!-- Body -->
+                    <Group dimensions="left:0; top:40; height:100%; width:100%">
+                        <!-- Header -->
+                         <Group dimensions="left:0; top:0; height:60; width:100%" blueprint="">
+                            <Group dimensions="left:0; top:0; height:100%; width:50%-1;" blueprint="Panel">
+                                <Group id="GlobalSettingsHeader" dimensions="left:0; top:1; height:20; width:100%" blueprint="Header" />
+								
+								<Group dimensions="left:5; bottom:100%-12; height:22; width:100">
+									<Group id="includeArchtype" dimensions="left:3; top:3; height:20; width:20" />
+									<Text key="INCLUDE_ARCHTYPE" dimensions="left:22; top:3; height:20; width:20" class="FilterRowText"/>
+								</Group>
+								
+                            </Group>
+                            
+                            <Group name="Buttons" dimensions="left:50%+1; top:0; height:100%; width:50%;" blueprint="Panel">
+                                <Group id="ButtonsHeader" dimensions="left:0; top:1; height:20; width:100%" blueprint="Header"/>
+                                <Group id="AddFilterButton" dimensions="right:100%-5; bottom:100%-5; height:22; width:120"/>
+                                <Group id="TestFilterButton" dimensions="right:100%-130; bottom:100%-5; height:22; width:120"/>
+                                <Group id="ReviewListButton" dimensions="right:100%-255; bottom:100%-5; height:22; width:120"/>
+                            </Group>
+                        </Group>
+                        <!-- Header -->
+                        
+                        <Group dimensions="left:0; top:62; height:100%; width:100%" blueprint="Panel">
+                        <!-- Filters -->
+                            <Group id="FiltersHeaders" dimensions="left:2; top:2; height:24; width:100%-22" blueprint="FilterRow"/>
+                            
+                            <!-- <Border dimensions="left:5; top:30; right:100%-5; bottom:100%-45" class="PanelSubBackDrop" style="alpha:0.5; tint:000000"/> -->
+                            <Group dimensions="left:2; top:28; right:100%-2; bottom:100%-42">
+                                <Group id="FilterList_Fostering" dimensions="top:0; left:0; width:100%; height:22;" style="visible:false;"/>
+                                <Group id="FilterList" dimensions="dock:fill;"/>
+                            </Group>
+                        <!-- Filters -->
+                        
+                        <!-- Footer -->
+                        <Group dimensions="left:0; top:100%-40; height:40; width:100%">
+                            <StillArt name="FadePanel" dimensions="left:0; top:-20; height:20; right:100%" style="texture:gradients; region:white_down; tint:000000; eatsmice:false; alpha:.5"/>
+                            
+                            <Group dimensions="left:9; top:9; height:22; width:100">
+                                <StillArt name="weight_icon" dimensions="left:0; width:19; top:0; bottom:19" style="texture:Inventory; region:backpack"/>
+                                <Text id="weight_text" dimensions="left:24; right:10; top:0; bottom:100%" style="font:Demi_9; halign:left; valign:center"/>
+                            </Group>
+
+                            <!-- Profits -->
+                            <Group dimensions="left:0; top:0; width:350; height:500" style="visible:false;">
+                                <Group id="ProfitToolTip" dimensions="dock:fill">
+                                    <Group id="ProfitsList_Fostering" dimensions="top:0; left:0; width:100%; height:22;" style="visible:false;"/>
+                                    <Text name="Name" key="PROFIT_LIST_TITLE" dimensions="left:0; width:100%; height:32; top:0" style="halign:center; valign:center; font:Demi_12; shadow:0; color:PanelTitle"/>
+                                    <Group id="ProfitsList" dimensions="left:0; width:100%; height:100%; top:32"/>
+                                </Group>
+                             </Group>
+
+                            <Group dimensions="right:100%; top:0; bottom:100%; width:300">
+                                <FocusBox id="ProfitFocus" dimensions="dock:fill" style="eatsmice:true;"/>
+                                <Group dimensions="right:100%-9; top:9; height:22; width:100">
+                                    <StillArt name="cy_icon" dimensions="right:100%; width:19; top:0; bottom:19" style="texture:currency_new; region:crystite_32"/>
+                                    <Text id="cy_text" dimensions="right:100%-24; width:100; top:0; bottom:100%" style="font:Demi_9; halign:right; valign:center"/>
+                                </Group>
+                                 <Group dimensions="right:100%-100; top:9; height:22; width:100">
+                                    <StillArt name="rp_icon" dimensions="right:100%; width:19; top:0; bottom:19" style="texture:currency_new; region:researchpoint_16"/>
+                                    <Text id="rp_text" dimensions="right:100%-24; width:100; top:0; bottom:100%" style="font:Demi_9; halign:right; valign:center"/>
+                                </Group>
+                            </Group>
+                            <!-- Profits -->
+                        </Group>
+                        <!-- Footer -->
+                        </Group>
+                    </Group>
+                    <!-- Body -->
+				</Group>
+				
+				<!-- Add Filter Popup -->
+				<Group id="AddFilterPopupParent" dimensions="center-x:50%; center-y:47%; width:100%-60; height:200">
+
+				</Group>
+				<!-- Add Filter Popup -->
+				
+				<!-- Percent Popup -->
+				<Group id="PercentPopupParent" dimensions="center-x:50%; center-y:50%; width:450; height:130"/>
+				<!-- Percent Popup -->
+				
+				<!-- Tooltip Popup -->
+				<Group id="ToolTipPopUp" dimensions="center-x:50%; center-y:50%; width:300; height:500" style="eatsmice:false; alpha:0"/>
+				<!-- Tooltip Popup -->
+				
+			</Children>
+			<OnClose bind="OnClose"/>
+			<OnEscape bind="OnClose"/>
+			<!-- <OnMessage bind="OnMessage"/> -->
+		</PanelFrame>
+
+        <PanelFrame name="ReviewPopup" dimensions="center-x:85%; center-y:40%; width:500; height:60%" visible="false" depth="-5">
+            <Children>
+                <!-- Title -->
+                <Group dimensions="left:0; top:0; height:38; width:100%" blueprint="Panel">
+                    <Group id="ReviewPopupMoveable" dimensions="dock:fill"/>
+                    <Text id="rp_title" key="REVIEW_LIST" dimensions="top:0; left:0; width:100%; height:38" style="font:Demi_15; halign:center; valign:center; shadow:0; color:PanelTitle;" />
+                    <FocusBox id="rp_close" dimensions="left:100%-48; right:100%; top:0; bottom:100%" class="ui_button">
+                        <Border dimensions="dock:fill" style="tint:000000; alpha:0.5; padding:3; shadow:0"/>
+                        <StillArt name="X" dimensions="center-x:50%; center-y:50%; width:16; height:16" style="texture:DialogWidgets; region:close; eatsmice:false"/>
+                    </FocusBox>
+                </Group>
+                <!-- Title -->
+
+                <!-- Body -->
+                <Group dimensions="left:0; top:40; height:35; width:100%" blueprint="Panel">
+                    <Text id="RL_CheckAll_Txt" key="CHECK_UNCHECK_ALL" dimensions="top:6; right:100%-58; width:120; height:24" style="font:Demi_11; halign:right; valign:center; shadow:0; color:textColor;" />
+                    <Group id="RL_CheckAll" dimensions="top:9; right:100%-34; width:18; height:18" />
+                </Group>
+
+                <Group dimensions="left:0; top:76; height:100%; width:100%" blueprint="Panel">
+                    <Group dimensions="left:2; top:2; right:100%-2; bottom:100%-42">
+                        <Group id="ReviewList_Fostering" dimensions="top:0; left:0; width:100%; height:40;" style="visible:false;"/>
+                        <Group id="ReviewList" dimensions="dock:fill;"/>
+                    </Group>
+
+                    <Group dimensions="left:0; top:100%-40; height:40; width:100%">
+                        <StillArt name="FadePanel" dimensions="left:0; top:-20; height:20; right:100%" style="texture:gradients; region:white_down; tint:000000; eatsmice:false; alpha:.5"/>
+						<Group id="RP_ResizableParent" dimensions="bottom:100%; height:15; right:100%; width:15" style="depth:5;"/>
+                        <Group dimensions="left:9; top:9; height:22; width:100">
+                            <StillArt name="weight_icon" dimensions="left:0; width:19; top:0; bottom:19" style="texture:Inventory; region:backpack"/>
+                            <Text id="review_list_count" dimensions="left:24; right:10; top:0; bottom:100%" style="font:Demi_9; halign:left; valign:center"/>
+                        </Group>
+
+                        <Group id="RP_SavlageSelected" dimensions="bottom:100%-8; height:26; right:50%-4; width:30%"/>
+                        <Group id="RP_KeepSelected" dimensions="bottom:100%-8; height:26; left:50%+4; width:30%"/>
+                    </Group>
+                </Group>
+                <!-- Body -->
+            </Children>
+            <OnClose bind="OnCloseRP"/>
+            <OnEscape bind="OnCloseRP"/>
+        </PanelFrame>
+    </Frames>
+</Component>
