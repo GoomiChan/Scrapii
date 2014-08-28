@@ -1,0 +1,22 @@
+V 1.1
+--------------------------
+- Moved the button in the inventory to the top left.
+- Left and right clicking on a filter will now open the context menu.
+- Improved the salvaging code. (Turns out SexiiSteak pointed out "ON_INVENTORY_ENTRY_CHANGED" to but I forgot to check up on it untill vDepth pointed it out again later, so thanks to both of them)
+- The check all check box will now uncheck itself if you uncheck an option after using it.
+- Added /scrapii and /scrap to open the Filter UI.
+- Added /srl and /review to open the review list.
+- Added options to the interface options allowing you to disable salvaging in certain instances, eg Baneclaw (Thanks to Kuro for the suggestion).
+- Swaped the salvage / don't salvage options on the loot pop-up, so don't salvage is on the left. This should help avoid accidental salvaging.
+- Now verifies that an item still exists when opening the review list.
+- Fixed Scrapii trying to salvage other players loot sometimes.
+- Replaced the place holder pop up with prettier ones.
+- New filters will now default to Queue for review.
+- Unneeded option in the add filter window will now be greyed out when they aren't needed.
+- Various small UI fixes and tweaks.
+- Added simple sorting to the filters, the order you see them in is the order that they will be processed in.
+- Added the ablity to have multiple differn't filter sets.
+- Added some sounds to actions like opening a popup or on error.
+- Fixed issue with the "Include Archetype" check box always showing as checked (was only a dispaly issue).
+- Added German translation by Maxunit941.
+- Added French translation by Maekess.

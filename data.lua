@@ -52,7 +52,7 @@ DD_TYPES =
     {
 		typeName = "salvage",
 		subTypeIds = {"3617"},
-		skips = {res = true, skipFrameCheck = true, skipRarityCheck = true},
+		skips = {res = true, skipFrameCheck = true, skipRarityCheck = true, skipLevelCheck = true},
         sortID = 8
     }
 };
@@ -163,46 +163,56 @@ DD_COLORS =
 	ORANGE =
     {
         sortID = 1,
-		raritys = {"prototype"}
+		raritys = {"legendary "}
     },
 	ORANGE_AND_BELOW =
     {
         sortID = 2,
+		raritys = {"legendary", "prototype", "epic", "rare", "uncommon", "common"}
+    },
+	YELLOW =
+    {
+        sortID = 3,
+		raritys = {"prototype"}
+    },
+	YELLOW_AND_BELOW =
+    {
+        sortID = 4,
 		raritys = {"prototype", "epic", "rare", "uncommon", "common"}
     },
 	PURPLE =
     {
-        sortID = 3,
+        sortID = 5,
 		raritys = {"epic"}
     },
 	PURPLE_AND_BELOW =
     {
-        sortID = 4,
+        sortID = 6,
 		raritys = {"epic", "rare", "uncommon", "common"}
     },
 	BLUE =
     {
-        sortID = 5,
+        sortID = 7,
 		raritys = {"rare"}
     },
 	BLUE_AND_BELOW =
     {
-        sortID = 6,
+        sortID = 8,
 		raritys = {"rare", "uncommon", "common"}
     },
 	GREEN =
     {
-        sortID = 7,
+        sortID = 9,
 		raritys = {"uncommon"}
     },
 	GREEN_AND_BELOW =
     {
-        sortID = 8,
+        sortID = 10,
 		raritys = {"uncommon", "common"}
     },
 	WHITE =
     {
-        sortID = 9,
+        sortID = 11,
 		raritys = {"common"}
     },
 };
@@ -223,12 +233,110 @@ DD_ACTIONS =
 -- Default filter settings
 DEFAULT_FILTER_DATA =
 {
-	type = nil,
+	typeName = "PRIMARY_WEAPON",
 	frame = "ANY_FRAME",
 	levelFrom = 1,
 	levelTo = 20,
 	color = #DD_COLORS,
 	when = "ON_PICKUP",
-	action = "SALVAGE",
+	action = "Q_FOR_REVIEW",
 	precentFull = 80
+};
+
+ZONES = 
+{
+	--[[
+		zone_id = 12, 
+		title = "Nothing"
+	}, ]]
+	{
+		zone_id = 162, 
+		title = "Devil's Tusk"
+	}, 
+	{
+		zone_id = 448, 
+		title = "New Eden"
+	}, 
+	{
+		zone_id = 805, 
+		title = "Epicenter"
+	}, 
+	{
+		zone_id = 833, 
+		title = "Campaign Chapter 1 - Blackwater Anomaly"
+	}, 
+	{
+		zone_id = 861, 
+		title = "Campaign Chapter 1 - Research Station"
+	}, 
+	{
+		zone_id = 863, 
+		title = "Cliff's Edge"
+	}, 
+	{
+		zone_id = 864, 
+		title = "Campaign Chapter 1 - Bandit Cave"
+	}, 
+	{
+		zone_id = 865, 
+		title = "Abyss"
+	}, 
+	{
+		zone_id = 868, 
+		title = "Cinerarium"
+	}, 
+	{
+		zone_id = 878, 
+		title = "The Wages of SIN"
+	}, 
+	{
+		zone_id = 1003, 
+		title = "Campaign Chapter 1 - Harvester Island"
+	}, 
+	{
+		zone_id = 1007, 
+		title = "Campaign Chapter 1 - Power Grab"
+	}, 
+	{
+		zone_id = 1008, 
+		title = "Campaign Chapter 1 - Risky Business"
+	}, 
+	{
+		zone_id = 1021, 
+		title = "Broken Peninsula"
+	}, 
+	{
+		zone_id = 1022, 
+		title = "Lair of the Destroyer"
+	}, 
+	{
+		zone_id = 1024, 
+		title = "The Wages of SIN"
+	}, 
+	{
+		zone_id = 1028, 
+		title = "Operation: Cinderblock"
+	}, 
+	{
+		zone_id = 1030, 
+		title = "Sertao"
+	}, 
+	{
+		zone_id = 1051, 
+		title = "Baneclaw Lair"
+	}, 
+	{
+		zone_id = 1054, 
+		title = "Devils Tusk "
+	}
+};
+
+HEADER_LOOKUP = 
+{
+	FLT_TYPE = "typeName",
+	FLT_FRAME = "frame",
+	FLT_LEVEL_RANGE = "levelFrom",
+	FLT_COLOR = "color",
+	FLT_WHEN = "when",
+	FLT_ACTION = "action"
 };

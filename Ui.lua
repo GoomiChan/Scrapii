@@ -26,6 +26,8 @@ Const =
 	TOOLTIP_POPUP = Component.GetWidget("ToolTipPopUp"),
 	RP_RESIZE_PARENT = Component.GetWidget("RP_ResizableParent"),
 	INCLUDE_ARCHTYPE = Component.GetWidget("includeArchtype"),
+	FILTER_SETS = Component.GetWidget("filterSets"),
+	FILTER_SET_REMOVE = Component.GetWidget("filterSetRemove"),
 	PROFITS_CY = Component.GetWidget("cy_text"),
 	PROFITS_RP = Component.GetWidget("rp_text"),
 	PROFITS_LIST_FOSTER = Component.GetWidget("ProfitsList_Fostering"),
@@ -41,6 +43,13 @@ Const =
 	{
 		EDIT = 0,
 		DELETE = 1
+	},
+	
+	SND = 
+	{
+		OPEN_POPUP = "Play_SFX_UI_TipPopUp",
+		FILTER_ROLL = "",
+		ERROR = "Play_SFX_UI_SIN_CooldownFail"
 	}
 };
 
@@ -65,7 +74,9 @@ local Private = -- Private object, easyier to keep track of important vars like 
 	ReviewListSavlageSelected = nil,
 	ReviewListSavlageKeep = nil,
 	ReviewListIsTest = false,
-	ReviewListCheckall = nil
+	ReviewListCheckall = nil,
+	FilterSets = nil,
+	FilterSetRemove = nil
 };
 
 -- Public functions
@@ -74,6 +85,8 @@ function Ui.Init()
 		frame = Const.MAIN,
 		MOVABLE_PARENT = Const.MOVABLE_PARENT
 	});
+	
+	Const.MAXLEVEL = #Game.GetProgressionUnlocks();
 	
 	InterfaceOptions.SetCallbackFunc(Private.UiOptionsCallback, Component.LookupText("WINDOW_TITE"));
 	Private.CreateUiOptions();
@@ -106,6 +119,10 @@ function Ui.Show(show)
 end
 
 function Ui.ShowReview(show, isReview)
+	if not Const.MAIN:IsVisible() then
+		Component.SetInputMode(show and "cursor" or "none");
+	end
+	
 	Const.REVIEW_POPUP:Show(show);
 	Private.IsReviewListOpen = show;
 	Private.ReviewListIsTest = isReview;
@@ -120,7 +137,7 @@ function ToggleWindow(args)
 end
 
 function Ui.SetInventoryWeight(inv)
-    -- ToDo: Color code when clsoe to limit?
+    -- ToDo: Color code when close to limit?
     Const.INV_WEIGHT_TEXT:SetText(unicode.format("%i/%i (%i%%)", inv.current, inv.max, math.floor(inv.precent*100)));
 end
 
@@ -159,11 +176,26 @@ function Ui.UpdateProfitsTootip(profitList)
 
 	Const.PROFITS_CY:SetText(_math.MakeReadable(profitList["10"] or 0));
 	Const.PROFITS_RP:SetText(_math.MakeReadable(profitList["86154"] or 0));
-	Const.PROFITS_RP:GetParent():SetDims("top:_; width:_; height:_; right:100%-".. Const.PROFITS_CY:GetTextDims().width + 50);
 end
 
 function Ui.ShowDialog(args)
 	Private.ShowDialog(args);
+end
+
+function Ui.ShowTextDialog(args)
+	Private.ShowTextDialog(args);
+end
+
+function Ui.UpdateFilterSets(sets)
+	Private.FilterSets:ClearItems();
+	for i, data in pairs(sets) do
+		Private.FilterSets:AddItem(data, data);
+	end
+	Private.FilterSets:AddItem(Component.LookupText("NEW_FILTER_SET"), NEW_FILTER_SET_ID);
+end
+
+function Ui.SetActiveFilterSet(active)
+	Private.FilterSets:SetSelectedByValue(active);
 end
 
 -- Private functions
@@ -188,7 +220,8 @@ function Private.CreateWidgets()
 	Private.AddFilterButton:Bind(function()
 		Private.SetAddFilterData(DEFAULT_FILTER_DATA);
         Private.AddFilterPopUp.AddButt:SetText(Component.LookupText("ADD_FILTER"));
-		Private.AddFilterPopUp.Window:Open();
+		Private.OpenPopUp(Private.AddFilterPopUp.Window);
+		System.PlaySound(Const.SND.OPEN_POPUP);
 	end);
     
     Private.TestFilterButton = Button.Create(Component.GetWidget("TestFilterButton"));
@@ -233,12 +266,29 @@ function Private.CreateWidgets()
 		config.includeArchtype = Private.IncludeArchtypeCB:IsChecked();
 		ConfigSaveSetting("includeArchtype");
 	end);
-
+	
+	Private.FilterSets = DropDownList.Create(Const.FILTER_SETS);
+	Private.FilterSets:BindOnSelect(SetActiveFilterSet);
+	
+	Private.FilterSetRemove = Button.Create(Const.FILTER_SET_REMOVE);
+	Private.FilterSetRemove:SetText("X");
+	Private.FilterSetRemove:TintPlate(Button.DEFAULT_RED_COLOR);
+	Private.FilterSetRemove:Bind(function()
+		Private.ShowDialog(
+		{
+			body = Component.LookupText("DELETE_FILTER_SET"):format(activeFilterSet or ""),
+			onYes = DeleteFilterSet,
+			onNo = function()
+			
+			end
+		});
+	end);
+	
 	-- Foster button into Inventory
-	local InvButton = Component.CreateWidget('<Group dimensions="right:100%-5; top:2; width:80; height:28;" />', Const.REVIEW_LIST_FOSTERING);
+	local InvButton = Component.CreateWidget('<Group dimensions="left:5; top:50%-13; width:80; height:26;" />', Const.REVIEW_LIST_FOSTERING);
 	Private.InventoryButton = Button.Create(InvButton);
 	Private.InventoryButton:SetText(Component.LookupText("WINDOW_TITE"));
-	Component.FosterWidget(InvButton, "Inventory:main.{1}.{2}.{2}.{2}.buttonsgroup"); -- I <3 Fostering
+	Component.FosterWidget(InvButton, "Inventory:main.{1}.{1}"); -- I <3 Fostering
 	Private.InventoryButton:Bind(function()
 			Ui.Show(true);
 		end);
@@ -256,6 +306,7 @@ function Private.CreateFilterButton(hostWidget, key)
         butt.descending = not butt.descending;
         Img:GetChild("icon"):SetRegion(butt.descending and "normal" or "mirrored");
         Private.OnFiltersSortChanged(key, butt.descending);
+		SortFilterList(key, butt.descending);
     end);
     
     butt.Reset = function()
@@ -288,23 +339,21 @@ function Private.EditFilter(row)
 	Private.AddFilterPopUp.EditMode = true;
 	Private.AddFilterPopUp.EditId = row.id;
     Private.AddFilterPopUp.AddButt:SetText(Component.LookupText("SAVE_FILTER"));
-	Private.AddFilterPopUp.Window:Open();
+	Private.OpenPopUp(Private.AddFilterPopUp.Window);
+	System.PlaySound(Const.SND.OPEN_POPUP);
 end
 
 function Private.DeleteFilter(row)
-	-- TODO: Make a prettyier version
-	ErrorDialog.Display(Component.LookupText("DELETE_FILTER_PROMPT"));
-	ErrorDialog.AddOption(Component.LookupText("ARE_YOU_SURE"), function()
-		DeleteFilter(row.id);
-		ErrorDialog.Hide();
-	end);
-	
-	ErrorDialog.AddOption(Component.LookupText("ABORT"), function()
-		ErrorDialog.Hide();
-	end);
-	
-	-- Less effort to jsut recreate the list instead of syncing with the data
-	--row.ListRef:Remove();
+	Private.ShowDialog(
+	{
+		body=Component.LookupText("DELETE_FILTER_PROMPT"),
+		onYes = function()
+			DeleteFilter(row.id);
+		end,
+		onNo = function()
+			
+		end
+	});
 end
 
 -- Filter Row Display Class
@@ -346,6 +395,7 @@ function Private.CreateFilterRow(id, data)
     focus:BindEvent("OnMouseEnter", function()
 		row.bg:ParamTo("tint", Component.LookupColor("RowHover"), 0.15);
         row.bg:ParamTo("alpha", 0.3, 0.15);
+		--System.PlaySound(Const.SND.FILTER_ROLL);
 	end);
 	focus:BindEvent("OnMouseLeave", function()
 		row.bg:ParamTo("tint", Component.LookupColor("RowDefault"), 0.15);
@@ -353,8 +403,8 @@ function Private.CreateFilterRow(id, data)
 	end);
     
     -- Setup the context menu
-    focus:BindEvent("OnRightMouse", function()
-        row.ContextMenu = ContextMenu.Create();	
+	local OpenContextMenu = function()
+	    row.ContextMenu = ContextMenu.Create();	
         row.ContextMenu:SetTitle(Component.LookupText("FILTER_OPTIONS"));
         row.ContextMenu:AddButton({id = Const.CONTEXT_IDS.EDIT, label_key = "EDIT_FILTER"});
 		row.ContextMenu:AddButton({id = Const.CONTEXT_IDS.DELETE, label_key = "DELETE_FILTER"});
@@ -367,7 +417,9 @@ function Private.CreateFilterRow(id, data)
 			end
 		end);
         row.ContextMenu:Show();
-	end);
+	end
+    focus:BindEvent("OnRightMouse", OpenContextMenu);
+	focus:BindEvent("OnMouseDown",  OpenContextMenu);
 
 	row.ListRef = Private.FilterList:AddRow(row.widget);
 	
@@ -384,7 +436,7 @@ end
 --------------------------------
 
 function Private.CreateAddFilterPopup()
-	Private.AddFilterPopUp.Window = RoundedPopupWindow.Create(Const.ADD_FILTER_POPUP_PARENT, nil, "panel");
+	Private.AddFilterPopUp.Window = RoundedPopupWindow.Create(Const.ADD_FILTER_POPUP_PARENT, nil);
 	local window = Private.AddFilterPopUp.Window;
 	window:SetTitle(Component.LookupText("ADD_FILTER_HEADER"));
 	window:SetDims("dock:fill;");
@@ -414,17 +466,8 @@ function Private.CreateAddFilterPopup()
     end
 	
 	local levelRange = Component.CreateWidget("EnterLevelRange", cont:GetChild("levelRange"));
-	local dd1 = levelRange:GetChild("dropDown1");
-	local dd2 = levelRange:GetChild("dropDown2");
-	local width = levelRange:GetChild("text1"):GetTextDims().width + 15;
-	local text2 = levelRange:GetChild("text2");
-	dd1:SetDims("left:"..width.."; top:_; height:_; width:_;");
-	Private.AddFilterPopUp.DD_FromLevel = DropDownList.Create(dd1);
-	width = width + dd1:GetBounds().width - 10;
-	text2:SetDims("left:"..width.."; top:_; height:_; width:_;");
-	width = width + text2:GetBounds().width - 10;
-	dd2:SetDims("left:"..width.."; top:_; height:_; width:_;");
-	Private.AddFilterPopUp.DD_ToLevel = DropDownList.Create(dd2);
+	Private.AddFilterPopUp.DD_FromLevel = DropDownList.Create(levelRange:GetChild("{1}.dropDown1"));
+	Private.AddFilterPopUp.DD_ToLevel = DropDownList.Create(levelRange:GetChild("{1}.{1}.{1}.dropDown2"));
 	
 	for i = 1, Const.MAXLEVEL, 1 do
 		Private.AddFilterPopUp.DD_FromLevel:AddItem(tostring(i), tostring(i));
@@ -446,7 +489,10 @@ function Private.CreateAddFilterPopup()
 		local selected = Private.AddFilterPopUp.DD_When:GetSelected();
 		if (selected == "INV_PCT_FULL") then
 			Private.PercentPopup.SetPercent(0.50);
-			Private.PercentPopup.Window:Open();
+			Private.OpenPopUp(Private.PercentPopup.Window);
+			Private.StylePopUp(Private.PercentPopup.Window);
+			Private.PercentPopup.Window:GetBody():GetParent():GetParent():SetDims("height:130; bottom:100%; width:350; center-y:50%;");
+			System.PlaySound(Const.SND.OPEN_POPUP);
 		end
 	end);
 	
@@ -469,7 +515,25 @@ function Private.CreateAddFilterPopup()
 		end
 	end);
 	
+	-- Grey out unneed options
+	Private.AddFilterPopUp.DD_Type:BindOnSelect(function (args)
+		local skips = DD_TYPES[args].skips;
+		if skips.skipFrameCheck  then Private.AddFilterPopUp.DD_Frame:Disable(true); else Private.AddFilterPopUp.DD_Frame:Enable(true); end
+		if skips.skipRarityCheck then Private.AddFilterPopUp.DD_Color:Disable(true); else Private.AddFilterPopUp.DD_Color:Enable(true); end
+		
+		if skips.skipRarityCheck then
+			Private.AddFilterPopUp.DD_FromLevel:Disable(true);
+			Private.AddFilterPopUp.DD_ToLevel:Disable(true);
+		else
+			Private.AddFilterPopUp.DD_FromLevel:Enable(true);
+			Private.AddFilterPopUp.DD_ToLevel:Enable(true);
+		end
+	end);
+	
 	window:Close();
+		
+	-- Adjsut the style a little
+	Private.StylePopUp(Private.AddFilterPopUp.Window);
 end
 
 function Private.GetAddFilterData()
@@ -502,7 +566,7 @@ end
 function Private.CreatePercentPopup()
 	Private.PercentPopup.Percent = 0;
 	
-	Private.PercentPopup.Window = RoundedPopupWindow.Create(Const.PERCENT_POPUP_PARENT, nil, "panel");
+	Private.PercentPopup.Window = RoundedPopupWindow.Create(Private.AddFilterPopUp.Window:GetBody():GetParent(), nil);
 	local window = Private.PercentPopup.Window;
 	window:SetTitle(Component.LookupText("INV_PCT_FULL"));
 	window:SetDims("dock:fill;");
@@ -515,7 +579,7 @@ function Private.CreatePercentPopup()
 	local textInput = controls:GetChild("InputGroup"):GetChild("TextInput");
 	textInput:SetText("0");
 	Private.PercentPopup.Slider = Slider.Create(controls:GetChild("Slider"), "adjuster");	
-	Private.PercentPopup.Slider:SetSteps(100);
+	Private.PercentPopup.Slider:SetSteps(101);
 	Private.PercentPopup.Slider:SetScrollSteps(1);
 	Private.PercentPopup.Slider:BindEvent("OnStateChanged", function(arg)
 		local pct = math.floor(Private.PercentPopup.Slider:GetPercent()*100);
@@ -547,6 +611,7 @@ function Private.CreatePercentPopup()
 	end;
 	
 	window:Close(false);
+	Private.StylePopUp(Private.PercentPopup.Window);
 end
 
 -- Review PopUP
@@ -582,7 +647,7 @@ function Private.CreateReviewPopUp()
 
 	Private.ReviewListCheckall = CheckBox.Create(Const.REVIEW_LIST_CHECKALL);
 	Private.ReviewListCheckall:AddHandler("OnStateChanged", function()
-		if (not Private.ReviewListIsTest) then
+		if (not Private.ReviewListIsTest and not Private.ReviewListCheckall_IngoreStateChange) then
 			for idx=1, Private.ReviewList:GetRowCount(), 1 do
 				Private.ReviewList:GetRow(idx).checkBox:SetCheck(Private.ReviewListCheckall:IsChecked());
 			end
@@ -636,6 +701,8 @@ function Private.AddToReviewUI(guid, sdbId, quanity, isReview)
 
 		bg:ParamTo("tint", Component.LookupColor("RowHover"), 0.15);
         bg:ParamTo("alpha", 0.3, 0.15);
+		
+		--System.PlaySound(Const.SND.FILTER_ROLL);
 	end);
 	
 	focus:BindEvent("OnMouseLeave", function()	
@@ -649,7 +716,7 @@ function Private.AddToReviewUI(guid, sdbId, quanity, isReview)
     	row.checkBox:SetCheck(not row.checkBox:IsChecked() and not isReview);
     end);
 	
-	widget:GetChild("icon"):SetUrl(itemInfo.web_icon or "http://d2ja7bjtwj8eb0.cloudfront.net/assets/items/64/" .. itemInfo.icon .. ".png");
+	widget:GetChild("icon"):SetUrl(itemInfo.web_icon or System.GetOperatorSetting("ingame_host").."/assets/items/64/" .. itemInfo.icon .. ".png");
 
 	local level = 0;
 	if (itemInfo.required_level == nil or itemInfo.required_level == 0) then
@@ -668,6 +735,12 @@ function Private.AddToReviewUI(guid, sdbId, quanity, isReview)
 	row.checkBox:Enable(not isReview);
 	row.checkBox:AddHandler("OnStateChanged", function()
 		if (not isReview) then
+			if (Private.ReviewListCheckall:IsChecked() and not row.checkBox:IsChecked()) then
+				Private.ReviewListCheckall_IngoreStateChange = true;
+				Private.ReviewListCheckall:SetCheck(false);
+				Private.ReviewListCheckall_IngoreStateChange = false;
+			end
+			
 			ReviewQueueFinilise(row.checkBox:IsChecked(), guid, sdbId, quanity);
 		end
 	end);
@@ -720,36 +793,88 @@ end
 
 -- {body="", onYes=function, onNo=function}
 function Private.ShowDialog(args)
-	ErrorDialog.Display(args.body);
-	ErrorDialog.AddOption(Component.LookupText("ARE_YOU_SURE"), function()
-		args.onYes();
-		ErrorDialog.Hide();
-	end);
+	SimpleDialog.Display(args.body);
+	SimpleDialog.SetTitle(Component.LookupText("CONFIRM"));
 	
-	ErrorDialog.AddOption(Component.LookupText("ABORT"), function()
-		args.onNo();
-		ErrorDialog.Hide();
-	end);
+	SimpleDialog.AddOption(Component.LookupText("ABORT"), function()
+		if args.onNo then args.onNo(); end
+		SimpleDialog.Hide();
+	end, {color = Button.DEFAULT_WHITE_COLOR});
+	
+	SimpleDialog.AddOption(Component.LookupText("ARE_YOU_SURE"), function()
+		if args.onYes then args.onYes(); end
+		SimpleDialog.Hide();
+	end, {color = Button.DEFAULT_GREEN_COLOR});
+	System.PlaySound(Const.SND.OPEN_POPUP);
+	
+end
+
+function Private.ShowTextDialog(args)
+	local widget = Component.CreateWidget("TextPopup", Const.REVIEW_LIST_FOSTERING);
+	local textInput = widget:GetChild("Text.InputGroup.TextInput");
+	textInput:SetFocus();
+	SimpleDialog.Display(widget);
+	SimpleDialog.SetTitle(Component.LookupText("FILTER_SET_NAME"));
+	
+	SimpleDialog.AddOption(Component.LookupText("ABORT"), function()
+		if args.onNo then args.onNo(); end
+		SimpleDialog.Hide();
+	end, {color = Button.DEFAULT_WHITE_COLOR});
+	
+	SimpleDialog.AddOption(Component.LookupText("ARE_YOU_SURE"), function()
+		if args.onYes then args.onYes(textInput:GetText()); end
+		SimpleDialog.Hide();
+	end, {color = Button.DEFAULT_GREEN_COLOR});
+	
+	SimpleDialog.SetDims("center-x:50%; center-y:50%; width:300; height:150;");
+	System.PlaySound(Const.SND.OPEN_POPUP);
+end
+
+-- TODO: Make a lib for these style of popups
+function Private.StylePopUp(popUp)
+	popUp:TintBack("#1B1E1F");
+	popUp:GetHeader():GetParent():ParamTo("tint", "#2b333a", 0, 0);
+	
+	-- Add an outline
+	--[[local widget = Component.CreateWidget('<Border dimensions="top:-15; left:0; width:100%; height:100%;" style="eatsmice:true; tint:#000000; exposure:0;"/>', popUp:GetBody():GetParent():GetParent());
+	Component.FosterWidget(popUp:GetBody():GetParent():GetParent():GetChild("{1}"), widget);
+	Component.FosterWidget(popUp:GetBody():GetParent():GetParent():GetChild("{2}"), widget);]]
+end
+
+function Private.OpenPopUp(popUp)
+	popUp:Open();
+	popUp:GetBody():GetParent():GetParent():SetDims("height:200; center-x:50%; width:80%; center-y:50%; relative:screen;");
+	popUp:GetHeader():GetParent():SetDims("height:40; left:_; right:_; top:-6");
 end
 
 function Private.CreateUiOptions()
-	InterfaceOptions.AddCheckBox({id="enableDebug", label=Component.LookupText("ENABLE_DEBUG"), tooltip="", default=uiOpts.enableDebug});
+	InterfaceOptions.AddCheckBox({id="enableDebug", label=Component.LookupText("ENABLE_DEBUG"), default=uiOpts.enableDebug});
 	InterfaceOptions.AddCheckBox({id="printSummary", label=Component.LookupText("PRINT_SUMMARY"), tooltip=Component.LookupText("PRINT_SUMMARY_TT"), default=uiOpts.printSummary});
 	InterfaceOptions.AddCheckBox({id="processLoot", label=Component.LookupText("PROCESS_LOOT"), tooltip=Component.LookupText("PROCESS_LOOT_TT"), default=uiOpts.processLoot});
 	InterfaceOptions.AddCheckBox({id="processRewards", label=Component.LookupText("PROCESS_REWARDS"), tooltip=Component.LookupText("PROCESS_REWARDS_TT"), default=uiOpts.processRewards});
 
 	InterfaceOptions.AddChoiceMenu({id="printSummaryChan", label=Component.LookupText("PRINT_SUMMARY_CHAN"), default=uiOpts.printSummaryChan});
-	InterfaceOptions.AddChoiceEntry({menuId="printSummaryChan", label="loot", val="loot"});
-	InterfaceOptions.AddChoiceEntry({menuId="printSummaryChan", label="system", val="system"});
+	InterfaceOptions.AddChoiceEntry({menuId="printSummaryChan", label_key="CHAT_LOOT_NAME", val="loot"});
+	InterfaceOptions.AddChoiceEntry({menuId="printSummaryChan", label_key="CHAT_SYSTEM_NAME", val="system"});
 
 	InterfaceOptions.AddCheckBox({id="reportRewards", label=Component.LookupText("REPORT_REWARDS"), tooltip=Component.LookupText("REPORT_REWARDS_TT"), default=uiOpts.reportRewards});
+	
+	InterfaceOptions.StartGroup({id="zonesGrp", label=Component.LookupText("ACTIVE_ZONE_TITLE"), checkbox=true, default=true});
+	for _,val in pairs(ZONES) do
+		InterfaceOptions.AddCheckBox({id="zone_"..val.zone_id, label=val.title, default=true});
+	end
+	InterfaceOptions.StopGroup()
 end
 
 -- A userinterface option has changed
 function Private.UiOptionsCallback(id, val)
-	local func = Private.UiCallbacks[id];
-	if (func) then
-		func(val);
+	if id:find("zone_") then
+		uiOpts.activeZones[id:gsub("zone_", "")] = val;
+	else
+		local func = Private.UiCallbacks[id];
+		if (func) then
+			func(val);
+		end
 	end
 end
 

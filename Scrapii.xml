@@ -17,106 +17,337 @@ xsi:schemaLocation="http://www.red5studios.com/ ../../../../schemas/component.xs
         <Event name="ON_SALVAGE_RESPONSE"           bind="OnsalvageResponce"/>
         <Event name="ON_INVENTORY_WEIGHT_CHANGED"   bind="OnInventoryWeightChanged"/>
         <Event name="ON_ENCOUNTER_REWARD"           bind="OnEncounterReward"/>
+        <Event name="ON_INVENTORY_ENTRY_CHANGED"    bind="OnInventoryEntryChange"/>
+		<Event name="ON_ENTER_ZONE"    				bind="OnEnterZone"/>
     </Events>
     
 <Strings>
         <String key="WINDOW_TITE"       text="- Scrapii -"              lang="EN"/>
+		<String key="WINDOW_TITE"       text="- Scrapii -"              lang="DE"/>
         <String key="GLOBAL_SETTINGS"   text="Global Settings"          lang="EN"/>
+		<String key="GLOBAL_SETTINGS"   text="Globale Einstellungen"    lang="DE"/>
         <String key="ACTIONS"           text="Actions"                  lang="EN"/>
+		<String key="ACTIONS"           text="Aktionen"                 lang="DE"/>
         <String key="ADD_FILTER"        text="Add Filter"               lang="EN"/>
+		<String key="ADD_FILTER"        text="Filter hinzufügen"        lang="DE"/>
         <String key="SAVE_FILTER"       text="Save Changes"             lang="EN"/>
+		<String key="SAVE_FILTER"       text="Änderungen speichern"     lang="DE"/>
         <String key="TEST_FILTER"       text="Test Filters"             lang="EN"/>
+		<String key="TEST_FILTER"       text="Filter testen"            lang="DE"/>
         <String key="OPEN_REVIEW_LIST"  text="Review List"              lang="EN"/>
+		<String key="OPEN_REVIEW_LIST"  text="Vorschau anzeigen"        lang="DE"/>
         <String key="FILTER_OPTIONS"    text="Filter Options"           lang="EN"/>
+		<String key="FILTER_OPTIONS"    text="Filter Optionen"          lang="DE"/>
         <String key="EDIT_FILTER"       text="Edit Filter"              lang="EN"/>
+		<String key="EDIT_FILTER"       text="Filter bearbeiten"        lang="DE"/>
         <String key="DELETE_FILTER"     text="Delete Filter"            lang="EN"/>
+		<String key="DELETE_FILTER"     text="Filter löschen"           lang="DE"/>
         <String key="FLT_TYPE"          text="Type"                     lang="EN"/>
+		<String key="FLT_TYPE"          text="Typ"                      lang="DE"/>
         <String key="FLT_FRAME"         text="Frame"                    lang="EN"/>
+		<String key="FLT_FRAME"         text="Frame"                    lang="DE"/>
         <String key="FLT_LEVEL_RANGE"   text="Level Range"              lang="EN"/>
+		<String key="FLT_LEVEL_RANGE"   text="Levelspanne"              lang="DE"/>
         <String key="FLT_COLOR"         text="Color"                    lang="EN"/>
+		<String key="FLT_COLOR"         text="Farbe"                    lang="DE"/>
         <String key="FLT_WHEN"          text="When"                     lang="EN"/>
+		<String key="FLT_WHEN"          text="Wann"                     lang="DE"/>
         <String key="FLT_ACTION"        text="Action"                   lang="EN"/>
+		<String key="FLT_ACTION"        text="Aktion"                   lang="DE"/>
         <String key="DELETE_FILTER_PROMPT" text="Delete Filter?\n Are you sure?"        lang="EN"/>
-        <String key="ARE_YOU_SURE"      text="Yes"                      lang="EN"/>
-        <String key="ABORT"             text="Nope, Abort"              lang="EN"/>
+		<String key="DELETE_FILTER_PROMPT" text="Filter löschen?\n Bist du dir sicher?"        lang="DE"/>
+        <String key="ARE_YOU_SURE"      text="Accept "                  lang="EN"/>
+		<String key="ARE_YOU_SURE"      text="Ja"                       lang="DE"/>
+        <String key="ABORT"             text="Cancel"              		lang="EN"/>
+		<String key="ABORT"             text="Nö, lass ma'"             lang="DE"/>
         <String key="ADD_FILTER_HEADER" text="Add New Filter"           lang="EN"/>
+		<String key="ADD_FILTER_HEADER" text="Neuen Filter hinzufügen"  lang="DE"/>
         <String key="ADD_FILTER_DESC"   text="Fill out the options below to add a new filter to the chain and then click &quot;Add Filter&quot; :>"         lang="EN"/>
+		<String key="ADD_FILTER_DESC"   text="Fülle die unteren Optionen aus, um einen neuen Filter hinzuzufügen und klicke auf &quot;Filter hinzufügen&quot; :>"         lang="DE"/>
         <String key="FROM"              text="From"                     lang="EN" />
+		<String key="FROM"              text="Von"                      lang="DE" />
         <String key="TO"                text="To"                       lang="EN" />
+		<String key="TO"                text="Bis"                      lang="DE" />
         <String key="PERCENT"           text="Percent"                  lang="EN" />
+		<String key="PERCENT"           text="Prozent"                  lang="DE" />
         <String key="OK"                text="Ok"                       lang="EN" />
+		<String key="OK"                text="Ok"                       lang="DE" />
         <String key="PCT"               text="%"                        lang="EN" />
+		<String key="PCT"               text="%"                        lang="DE" />
         <String key="INV_PCT_FULL_FMT"  text="Over %i%% full"           lang="EN" />
+		<String key="INV_PCT_FULL_FMT"  text="Über %i%% voll"           lang="DE" />
         <String key="REVIEW_LIST"       text="Review List"              lang="EN" />
-        <String key="INCLUDE_ARCHTYPE"  text="Include Archetype"        lang="EN" />
+		<String key="REVIEW_LIST"       text="Vorschau"              	lang="DE" />
+        <String key="INCLUDE_ARCHTYPE"  text="Include Battleframe Archetype"        lang="EN" />
+		<String key="INCLUDE_ARCHTYPE"  text="Muster einbeziehen"       lang="DE" />
         <String key="PROFIT_LIST_TITLE" text="Profits:"                 lang="EN" />
+		<String key="PROFIT_LIST_TITLE" text="Profit:"                 	lang="DE" />
         <String key="GOT_LOOTS"         text="Sweets loots"             lang="EN" />
+		<String key="GOT_LOOTS"         text="Coole Beute"             	lang="DE" />
         <String key="SALVAGE"           text="Salvage"                  lang="EN" />
+		<String key="SALVAGE"           text="Recycling"                lang="DE" />
         <String key="DONT_SALVAGE"      text="Don't Salvage"            lang="EN" />
+		<String key="DONT_SALVAGE"      text="Nicht Recyclen"           lang="DE" />
         <String key="CHECK_UNCHECK_ALL" text="Check/Uncheck All"        lang="EN" />
+		<String key="CHECK_UNCHECK_ALL" text="Alles/Nichts auswählen"   lang="DE" />
         <String key="PROCESS_LOOT"      text="Process loot drops"       lang="EN" />
+		<String key="PROCESS_LOOT"      text="Beute recyclen"       		lang="DE" />
         <String key="PROCESS_LOOT_TT"   text="If enabled Scrapii will salvage loot from drops"        lang="EN" />
+		<String key="PROCESS_LOOT_TT"   text="Wenn aktiviert, wird Scrapii aufgesammeltes Beute recyclen"        lang="DE" />
         <String key="PROCESS_REWARDS"   text="Process rewards"        lang="EN" />
+		<String key="PROCESS_REWARDS"   text="Belohnungen recyclen"        lang="DE" />
         <String key="PROCESS_REWARDS_TT" text="If enabled Scrapii will salvage loot from A.R.E.S Job and events, pretty much anything that pops a reward notification."        lang="EN" />
-        <String key="SAVLVAGE_SELCECTED" text="Salvage Selected"         lang="EN" />
+		<String key="PROCESS_REWARDS_TT" text="Wenn aktiviert, wird Scrapii Beute von A.R.E.S Jobs and Events recyclen. Also so ziemlich alles, was im Beute Popup auftaucht."        lang="DE" />
+        <String key="SAVLVAGE_SELCECTED" text="Salvage Selected"        lang="EN" />
+		<String key="SAVLVAGE_SELCECTED" text="Auswahl recyclen"   lang="DE" />
         <String key="KEEP_SELECTED"     text="Keep Selected"            lang="EN" />
+		<String key="KEEP_SELECTED"     text="Auswahl behalten"    lang="DE" />
         <String key="KEEP_ARE_SURE"     text="Are you sure you want to keep these %s items?"            lang="EN" />
-        <String key="SALVAGE_ARE_SURE"  text="Are you sure you want to salvage these %s items?"            lang="EN" />
+		<String key="KEEP_ARE_SURE"     text="Bist du dir sicher, das du %s Items behalten willst?"     lang="DE" />
+        <String key="SALVAGE_ARE_SURE"  text="Are you sure you want to salvage these %s items?"         lang="EN" />
+		<String key="SALVAGE_ARE_SURE"  text="Bist du dir sicher, das du %s Items recyclen willst?"     lang="DE" />
         <String key="ENABLE_DEBUG"      text="Enable Debug"             lang="EN" />
+		<String key="ENABLE_DEBUG"      text="Debug Modus aktivieren"   lang="DE" />
+		<!-- I am just testing (Maxunit)-->
+		<String key="ENABLE_DEBUG_TT"	text="Enables Debug Mode"		lang="EN" />
+		<String key="ENABLE_DEBUG_TT"	text="Aktiviert Debug Modus"	lang="DE" />
+		<!-- Added this, so that the Console won't spew warnings about this stuff missing. Also modified Ui.lua accordingly -->
         <String key="PRINT_SUMMARY"     text="Print Summary"            lang="EN" />
+		<String key="PRINT_SUMMARY"     text="Auszug anzeigen"          lang="DE" />
         <String key="PRINT_SUMMARY_TT"  text="If checked will print a summary of what is being salvaged and the salvage rewards to the loot window"             lang="EN" />
+		<String key="PRINT_SUMMARY_TT"  text="Wenn ausgewählt, zeigt einen Auszug von allem an, was recycelt wird und zeigt die Belohnung im Beute Fenster an "            lang="DE" />
         <String key="PRINT_SUMMARY_CHAN" text="Print summary output channel" lang="EN" />
-        <String key="REPORT_REWARDS"     text="Report Savlage Rewards"            lang="EN" />
+		<String key="PRINT_SUMMARY_CHAN" text="Channel für den Debug Auszug" lang="DE" />
+        <String key="REPORT_REWARDS"     text="Report Salvage Rewards"            lang="EN" />
+		<String key="REPORT_REWARDS"     text="Belohnung vom recycling melden"  lang="DE" />
         <String key="REPORT_REWARDS_TT"  text="If checked your salvage rewards will be logged on to my sever, this is purely for stats. So users can see the total 'profits' of all the addon users added together, no personal data is stored, just the rewards for that salvage operation (e.g. 50 crystiste and 1,000 Reserach points), this is opt-in so you don't have to :> (I though it could make for some semi intresting numbers)"             lang="EN" />
+		<String key="REPORT_REWARDS_TT"  text="Wenn du diese Option aktivierst, werden alle Recycling Belohnung an meinen Server geschickt. Rein für Statistiken. Damit können andere Spieler sehen, wie viel 'Profit' von allen Addon Nutzern zusammen erwirtschaftet wurde. Es werden keine persöhnlichen Daten gespeichert, nur die Belohnungen und was recyclet wurde (z.B. 50 Crystit und 1,000 Forschungspunkte). Dies ist freiwillig, du musst diese Option nicht aktivieren :> (Ich dachte mir, das könnte ein paar interessante Statistiken erstellen)"             lang="DE" />
 
         <!-- Type Strings -->
         <String key="ALL_TYPES"             text="All Types" lang="EN" />
+		<String key="ALL_TYPES"             text="Alles" 	 lang="DE" />
         <String key="PRIMARY_WEAPON"        text="Primary Weapon" lang="EN" />
+		<String key="PRIMARY_WEAPON"        text="Primärwaffen" lang="DE" />
         <String key="SECONDARY_WEAPON"      text="Secondary Weapon" lang="EN" />
+		<String key="SECONDARY_WEAPON"      text="Sekundärwaffen" lang="DE" />
         <String key="ABILITY"               text="Ability" lang="EN" />
+		<String key="ABILITY"               text="Fähigkeiten" lang="DE" />
         <String key="WEAPON_MODULE"         text="Weapon Module" lang="EN" />
+		<String key="WEAPON_MODULE"         text="Waffenmodule" lang="DE" />
         <String key="ABILITY_MODULE"        text="Ability Module" lang="EN" />
+		<String key="ABILITY_MODULE"        text="Fähigkeitenmodule" lang="DE" />
         <String key="BATTLEFRAME_CORE"      text="Battleframe Core" lang="EN" />
+		<String key="BATTLEFRAME_CORE"      text="Battleframe-Kerne" lang="DE" />
         <String key="JUNK_SALVAGE"          text="Junk Salvage" lang="EN" />
+		<String key="JUNK_SALVAGE"          text="Unverarbeitetes Recycling" lang="DE" />
 
         <!-- Frame Strings -->
         <String key="ANY_FRAME"             text="Any Frame" lang="EN" />
+		<String key="ANY_FRAME"             text="Jegliche Frame" lang="DE" />
         <String key="ACCORD_BIOTECH"        text="Accord Biotech" lang="EN" />
+		<String key="ACCORD_BIOTECH"        text="Accord Biotech" lang="DE" />
         <String key="DRAGONFLY"             text="Dragonfly" lang="EN" />
+		<String key="DRAGONFLY"             text="Libelle" lang="DE" />
         <String key="RECLUSE"               text="Recluse" lang="EN" />
+		<String key="RECLUSE"               text="Einsiedlerspinne" lang="DE" />
         <String key="ACCORD_ASSAULT"        text="Accord Assault" lang="EN" />
+		<String key="ACCORD_ASSAULT"        text="Accord Stürmer" lang="DE" />
         <String key="FIRECAT"               text="Firecat" lang="EN" />
+		<String key="FIRECAT"               text="Feuerkatze" lang="DE" />
         <String key="TIGERCLAW"             text="Tigerclaw" lang="EN" />
+		<String key="TIGERCLAW"             text="Tigerkralle" lang="DE" />
         <String key="ACCORD_DREADNAUGHT"    text="Accord Dreadnaught" lang="EN" />
+		<String key="ACCORD_DREADNAUGHT"    text="Accord Zerstörer" lang="DE" />
         <String key="ARSENAL"               text="Arsenal" lang="EN" />
+		<String key="ARSENAL"               text="Arsenal" lang="DE" />
         <String key="MAMMOTH"               text="Mammoth" lang="EN" />
+		<String key="MAMMOTH"               text="Mammut" lang="DE" />
         <String key="RHINO"                 text="Rhino" lang="EN" />
+		<String key="RHINO"                 text="Nashorn" lang="DE" />
         <String key="ACCORD_ENGINEER"       text="Accord Engineer" lang="EN" />
+		<String key="ACCORD_ENGINEER"       text="Accord Pionier" lang="DE" />
         <String key="BASTION"               text="Bastion" lang="EN" />
+		<String key="BASTION"               text="Bastion" lang="DE" />
         <String key="ELECTRON"              text="Electron" lang="EN" />
+		<String key="ELECTRON"              text="Elektron" lang="DE" />
         <String key="ACCORD_RECON"          text="Accord Recon" lang="EN" />
+		<String key="ACCORD_RECON"          text="Accord Aufklärer" lang="DE" />
         <String key="NIGHTHAWK"             text="Nighthawk" lang="EN" />
+		<String key="NIGHTHAWK"             text="Nachtfalke" lang="DE" />
         <String key="RAPTOR"                text="Raptor" lang="EN" />
+		<String key="RAPTOR"                text="Raptor" lang="DE" />
         
         <!-- Color Strings -->
         <String key="ORANGE"                text="Orange" lang="EN" />
+		<String key="ORANGE"                text="Orange" lang="DE" />
         <String key="ORANGE_AND_BELOW"      text="Orange and below" lang="EN" />
+		<String key="ORANGE_AND_BELOW"      text="Orange und niedriger" lang="DE" />
         <String key="PURPLE"                text="Purple" lang="EN" />
+		<String key="PURPLE"                text="Lila" lang="DE" />
         <String key="PURPLE_AND_BELOW"      text="Purple and below" lang="EN" />
+		<String key="PURPLE_AND_BELOW"      text="Lila und niedriger" lang="DE" />
         <String key="BLUE"                  text="Blue" lang="EN" />
+		<String key="BLUE"                  text="Blau" lang="DE" />
         <String key="BLUE_AND_BELOW"        text="Blue and below" lang="EN" />
+		<String key="BLUE_AND_BELOW"        text="Blau und niedriger" lang="DE" />
         <String key="GREEN"                 text="Green" lang="EN" />
+		<String key="GREEN"                 text="Grün" lang="DE" />
         <String key="GREEN_AND_BELOW"       text="Green and below" lang="EN" />
+		<String key="GREEN_AND_BELOW"       text="Grün und niedriger" lang="DE" />
         <String key="WHITE"                 text="White" lang="EN" />
+		<String key="WHITE"                 text="Weiß" lang="DE" />
         
         <!-- When Strings -->
         <String key="ON_PICKUP"             text="On pick-up" lang="EN" />
+		<String key="ON_PICKUP"             text="Beim aufheben" lang="DE" />
         <String key="INV_PCT_FULL"          text="Percent Inventory full" lang="EN" />
+		<String key="INV_PCT_FULL"          text="Prozent Inventar voll" lang="DE" />
         
         <!-- Actions Strings -->
         <String key="SALVAGE"               text="Salvage" lang="EN" />
+		<String key="SALVAGE"               text="Recyclen" lang="DE" />
         <String key="PROMPT"                text="Prompt" lang="EN" />
+		<String key="PROMPT"                text="Aufforderung" lang="DE" />
         <String key="Q_FOR_REVIEW"          text="Queue for review" lang="EN" />
+		<String key="Q_FOR_REVIEW"          text="In Warteschlange für Überprüfung" lang="DE" />
+		
+		<!-- French Maekess -->
+        <String key="WINDOW_TITE"      text="- Scrapii -"              lang="FR"/>
+        <String key="GLOBAL_SETTINGS"  text="Paramètres Généraux"          lang="FR"/>
+        <String key="ACTIONS"          text="Actions"                  lang="FR"/>
+        <String key="ADD_FILTER"        text="Ajouter filtre"              lang="FR"/>
+        <String key="SAVE_FILTER"      text="Sauvegarder"            lang="FR"/>
+        <String key="TEST_FILTER"      text="Tester filtres"            lang="FR"/>
+        <String key="OPEN_REVIEW_LIST"  text="List de révision"              lang="FR"/>
+        <String key="FILTER_OPTIONS"    text="Option de filtre"          lang="FR"/>
+        <String key="EDIT_FILTER"      text="Editer le Filtre"              lang="FR"/>
+        <String key="DELETE_FILTER"    text="Supprimer Filtre"            lang="FR"/>
+        <String key="FLT_TYPE"          text="Type"                    lang="FR"/>
+        <String key="FLT_FRAME"        text="Battleframe"                    lang="FR"/>
+        <String key="FLT_LEVEL_RANGE"  text="Niveaux"              lang="FR"/>
+        <String key="FLT_COLOR"        text="Qualité"                    lang="FR"/>
+        <String key="FLT_WHEN"          text="Quand"                    lang="FR"/>
+        <String key="FLT_ACTION"        text="Action"                  lang="FR"/>
+        <String key="DELETE_FILTER_PROMPT" text="Supprimer Filtre?\n Etes-vous sûr ?"        lang="FR"/>
+        <String key="ARE_YOU_SURE"      text="Oui"                      lang="FR"/>
+        <String key="ABORT"            text="Non, Annuler"              lang="FR"/>
+        <String key="ADD_FILTER_HEADER" text="Ajouter un nouveau Filtre"          lang="FR"/>
+        <String key="ADD_FILTER_DESC"  text="Remplissez les options ci dessous pour ajouter un nouveau filtre à la chaine de traitement puis cliquez &quot;Ajouter Filtre&quot; :>"        lang="FR"/>
+        <String key="FROM"              text="De"                    lang="FR" />
+        <String key="TO"                text="à"                      lang="FR" />
+        <String key="PERCENT"          text="Pourcent"                  lang="FR" />
+        <String key="OK"                text="Ok"                      lang="FR" />
+        <String key="PCT"              text="%"                        lang="FR" />
+        <String key="INV_PCT_FULL_FMT"  text="Plein à %i%%"          lang="FR" />
+        <String key="REVIEW_LIST"      text="Liste de révison"              lang="FR" />
+        <String key="INCLUDE_ARCHTYPE"  text="Inclure Archetype"        lang="FR" />
+        <String key="PROFIT_LIST_TITLE" text="Profits:"                lang="FR" />
+        <String key="GOT_LOOTS"        text="Sweets loots"            lang="FR" />
+        <String key="SALVAGE"          text="Recycler"                  lang="FR" />
+        <String key="DONT_SALVAGE"      text="Ne pas recycler"            lang="FR" />
+        <String key="CHECK_UNCHECK_ALL" text="Cocher/décocher tout"        lang="FR" />
+        <String key="PROCESS_LOOT"      text="Gérer les loots"      lang="FR" />
+        <String key="PROCESS_LOOT_TT"  text="Si activé Scrapii recyclera les loots"        lang="FR" />
+        <String key="PROCESS_REWARDS"  text="Gérer les récompenses"        lang="FR" />
+        <String key="PROCESS_REWARDS_TT" text="Si activé Scrapii recyclera les loot des mission A.R.E.S et à peut près tout ce qui passe par une fenêtre de récompense."        lang="FR" />
+        <String key="SAVLVAGE_SELCECTED" text="Recycler la sélection"        lang="FR" />
+        <String key="KEEP_SELECTED"    text="Garder la sélection"            lang="FR" />
+        <String key="KEEP_ARE_SURE"    text="Etes-vous sûr de vouloir garder ses %s objets ?"            lang="FR" />
+        <String key="SALVAGE_ARE_SURE"  text="Etes-vous sûr de vouloir recycler ses %s objets ?"            lang="FR" />
+        <String key="ENABLE_DEBUG"      text="Activer Debug"            lang="FR" />
+        <String key="PRINT_SUMMARY"    text="Afficher le sommaire"            lang="FR" />
+        <String key="PRINT_SUMMARY_TT"  text="Si activé tout ce qui seras recycler et leurs résultat seront affiché dans la fenêtre de loot"            lang="FR" />
+        <String key="PRINT_SUMMARY_CHAN" text="Canal d'afficage du sommaire" lang="FR" />
+        <String key="REPORT_REWARDS"    text="Envoyer les statistiques de recyclage a Scrapii"            lang="FR" />
+        <String key="REPORT_REWARDS_TT"  text="If checked your salvage rewards will be logged on to my sever, this is purely for stats. So users can see the total 'profits' of all the addon users added together, no personal data is stored, just the rewards for that salvage operation (e.g. 50 crystiste and 1,000 Reserach points), this is opt-in so you don't have to :> (I though it could make for some semi intresting numbers)"            lang="FR" />
+ 
+        <!-- Type Strings -->
+        <String key="ALL_TYPES"            text="Tous types" lang="FR" />
+        <String key="PRIMARY_WEAPON"        text="Arme principales" lang="FR" />
+        <String key="SECONDARY_WEAPON"      text="Arme secondaire" lang="FR" />
+        <String key="ABILITY"              text="Compétence" lang="FR" />
+        <String key="WEAPON_MODULE"        text="Module d'arme" lang="FR" />
+        <String key="ABILITY_MODULE"        text="Module de compétence" lang="FR" />
+        <String key="BATTLEFRAME_CORE"      text="Noyau de Battleframe" lang="FR" />
+        <String key="JUNK_SALVAGE"          text="Objets Recyclable" lang="FR" />
+ 
+        <!-- Frame Strings -->
+        <String key="ANY_FRAME"            text="N'importe quel battleframe" lang="FR" />
+        <String key="ACCORD_BIOTECH"        text="Biotech Accord" lang="FR" />
+        <String key="DRAGONFLY"            text="Dragonfly" lang="FR" />
+        <String key="RECLUSE"              text="Recluse" lang="FR" />
+        <String key="ACCORD_ASSAULT"        text="Assault Accord" lang="FR" />
+        <String key="FIRECAT"              text="Firecat" lang="FR" />
+        <String key="TIGERCLAW"            text="Tigerclaw" lang="FR" />
+        <String key="ACCORD_DREADNAUGHT"    text="Dreadnaught Accord" lang="FR" />
+        <String key="ARSENAL"              text="Arsenal" lang="FR" />
+        <String key="MAMMOTH"              text="Mammoth" lang="FR" />
+        <String key="RHINO"                text="Rhino" lang="FR" />
+        <String key="ACCORD_ENGINEER"      text="Ingénieur Accord" lang="FR" />
+        <String key="BASTION"              text="Bastion" lang="FR" />
+        <String key="ELECTRON"              text="Electron" lang="FR" />
+        <String key="ACCORD_RECON"          text="Recon Accord" lang="FR" />
+        <String key="NIGHTHAWK"            text="Nighthawk" lang="FR" />
+        <String key="RAPTOR"                text="Raptor" lang="FR" />
+     
+        <!-- Color Strings -->
+        <String key="ORANGE"                text="Orange" lang="FR" />
+        <String key="ORANGE_AND_BELOW"      text="Orange et qualité inférieure" lang="FR" />
+        <String key="PURPLE"                text="Violet" lang="FR" />
+        <String key="PURPLE_AND_BELOW"      text="Violet et qualité inférieure" lang="FR" />
+        <String key="BLUE"                  text="Bleu" lang="FR" />
+        <String key="BLUE_AND_BELOW"        text="Bleu et qualité inférieure" lang="FR" />
+        <String key="GREEN"                text="Vert" lang="FR" />
+        <String key="GREEN_AND_BELOW"      text="Vert et qualité inférieure" lang="FR" />
+        <String key="WHITE"                text="Blanc" lang="FR" />
+     
+        <!-- When Strings -->
+        <String key="ON_PICKUP"            text="Au ramassage" lang="FR" />
+        <String key="INV_PCT_FULL"          text="%tage de l'inventaire" lang="FR" />
+     
+        <!-- Actions Strings -->
+        <String key="SALVAGE"              text="Recycler" lang="FR" />
+        <String key="PROMPT"                text="Demander" lang="FR" />
+        <String key="Q_FOR_REVIEW"          text="Lister pour revue" lang="FR" />
+		
+		<String key="ACTIVE_ZONE_TITLE"    text="Zones ou recycler" lang="FR" />
+        <String key="CONFIRM"                text="Confirmer" lang="FR" />
+        <String key="FILTER_SETS"            text="|  Groupe de filtres : " lang="FR" />
+        <String key="DELETE_FILTER_SET"    text="Supprimer le groupe de filtres %s\n Etes-vous sûr ?" lang="FR" />
+        <String key="NEW_FILTER_SET"        text="Ajouter un nouveau groupe" lang="FR" />
+        <String key="FILTER_SET_EXISTS"        text="Un groupe de filtres avec le nom %s existe déjà." lang="FR" />
+        <String key="FILTER_SET_NO_DELETE"    text="Impossible de supprimer le dernier filtre." lang="FR" />
+        <String key="NAME"                    text="Nom : " lang="FR" />
+        <String key="FILTER_SET_NAME"        text="Nom du groupe de filtres" lang="FR" />
+        <String key="YELLOW"                text="Jaune" lang="FR" />
+        <String key="YELLOW_AND_BELOW"      text="Jaune et qualité inférieure" lang="FR" />
+		<!-- FR -->
+		
+		<!-- DE 2 -->
+		<String key="ACTIVE_ZONE_TITLE"     text="Nur in diesen Zonen recyclen" lang="DE" />
+		<String key="CONFIRM"     			text="Bestätigen" lang="DE" />
+		<String key="FILTER_SETS"     	    text="|  Filter Set: " lang="DE" />
+		<String key="DELETE_FILTER_SET"     text="Filter Set löschen %s\n Bist du dir sicher?" lang="DE" />
+		<String key="NEW_FILTER_SET"		text="Neues Set hinzufügen" lang="DE" />
+		<String key="FILTER_SET_EXISTS"		text="Ein Filter Set mit dem Namen %s existiert bereits." lang="DE" />
+		<String key="FILTER_SET_NO_DELETE"	text="Das letzte Filter Set kann nicht gelöscht werden." lang="DE" />
+		<String key="NAME"					text="Name: " lang="DE" />
+		<String key="FILTER_SET_NAME"		text="Filter Set Name" lang="DE" />
+		<String key="YELLOW"                text="Gelb" lang="DE" />
+        <String key="YELLOW_AND_BELOW"      text="Gelb und niedriger" lang="DE" />
+		<!-- DE 2 -->
+		
+		<String key="ACTIVE_ZONE_TITLE"     text="Zones to salvage in" lang="EN" />
+		<String key="CONFIRM"     			text="Confirm" lang="EN" />
+		<String key="FILTER_SETS"     	    text="|  Filter Set: " lang="EN" />
+		<String key="DELETE_FILTER_SET"     text="Delete filter set %s\n Are you sure?" lang="EN" />
+		<String key="NEW_FILTER_SET"		text="Add New Set" lang="EN" />
+		<String key="FILTER_SET_EXISTS"		text="A filter set with the name %s already exists." lang="EN" />
+		<String key="FILTER_SET_NO_DELETE"	text="Can't delete the last filter." lang="EN" />
+		<String key="NAME"					text="Name: " lang="EN" />
+		<String key="FILTER_SET_NAME"		text="Filter Set Name" lang="EN" />
+		<String key="YELLOW"                text="Yellow" lang="EN" />
+        <String key="YELLOW_AND_BELOW"      text="Yellow and below" lang="EN" />
     </Strings>
     
     <Textures>
@@ -193,6 +424,12 @@ xsi:schemaLocation="http://www.red5studios.com/ ../../../../schemas/component.xs
 			numeric:true;
         </StyleSheet>
 		
+		<StyleSheet name="TextInputText" parent="TextInput">
+            halign: left;
+			maxlen:50;
+			numeric:false;
+        </StyleSheet>
+		
 		<StyleSheet name="Reviewlist">
             font:Demi_12;
             halign: left;
@@ -246,16 +483,19 @@ xsi:schemaLocation="http://www.red5studios.com/ ../../../../schemas/component.xs
 		
 		<!-- Positioned in Lua to match with text -->
 		<BluePrint name="EnterLevelRange" instantiable="true">
-            <Text  name="text1" key="FROM" dimensions="left:0; top:0; width:50; height:100%;" class="AddFilterText" />
-			<Group name="dropDown1" dimensions="left:0; top:0; width:60; height:100%;"/>
-			<Text  name="text2" key="TO" dimensions="left:0; top:0; width:50; height:100%;" class="AddFilterText" />
-			<Group name="dropDown2" dimensions="left:0; top:0; width:60; height:100%;"/>
+			<Text name="text1" key="FROM" dimensions="left:15; top:0; width:10; height:24;" class="AddFilterText">
+				<Group name="dropDown1" dimensions="left:100%+15; top:-6; width:60; height:24;">
+					<Text  name="text2" key="TO" dimensions="left:100%+15; top:0; width:10; height:24;" class="AddFilterText">
+						<Group name="dropDown2" dimensions="left:100%+15; top:-7; width:60; height:24;"/>
+					</Text>
+				</Group>
+			</Text>
         </BluePrint>
 		
 		<BluePrint name="AddFilterBody" instantiable="true">
-            <Text name="name" key="ADD_FILTER_DESC"	dimensions="top:5; left:20; width:100%-20; height:16" class="AddFilterDesc" />
+            <Text name="name" key="ADD_FILTER_DESC"	dimensions="top:15; left:20; width:100%-20; height:16" class="AddFilterDesc" />
 			
-			<Group name="cont" dimensions="left:20; bottom:100%-85; height:24; width:100%-40">
+			<Group name="cont" dimensions="left:20; bottom:100%-80; height:24; width:100%-40">
 				<Group name="header" dimensions="left:0; top:0; height:24; width:100%" blueprint="FilterRow"/>
 				<Group name="cont" dimensions="left:0; top:30; height:24; width:100%" blueprint="FilterRow"/>
 			</Group>
@@ -266,7 +506,7 @@ xsi:schemaLocation="http://www.red5studios.com/ ../../../../schemas/component.xs
 		<BluePrint name="PercentPopUp" instantiable="true">
 			<!-- <Text name="name" key="INV_PCT_FULL"	dimensions="top:5; left:20; width:100%-20; height:16" class="AddFilterDesc" /> -->
 			
-			<Group name="Controls" dimensions="center-x:50%; top:15; width:100%-20; height:24">
+			<Group name="Controls" dimensions="center-x:50%; top:20; width:100%-20; height:24">
 				<Group name="Slider" dimensions="top:0; left:0; width:70%; height:24" />
 				<Border name="InputGroup" class="ButtonBorder" dimensions="top:-3; left:70%+10; width:70; height:30;" style="eatsmice:false; alpha:1; exposure:1; tint:#30B9B9B9" style="clip-children:true; padding:0">
 					<TextInput name="TextInput" dimensions="dock:fill;" class="TextInput"/>
@@ -297,6 +537,14 @@ xsi:schemaLocation="http://www.red5studios.com/ ../../../../schemas/component.xs
             <Border name="tooltip" dimensions="left:0; width:250; top:0; height:500" class="PanelBackDrop" />
             <WebImage name="icon" dimensions="dock:fill" style="fixed-bounds:true"/>
         </BluePrint>
+		
+		<BluePrint name="TextPopup" instantiable="true">
+			<Text name="Text" key="NAME" dimensions="top:25; left:50%-85; width:10; height:24" class="AddFilterText" style="font:Demi_12;">
+				<Border name="InputGroup" class="ButtonBorder" dimensions="center-y:50%; left:100%+5; width:150; height:30;" style="eatsmice:false; alpha:1; exposure:1; tint:#30B9B9B9" style="clip-children:true; padding:0">
+					<TextInput name="TextInput" dimensions="dock:fill;" class="TextInputText"/>
+				</Border>
+			</Text>
+        </BluePrint>
     </BluePrints>
     
     <Frames>
@@ -323,16 +571,24 @@ xsi:schemaLocation="http://www.red5studios.com/ ../../../../schemas/component.xs
 								
 								<Group dimensions="left:5; bottom:100%-12; height:22; width:100">
 									<Group id="includeArchtype" dimensions="left:3; top:3; height:20; width:20" />
-									<Text key="INCLUDE_ARCHTYPE" dimensions="left:22; top:3; height:20; width:20" class="FilterRowText"/>
+									<Text key="INCLUDE_ARCHTYPE" dimensions="left:22; top:3; height:20; width:20" class="FilterRowText">
+										<Text key="FILTER_SETS" dimensions="left:100%+5; center-y:50%; height:20; width:10" class="FilterRowText">
+											<Group id="filterSets" dimensions="left:100%+5; center-y:50%; height:24; width:120">
+												<Group id="filterSetRemove" dimensions="left:100%+5; center-y:50%; height:24; width:24">
+												
+												</Group>
+											</Group>
+										</Text>
+									</Text>
 								</Group>
 								
                             </Group>
                             
                             <Group name="Buttons" dimensions="left:50%+1; top:0; height:100%; width:50%;" blueprint="Panel">
                                 <Group id="ButtonsHeader" dimensions="left:0; top:1; height:20; width:100%" blueprint="Header"/>
-                                <Group id="AddFilterButton" dimensions="right:100%-5; bottom:100%-5; height:22; width:120"/>
-                                <Group id="TestFilterButton" dimensions="right:100%-130; bottom:100%-5; height:22; width:120"/>
-                                <Group id="ReviewListButton" dimensions="right:100%-255; bottom:100%-5; height:22; width:120"/>
+                                <Group id="AddFilterButton" dimensions="right:100%-5; bottom:100%-5; height:24; width:120"/>
+                                <Group id="TestFilterButton" dimensions="right:100%-130; bottom:100%-5; height:24; width:120"/>
+                                <Group id="ReviewListButton" dimensions="right:100%-255; bottom:100%-5; height:24; width:120"/>
                             </Group>
                         </Group>
                         <!-- Header -->
@@ -368,14 +624,15 @@ xsi:schemaLocation="http://www.red5studios.com/ ../../../../schemas/component.xs
 
                             <Group dimensions="right:100%; top:0; bottom:100%; width:300">
                                 <FocusBox id="ProfitFocus" dimensions="dock:fill" style="eatsmice:true;"/>
-                                <Group dimensions="right:100%-9; top:9; height:22; width:100">
-                                    <StillArt name="cy_icon" dimensions="right:100%; width:19; top:0; bottom:19" style="texture:currency_new; region:crystite_32"/>
-                                    <Text id="cy_text" dimensions="right:100%-24; width:100; top:0; bottom:100%" style="font:Demi_9; halign:right; valign:center"/>
-                                </Group>
-                                 <Group dimensions="right:100%-100; top:9; height:22; width:100">
-                                    <StillArt name="rp_icon" dimensions="right:100%; width:19; top:0; bottom:19" style="texture:currency_new; region:researchpoint_16"/>
-                                    <Text id="rp_text" dimensions="right:100%-24; width:100; top:0; bottom:100%" style="font:Demi_9; halign:right; valign:center"/>
-                                </Group>
+								<StillArt name="cy_icon" dimensions="right:100%-12; center-y:50%; width:19; height:19;" style="texture:currency_new; region:crystite_32">
+									<Text id="cy_text" dimensions="right:100%-24; width:10; top:0; bottom:100%" style="font:Demi_9; halign:right; valign:center">
+										<StillArt name="rp_icon" dimensions="right:-6; center-y:50%; width:19; height:19;" style="texture:currency_new; region:researchpoint_16">
+											<Text id="rp_text" dimensions="right:100%-24; width:10; top:0; bottom:100%" style="font:Demi_9; halign:right; valign:center">
+												<Text key="PROFIT_LIST_TITLE" dimensions="right:-5; width:10; top:0; bottom:100%" style="font:Demi_9; halign:right; valign:center;"/>
+											</Text>
+										</StillArt>
+									</Text>
+								</StillArt>
                             </Group>
                             <!-- Profits -->
                         </Group>
@@ -394,10 +651,6 @@ xsi:schemaLocation="http://www.red5studios.com/ ../../../../schemas/component.xs
 				<!-- Percent Popup -->
 				<Group id="PercentPopupParent" dimensions="center-x:50%; center-y:50%; width:450; height:130"/>
 				<!-- Percent Popup -->
-				
-				<!-- Tooltip Popup -->
-				<Group id="ToolTipPopUp" dimensions="center-x:50%; center-y:50%; width:300; height:500" style="eatsmice:false; alpha:0"/>
-				<!-- Tooltip Popup -->
 				
 			</Children>
 			<OnClose bind="OnClose"/>
@@ -443,6 +696,10 @@ xsi:schemaLocation="http://www.red5studios.com/ ../../../../schemas/component.xs
                     </Group>
                 </Group>
                 <!-- Body -->
+				
+				<!-- Tooltip Popup -->
+				<Group id="ToolTipPopUp" dimensions="center-x:50%; center-y:50%; width:300; height:500" style="eatsmice:false; alpha:0"/>
+				<!-- Tooltip Popup -->
             </Children>
             <OnClose bind="OnCloseRP"/>
             <OnEscape bind="OnCloseRP"/>

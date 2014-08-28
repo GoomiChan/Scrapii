@@ -9,7 +9,6 @@ require "lib/lib_MovablePanel";
 require "lib/lib_Button";
 require "lib/lib_RowScroller";
 require "lib/lib_ContextMenu";
-require "lib/lib_ErrorDialog";
 require "lib/lib_RoundedPopupWindow";
 require "lib/lib_DropDownList";
 require "lib/lib_Slider";
@@ -25,6 +24,9 @@ require "lib/lib_MultiArt";
 require "lib/lib_Math";
 require "lib/lib_HudNote";
 require "lib/lib_InterfaceOptions";
+require "lib/lib_Slash";
+require "lib/lib_RoundedPopupWindow";
+require "./libs/lib_SimpleDialog";
 require "./data";
 require "./Ui";
 -- Just include them all why don't I
@@ -34,10 +36,12 @@ require "./Ui";
 --=====================
 HUD_NOTE_TIMEOUT = 100;
 salvageQueueFlushDelay = 7;
+NEW_FILTER_SET_ID = "__NEW__";
 
 --=====================
 --		Varables     --
 --=====================
+zoneId = 0;
 FiltersData = {};
 FilteredItems = {};
 c_cid = 0;
@@ -55,10 +59,11 @@ uiOpts =
 	printSummaryChan = "loot",
 	reportRewards = false,
 	processLoot = true,
-	processRewards = true
+	processRewards = true,
+	activeZones = {} -- A table of zone ids to salvage items in, format "id = bool", so it can be index checked
 };
 
--- Filter related configes
+-- Filter related configs
 config =
 {
 	includeArchtype = true
@@ -70,37 +75,78 @@ reviewQueue = {};
 finalisedQueue = {};
 salvageCallBack = Callback2.Create();
 isSalvageing = false;
+activeFilterSet = "";
+filterSets = nil;
+
+-- List of sdb ids that we are to salvage once the OnInventoryEntryChange event for them fires
+--[[ format 
+"sdbid" = 
+{
+	quanity,
+	filterData
+}
+]]
+checkList = {};
 
 --=====================
 --      Events       --
 --=====================
 function OnComponentLoad(args)	
+	LoadConfig();
+	GetZoneList();
 	LoadSalvageRewards();
     Ui.Init();
-    LoadConfig();
+	
+	-- Migrate data
+	local oldData = Component.GetSetting("FiltersData");
+	if oldData then
+		AddNewFilterSet("Default");
+		SetActiveFilterSet("Default");
+		FiltersData = oldData;
+		SaveActiveFilterSet();
+		Component.SaveSetting("FiltersData", nil);
+	end
+	
     LoadReviewQueue();
 
 	Ui.UpdateProfitsTootip(salvageRewards);
-
 	FiltersData = Component.GetSetting("FiltersData") or {};
-	
+	filterSets = Component.GetSetting("filterSets") or {};
+	Ui.UpdateFilterSets(filterSets, activeFilterSet);
+	activeFilterSet = Component.GetSetting("activefilterset") or "";
+	Ui.SetActiveFilterSet(activeFilterSet);
 	CreateList();
-
 	salvageCallBack:Bind(ProcessSalvageQueue);
+	
+	LIB_SLASH.BindCallback({slash_list="scrapii,scrap", description="", func=OnSlashOpen});
+	LIB_SLASH.BindCallback({slash_list="srl,review", description="", func=OnSlashOpenReview});
 end
 
 function OnPlayerReady(args)
 	c_cid = Player.GetTargetId();
-
+	OnEnterZone();
+	
 	-- See Mavoc I do listen, sometimes
 	Debug.EnableLogging(IsUserAuthor() or uiOpts.enableDebug);
     UpdateInvWeight();
+end
 
-    Debug.Log(tostring(Game.GetItemInfoByType(102768)));
+function OnInventoryEntryChange(args)
+	for id, val in pairs(checkList) do
+		if (id == tostring(args.sdb_id)) then
+			Debug.Log("================== OnInventoryEntryChange ================");
+			Debug.Log("SDB ID: ".. tostring(args.sdb_id).." GUID: ".. tostring(args.guid));
+			local itemInfo = Game.GetItemInfoByType(args.sdb_id);
+			itemInfo.item_sdb_id = args.sdb_id;
+			itemInfo.lootArgs = {quantity = val.quantity};
+			PreformFilterAction(val.filterData, itemInfo, args.guid);
+			checkList[id] = nil;
+		end
+	end
 end
 
 function OnLootCollected(args)
-	if (args.lootedToId ~= c_cid and not uiOpts.processLoot) then
+	if (args.lootedToId ~= c_cid or not uiOpts.processLoot) then
 		return;
 	end
 
@@ -113,7 +159,7 @@ function OnLootCollected(args)
 
 		local result = CheckAgainstFilters(info);
 	    if (result) then
-	    	PreformFilterAction(result, info);
+	    	AddToCheckList(itemTypeId, result, args.quantity);
 	    end
 	end
 end
@@ -157,6 +203,8 @@ function OnInventoryWeightChanged(args)
 end
 
 function OnEncounterReward(args)
+	Debug.Log(tostring(args));
+
 	if (uiOpts.processRewards) then
 		for id, data in pairs(args.rewards) do
 			local itemTypeId = data.itemTypeId;
@@ -164,20 +212,32 @@ function OnEncounterReward(args)
 
 		    if (info.flags and info.flags.is_salvageable) then
 			    info.item_sdb_id = itemTypeId;
-			    info.lootArgs = args;
+			    info.lootArgs = data;
 
 				local result = CheckAgainstFilters(info);
 			    if (result) then
-			    	PreformFilterAction(result, info);
+			    	AddToCheckList(itemTypeId, result, data.quantity);
 			    end
 			end
 		end
 	end
 end
 
+function OnEnterZone(args)
+	zoneId = tostring(Game.GetZoneId());
+end
+
 --=====================
---		Callacks     --
+-- 	   Callbacks     --
 --=====================
+function OnSlashOpen()
+	Ui.Show(true);
+end
+
+function OnSlashOpenReview()
+	LoadReviewList();
+end
+
 function OnClose(args)
     Ui.Show(false);
 end
@@ -188,20 +248,24 @@ end
 
 -- Called from the UI
 function CreateNewFilter(data)
+	if not FiltersData then
+		FiltersData = {};
+	end
+	
     table.insert(FiltersData, data);
-	Component.SaveSetting("FiltersData", FiltersData);
+	SaveActiveFilterSet();
 	Ui.AddFilterRow(#FiltersData, data);
 end
 
 function EditFilter(id, data)
 	FiltersData[id] = data;
-	Component.SaveSetting("FiltersData", FiltersData);
+	SaveActiveFilterSet();
 	CreateList();
 end
 
 function DeleteFilter(id)
 	FiltersData[id] = nil;
-	Component.SaveSetting("FiltersData", FiltersData);
+	SaveActiveFilterSet();
 	CreateList();
 end
 
@@ -236,15 +300,8 @@ function TestFilters()
 end
 
 function ProcessSalvageQueue()
-	-- Reslove any guid that we need to get
 	local summaryStr = "";
-	local items, resources = Player.GetInventory();
 	for _,data in pairs(salvageQueue) do
-		if (data.item_guid == "need") then
-			Debug.Log("Resloving guid for " .. tostring(data.item_sdb_id));
-			data.item_guid = MatchSdbId(data.item_sdb_id, items);
-		end
-
 		if (uiOpts.printSummary) then
 			summaryStr = summaryStr.. unicode.format("%s x %s, ", data.quantity, ChatLib.EncodeItemLink(data.item_sdb_id));
 		end
@@ -254,7 +311,7 @@ function ProcessSalvageQueue()
 
 	isSalvageing = true;
 	Debug.Log(tostring(salvageQueue));
-	Player.RequestSalvageItems(salvageQueue);
+	TrySalvageItems(salvageQueue);
 	salvageQueue = {};
 end
 
@@ -264,8 +321,17 @@ function LoadReviewList()
 	
 	local count = 0;
 	for id, data in pairs(reviewQueue) do
-		Ui.AddToReviewList(data.item_guid, data.item_sdb_id, data.quantity, false);
-		count = count + data.quantity;
+		local num = Player.GetItemCount(data.item_sdb_id);
+		if (num > 0) then
+			if (data.item_guid == nil or Player.GetItemProperties(data.item_guid).flags.is_equipped == false) then
+				local quant = math.min(data.quantity, num);
+				Ui.AddToReviewList(data.item_guid, data.item_sdb_id, quant, false);
+				count = count + quant;
+			end
+		else
+			Debug.Log("Invalid item with SDB_ID: "..tostring(data.item_sdb_id));
+			reviewQueue[id] = nil;
+		end
 	end
 
 	Ui.ReviewListSetCount(count);
@@ -329,6 +395,90 @@ function KeepSelected()
 	end
 end
 
+function SortFilterList(key, descending)
+	local field = HEADER_LOOKUP[key];
+	
+	table.sort(FiltersData, function (a, b)
+		if key == "FLT_LEVEL_RANGE" and a and b then
+			if descending then
+				return (a ~= nil and (a.levelTo - a.levelFrom) or 0) < (b ~= nil and (b.levelTo - b.levelFrom) or 0);
+			else
+				return (a ~= nil and (a.levelTo - a.levelFrom) or 0) > (b ~= nil and (b.levelTo - b.levelFrom) or 0);
+			end
+		else
+			if descending then
+				return (a ~= nil and a[field] or "") < (b ~= nil and b[field] or "");
+			else
+				return (a ~= nil and a[field] or "") > (b ~= nil and b[field] or "");
+			end
+		end
+		
+		return false;
+	end);
+	
+	SaveActiveFilterSet();
+	CreateList();
+end
+
+function AddNewFilterSet(name)
+	if filterSets == nil then
+		filterSets = {};
+	end
+	
+	if not TableHasValue(filterSets, name) then
+		table.insert(filterSets, name);
+		Component.SaveSetting("filterSets", filterSets);
+	else
+		Print(Component.LookupText("FILTER_SET_EXISTS"):format(name));
+		System.PlaySound(Const.SND.ERROR);
+	end
+end
+
+function DeleteFilterSet()
+	Debug.Log(tostring(#filterSets));
+	
+	if filterSets and #filterSets == 1 then
+		Print(Component.LookupText("FILTER_SET_NO_DELETE"));
+		System.PlaySound(Const.SND.ERROR);
+	else
+		for id, value in pairs(filterSets) do
+			if (value == activeFilterSet) then
+				filterSets[id] = nil;
+			end
+		end
+		
+		FiltersData = nil;
+		SaveActiveFilterSet();
+		
+		SetActiveFilterSet(filterSets[1]);
+		
+		Component.SaveSetting("filterSets", filterSets);
+		Ui.UpdateFilterSets(filterSets);
+		Ui.SetActiveFilterSet(name);
+	end
+end
+
+function SetActiveFilterSet(name)
+	if name == NEW_FILTER_SET_ID then
+		Ui.ShowTextDialog({
+			onYes = function(name)
+				AddNewFilterSet(name);
+				activeFilterSet = name;
+				Ui.UpdateFilterSets(filterSets);
+				Ui.SetActiveFilterSet(name);
+			end, 
+			onNo = function()
+				Ui.SetActiveFilterSet(activeFilterSet);
+			end
+		});
+	else
+		activeFilterSet = name;
+		LoadActiveFilterSet();
+		Component.SaveSetting("activeFilterSet", activeFilterSet);
+		CreateList();
+	end
+end
+
 --=====================
 --		Functions    --
 --=====================
@@ -347,15 +497,19 @@ end
 function CreateList()
 	Ui.ClearFilters();
 	
-	for id, data in pairs(FiltersData) do
-		Ui.AddFilterRow(id, data);
+	if FiltersData then
+		for id, data in pairs(FiltersData) do
+			Ui.AddFilterRow(id, data);
+		end
 	end
 end
 
 function CheckAgainstFilters(itemInfo)
-	for id, data in pairs(FiltersData) do
-		if (MatchsFilter(data, itemInfo)) then
-			return data;
+	if IsActiveForZone() then
+		for id, data in pairs(FiltersData) do
+			if (MatchsFilter(data, itemInfo)) then
+				return data;
+			end
 		end
 	end
 
@@ -363,7 +517,7 @@ function CheckAgainstFilters(itemInfo)
 end
 
 function MatchsFilter(filter, itemInfo)
-	-- Skip Equiped items, jsut incase
+	-- Skip Equipped items, just in case
 	if ((itemInfo.dynamic_flags and itemInfo.dynamic_flags.is_equipped) or (itemInfo.flags and not itemInfo.flags.is_salvageable)) then
 		return;
 	end
@@ -374,7 +528,7 @@ function MatchsFilter(filter, itemInfo)
 		local typeCheck = CheckType(filter, itemInfo);
 		if (typeCheck and typeCheck.res == true) then
 			if (CheckFrame(filter, itemInfo) or typeCheck.skipFrameCheck) then
-				if (CheckLevelRange(filter, itemInfo)) then
+				if (CheckLevelRange(filter, itemInfo) or typeCheck.skipLevelCheck) then
 					if (CheckRarity(filter, itemInfo) or typeCheck.skipRarityCheck) then
 						return true;
 					end
@@ -415,7 +569,6 @@ function CheckFrame(filter, itemInfo)
         return true;
     else
 		for id, data in ipairs(itemInfo.certifications) do
-			local info = Game.GetCertificationInfo(data);
 			local frameData = DD_FRAMES[filter.frame];
 			local includeArchtype = config.includeArchtype and frameData.baseFrame;
 
@@ -439,17 +592,15 @@ function CheckRarity(filter, itemInfo)
     return TableHasValue(filterInfo.raritys, itemInfo.rarity);
 end
 
-function PreformFilterAction(filter, itemInfo)
-	local guid = nil;
-	if (filter.typeName == "PRIMARY_WEAPON" or filter.typeName == "SECONDARY_WEAPON" or filter.typeName == "ABILITY" or filter.typeName == "BATTLEFRAME_CORE") then -- ABILITY and BATTLEFRAME_CORE may not need a guid, not sure yet
-		guid = "need";
-		itemInfo.GUID = guid;
-	end
-
+function PreformFilterAction(filter, itemInfo, guid)
+	Debug.Log("PreformFilterAction: "..filter.action);
+	
 	if (filter.action == "SALVAGE") then
+		Debug.Log("PreformFilterAction: " .. tostring(guid));
 		SalvageAddToQueue(guid, itemInfo.item_sdb_id, itemInfo.lootArgs.quantity);
     	UpdateSalvageQueue();
     elseif (filter.action == "PROMPT") then
+		itemInfo.GUID = guid;
     	CreateHudNote(itemInfo);
     elseif (filter.action == "Q_FOR_REVIEW") then
     	AddToReviewQueue(guid, itemInfo.item_sdb_id, itemInfo.lootArgs.quantity);
@@ -484,11 +635,11 @@ function CreateHudNote(itemInfo)
 	HUDNOTE:SetBodyHeight(bounds.height + 22)
 	HUDNOTE:SetTags({"scrapii"})
 
-	HUDNOTE:SetPrompt(1, Component.LookupText("SALVAGE"), function()
-			OnsalvagePromptResponce(true, HUDNOTE, GRP, itemInfo);
+	HUDNOTE:SetPrompt(1, Component.LookupText("DONT_SALVAGE"), function()
+			OnsalvagePromptResponce(false, HUDNOTE, GRP, itemInfo);
 		end, itemInfo)
-	HUDNOTE:SetPrompt(2, Component.LookupText("DONT_SALVAGE"), function()
-			OnsalvagePromptResponce(false, HUDNOTE, GRP, itemInfo)
+	HUDNOTE:SetPrompt(2, Component.LookupText("SALVAGE"), function()
+			OnsalvagePromptResponce(true, HUDNOTE, GRP, itemInfo)
 ;		end, itemInfo)
 
 	HUDNOTE:SetTimeout(HUD_NOTE_TIMEOUT, function()
@@ -505,30 +656,6 @@ function OnsalvagePromptResponce(salvage, HUDNOTE, GRP, itemInfo)
 
 	HUDNOTE:Remove();
 	Component.RemoveWidget(GRP.GROUP);
-end
-
-function MatchSdbId(sdb_id, items)
-	Debug.Log("=========== MatchSdbId ===========");
-
-	for id, data in pairs(items) do
-		if (tostring(sdb_id) == tostring(data.item_sdb_id) and data.flags.is_new and data.flags.is_salvageable and not data.flags.is_bound and data.item_id) then -- sdb_id matchs, is new, salvagable, not bound and has a guid
-			Debug.Log("=========== MatchSdbId first check passed ===========");
-
-			local item_id = data.item_id;
-			local playerItemInfo = Player.GetItemInfo(item_id);
-
-			-- Some extra safetly checks, check that it has no mods, isn't equiped, isn't bound. I reallllllllly don't want to nom on the wrong item :s
-			if ((playerItemInfo.dynamic_flags and playerItemInfo.dynamic_flags.is_equipped == false) --[[and (playerItemInfo.slotted_modules and #playerItemInfo.slotted_modules == 0)]]) then
-
-				Debug.Log(data.name..": "..tostring(data.item_id).." : "..tostring(data.item_sdb_id).." : "..tostring(Player.GetItemCount(data.item_sdb_id)));
-				Debug.Log(tostring(data));
-				Debug.Log(tostring(playerItemInfo));
-
-				return item_id;
-			end
-
-		end
-	end
 end
 
 -- Basicly add the name, level and color together so as to prevent stackable items not stacking
@@ -561,8 +688,8 @@ function IsUserAuthor()
 	return ChatLib.StripArmyTag(name) == author;
 end
 
--- Save each setting sepratly so it looks a bit nicer in the settings file incase a user wants to edit it the hardway
--- Or another addon need to read a certan value easly
+-- Save each setting separately so it looks a bit nicer in the settings file in case a user wants to edit it the hard way
+-- Or another addon need to read a certain value easily
 function SaveConfig()
 	for id, value in pairs(config) do
 		Component.SaveSetting(id, value);
@@ -591,8 +718,23 @@ function SaveSalvageRewards()
 	Component.SaveSetting("salvageRewards", salvageRewards);
 end
 
+function AddToCheckList(sdbID, filterData, quantity)
+	local data = checkList[tostring(sdbID)];
+	if (data) then
+		data.quantity = data.quantity + quantity;
+	else
+		checkList[tostring(sdbID)] = 
+		{
+			quanity = quantity,
+			filterData = filterData
+		};
+	end
+end
+
 function SalvageAddToQueue(guid, sdbId, quantity)
-	-- Incremnt the quanity if this item is already here
+	Debug.Log("SalvageAddToQueue: " .. tostring(guid));
+	
+	-- Increment the quantity if this item is already here
 	local has = false;
 	for _, data in pairs(salvageQueue) do
 		if (data.item_sdb_id == sdbId) then
@@ -603,35 +745,25 @@ function SalvageAddToQueue(guid, sdbId, quantity)
 
 	if (not has) then
 		table.insert(salvageQueue, {item_guid=guid, item_sdb_id=sdbId, quantity=quantity or 1});
+		Debug.Log("if check, SalvageAddToQueue: " .. tostring({item_guid=guid, item_sdb_id=sdbId, quantity=quantity or 1}));
 	end
 end
 
 function AddToReviewQueue(guid, sdbId, quantity)
-	-- Delay by a few seconds to ensure it got added to the inventory
-	Callback2.FireAndForget(function()
-		local items, resources = Player.GetInventory();
-
-		-- reslove it now becasue who knows how long this will sit in the review queue
-		if (guid == "need") then
-			Debug.Log("Resloving guid for " .. tostring(sdbId));
-			guid = MatchSdbId(sdbId, items);
+	-- Increment the quantity if this item is already here
+	local has = false;
+	for _, data in pairs(reviewQueue) do
+		if ((guid and data.item_guid and data.item_guid == guid) or data.item_sdb_id == sdbId) then
+			data.quantity = data.quantity + (quantity or 1);
+			has = true;
 		end
+	end
 
-		-- Incremnt the quanity if this item is already here
-		local has = false;
-		for _, data in pairs(reviewQueue) do
-			if ((guid and data.item_guid and data.item_guid == guid) or data.item_sdb_id == sdbId) then
-				data.quantity = data.quantity + (quantity or 1);
-				has = true;
-			end
-		end
+	if (not has) then
+		table.insert(reviewQueue, {item_guid=guid, item_sdb_id=sdbId, quantity=quantity or 1});
+	end
 
-		if (not has) then
-			table.insert(reviewQueue, {item_guid=guid, item_sdb_id=sdbId, quantity=quantity or 1});
-		end
-
-		Component.SaveSetting("reviewQueue", reviewQueue);
-	end, nil, 5);
+	Component.SaveSetting("reviewQueue", reviewQueue);
 end
 
 function LoadReviewQueue()
@@ -682,9 +814,32 @@ function PrintLoot(msg)
 end
 
 function SendWebStats(stats)
-	if (not HTTP.IsRequestPending()) then -- Not imporant if we can't send it 
-		HTTP.IssueRequest("http://firefall.nyaasync.net/scrapii/stats.php", "POST", stats, function(args, err) end);
+	local url = "http://firefall.nyaasync.net/scrapii/stats.php";
+	if (not HTTP.IsRequestPending(url)) then -- Not important if we can't send it 
+		HTTP.IssueRequest(url, "POST", stats, function(args, err) end);
 	else
 		Debug.Log("Stats request pending");
 	end
+end
+
+function GetZoneList()
+	HTTP.IssueRequest(System.GetOperatorSetting("ingame_host").."/api/v1/social/static_data.json", "GET", nil, function (args, err)
+		--Debug.Log(tostring(args));
+		--Update the labels in the UI options, these should be localised
+		for _,val in pairs(args.zones) do
+			InterfaceOptions.UpdateLabel("zone_"..val.zone_id, val.title);
+		end
+	end);
+end
+
+function IsActiveForZone()
+	return uiOpts.activeZones[zoneId];
+end
+
+function SaveActiveFilterSet()
+	Component.SaveSetting("Filter_"..activeFilterSet, FiltersData);
+end
+
+function LoadActiveFilterSet()
+	FiltersData = Component.GetSetting("Filter_"..activeFilterSet);
 end
