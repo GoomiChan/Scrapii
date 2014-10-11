@@ -327,7 +327,7 @@ ZONES =
 	}, 
 	{
 		zone_id = 1054, 
-		title = "Devils Tusk "
+		title = "Devils Tusk Warfronts"
 	}
 };
 

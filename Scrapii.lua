@@ -827,7 +827,11 @@ function GetZoneList()
 		--Debug.Log(tostring(args));
 		--Update the labels in the UI options, these should be localised
 		for _,val in pairs(args.zones) do
-			InterfaceOptions.UpdateLabel("zone_"..val.zone_id, val.title);
+			if (val.zone_id == 1054) then
+				InterfaceOptions.UpdateLabel("zone_"..val.zone_id, val.title..": Warfront Raid");
+			else
+				InterfaceOptions.UpdateLabel("zone_"..val.zone_id, val.title);
+			end
 		end
 	end);
 end
