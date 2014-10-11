@@ -97,8 +97,6 @@ function Ui.Init()
     Private.CreateReviewPopUp();
 	Private.CreateProfitsTootip();
 
-    Private.OpenReviewPopUp();
-
     PanelManager.RegisterFrame(Const.MAIN, ToggleWindow, {show=false});
     Ui.Show(false);
 end
