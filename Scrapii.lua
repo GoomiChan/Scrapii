@@ -109,12 +109,18 @@ function OnComponentLoad(args)
 	
     LoadReviewQueue();
 
+	activeFilterSet = Component.GetSetting("activefilterset") or "";
+	if (activeFilterSet == "") then
+		AddNewFilterSet("Default");
+		SetActiveFilterSet("Default");
+	end
+	
 	Ui.UpdateProfitsTootip(salvageRewards);
 	FiltersData = Component.GetSetting("FiltersData") or {};
 	filterSets = Component.GetSetting("filterSets") or {};
 	Ui.UpdateFilterSets(filterSets, activeFilterSet);
-	activeFilterSet = Component.GetSetting("activefilterset") or "";
 	Ui.SetActiveFilterSet(activeFilterSet);
+	
 	CreateList();
 	salvageCallBack:Bind(ProcessSalvageQueue);
 	
@@ -827,7 +833,7 @@ function GetZoneList()
 		--Debug.Log(tostring(args));
 		--Update the labels in the UI options, these should be localised
 		for _,val in pairs(args.zones) do
-			if (val.zone_id == 1054) then
+			if (val.zone_id == 1054) then -- hacky
 				InterfaceOptions.UpdateLabel("zone_"..val.zone_id, val.title..": Warfront Raid");
 			else
 				InterfaceOptions.UpdateLabel("zone_"..val.zone_id, val.title);
