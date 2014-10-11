@@ -725,7 +725,7 @@ function AddToCheckList(sdbID, filterData, quantity)
 	else
 		checkList[tostring(sdbID)] = 
 		{
-			quanity = quantity,
+			quantity = quantity,
 			filterData = filterData
 		};
 	end
