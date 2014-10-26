@@ -351,7 +351,7 @@ xsi:schemaLocation="http://www.red5studios.com/ ../../../../schemas/component.xs
     </Strings>
     
     <Textures>
-		<Texture name="Inventory" src="components/MainUI/Panels/Inventory/Inventory.dds" premultiplied="false" minScale="1">
+		<Texture name="Inventory" src="components/MainUI/Panels/Inventory/textures/Inventory.dds" premultiplied="false" minScale="1">
 			<Region name="backpack" top="24" bottom="43" left="0" right="21" />
 		</Texture>
         
@@ -360,8 +360,8 @@ xsi:schemaLocation="http://www.red5studios.com/ ../../../../schemas/component.xs
 			<Region name="mirrored" top="11" bottom="1" left="1" right="15" />
 		</Texture>
         
-        <Texture name="Divider" src="components\MainUI\Panels\Inventory\HR.png" premultiplied="false"/>
-        <Texture name="dash_lines" src="components\MainUI\Panels\Inventory\dashLineMask.png" premultiplied="false"/>
+        <Texture name="Divider" src="components\MainUI\Panels\Inventory\textures\HR.png" premultiplied="false"/>
+        <Texture name="dash_lines" src="components\MainUI\Panels\Inventory\textures\dashLineMask.png" premultiplied="false"/>
     </Textures>
         
     <Colors>

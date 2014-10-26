@@ -22,8 +22,8 @@ Const =
     REVIEW_POPUP_MOVEABLE =  Component.GetWidget("ReviewPopupMoveable"),
     RP_CLOSE_BUTTON = Component.GetWidget("rp_close"),
     REVIEW_LIST_FOSTERING = Component.GetWidget("ReviewList_Fostering"),
-    REVIEW_LIST_PARENT = Component.GetWidget("ReviewList"),
-	TOOLTIP_POPUP = Component.GetWidget("ToolTipPopUp"),
+    REVIEW_LIST_PARENT = Component.GetWidget("ReviewList")
+,	TOOLTIP_POPUP = Component.GetWidget("ToolTipPopUp"),
 	RP_RESIZE_PARENT = Component.GetWidget("RP_ResizableParent"),
 	INCLUDE_ARCHTYPE = Component.GetWidget("includeArchtype"),
 	FILTER_SETS = Component.GetWidget("filterSets"),
@@ -53,7 +53,7 @@ Const =
 	}
 };
 
-local Private = -- Private object, easyier to keep track of important vars like this :>
+local Private = -- Private object, easier to keep track of important vars like this :>
 {
     FilterHeaderButtons = nil,
     AddFilterButton = nil,

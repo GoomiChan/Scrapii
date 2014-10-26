@@ -39,7 +39,7 @@ salvageQueueFlushDelay = 7;
 NEW_FILTER_SET_ID = "__NEW__";
 
 --=====================
---		Varables     --
+--	   Variables     --
 --=====================
 zoneId = 0;
 FiltersData = {};
@@ -82,7 +82,7 @@ filterSets = nil;
 --[[ format 
 "sdbid" = 
 {
-	quanity,
+	quantity,
 	filterData
 }
 ]]
@@ -126,6 +126,8 @@ function OnComponentLoad(args)
 	
 	LIB_SLASH.BindCallback({slash_list="scrapii,scrap", description="", func=OnSlashOpen});
 	LIB_SLASH.BindCallback({slash_list="srl,review", description="", func=OnSlashOpenReview});
+	LIB_SLASH.BindCallback({slash_list="stest", description="", func=OnItemTest});
+	LIB_SLASH.BindCallback({slash_list="stest2", description="", func=OnItemTest2});
 end
 
 function OnPlayerReady(args)
@@ -138,6 +140,8 @@ function OnPlayerReady(args)
 end
 
 function OnInventoryEntryChange(args)
+	Debug.Log("- OnInventoryEntryChange");
+
 	for id, val in pairs(checkList) do
 		if (id == tostring(args.sdb_id)) then
 			Debug.Log("================== OnInventoryEntryChange ================");
@@ -229,6 +233,25 @@ function OnEncounterReward(args)
 	end
 end
 
+function OnFeedTestItem(itemID)
+	Debug.Log("==== Test Item: "..itemID.. " ====");
+
+	local info = Game.GetItemInfoByType(itemID);
+	local result = CheckAgainstFilters(info);
+    if (result) then
+    	Debug.Log("Item matched filters");
+    	result.is_test = true;
+    	AddToCheckList(itemID, result, 1);
+
+    	-- Fake an inventory change event
+		OnInventoryEntryChange(
+		{
+			sdb_id = itemID,
+			guid = nil
+		});
+    end
+end
+
 function OnEnterZone(args)
 	zoneId = tostring(Game.GetZoneId());
 end
@@ -242,6 +265,17 @@ end
 
 function OnSlashOpenReview()
 	LoadReviewList();
+end
+
+function OnItemTest(args)
+	OnFeedTestItem(args[1]);
+end
+
+function OnItemTest2(args)
+	OnFeedTestItem(113993); -- Myrmidon
+	OnFeedTestItem("114506"); -- Sharpeye R36 Rifle
+	OnFeedTestItem("114041"); -- Rolling Thunder
+	OnFeedTestItem("114495"); -- Burrowing Sticky Launcher
 end
 
 function OnClose(args)
@@ -329,7 +363,11 @@ function LoadReviewList()
 	for id, data in pairs(reviewQueue) do
 		local num = Player.GetItemCount(data.item_sdb_id);
 		if (num > 0) then
-			if (data.item_guid == nil or Player.GetItemProperties(data.item_guid).flags.is_equipped == false) then
+			Debug.Log("data.item_guid: ".. tostring(data.item_guid));
+			Debug.Log("data.item_sdb_id: "..tostring(data.item_sdb_id));
+			Debug.Log("data: "..tostring(data));
+			local itemGuidData = data.item_guid and Player.GetItemProperties(data.item_guid) or nil;
+			if (data.item_guid == nil or (itemGuidData and itemGuidData.flags.is_equipped == false)) then
 				local quant = math.min(data.quantity, num);
 				Ui.AddToReviewList(data.item_guid, data.item_sdb_id, quant, false);
 				count = count + quant;
@@ -512,6 +550,8 @@ end
 
 function CheckAgainstFilters(itemInfo)
 	if IsActiveForZone() then
+		Debug.Log("IsActiveForZone: true : "..itemInfo.itemTypeId);
+
 		for id, data in pairs(FiltersData) do
 			if (MatchsFilter(data, itemInfo)) then
 				return data;
@@ -519,23 +559,36 @@ function CheckAgainstFilters(itemInfo)
 		end
 	end
 
+
 	return nil;
 end
 
 function MatchsFilter(filter, itemInfo)
+	Debug.Log("========= Checking against filter =========");
 	-- Skip Equipped items, just in case
 	if ((itemInfo.dynamic_flags and itemInfo.dynamic_flags.is_equipped) or (itemInfo.flags and not itemInfo.flags.is_salvageable)) then
+		Debug.Log("MatchsFilter, earlyied out: "..itemInfo.itemTypeId);
 		return;
 	end
 
 	-- Early out if we can
 	if (CheckWhen(filter, itemInfo) ) then
+		Debug.Log("Passed, CheckWhen: "..itemInfo.itemTypeId);
+
 		-- Check Type
 		local typeCheck = CheckType(filter, itemInfo);
 		if (typeCheck and typeCheck.res == true) then
+			Debug.Log("Passed, typeCheck: "..itemInfo.itemTypeId);
+
 			if (CheckFrame(filter, itemInfo) or typeCheck.skipFrameCheck) then
+				Debug.Log("Passed, CheckFrame: "..itemInfo.itemTypeId);
+
 				if (CheckLevelRange(filter, itemInfo) or typeCheck.skipLevelCheck) then
+					Debug.Log("Passed, CheckLevelRange: "..itemInfo.itemTypeId);
+
 					if (CheckRarity(filter, itemInfo) or typeCheck.skipRarityCheck) then
+						Debug.Log("Passed, CheckRarity: "..itemInfo.itemTypeId);
+
 						return true;
 					end
 				end
@@ -554,14 +607,19 @@ end
 
 function CheckType(filter, itemInfo)
 	local typeData = DD_TYPES[filter.typeName];
-	
+
+	-- Fun little quirk with firefall api, some of the new primary weapons have  the slotIdx set to 0 while the old ones have it set to 1, so until I find out why, I'll just set it to 1 if it is 0
+	if itemInfo.slotIdx and itemInfo.slotIdx == 0 then
+		itemInfo.slotIdx = 1;
+	end
+
 	if (typeData.typeName == "salvage" and (itemInfo.subtitle == "Salvage" or itemInfo.rarity == "salvage" or TableHasValue(typeData.subTypeIds, itemInfo.subTypeId))) then -- Junk Salvage
 		return typeData.skips;
 	elseif (typeData.typeName == "frame_module" and itemInfo.type == "frame_module" and typeData.all) then -- Battleframe Cores
 		return typeData.skips;
 	elseif (typeData.typeName == "module" and itemInfo.type == "item_module" and typeData.module_location == itemInfo.module_location) then -- Modules
 		return typeData.skips;
-	elseif (typeData.typeName == "ablity"  and itemInfo.type == "ability_module") then -- Ablitys
+	elseif (typeData.typeName == "ablity"  and itemInfo.type == "ability_module") then -- Abilitys
 		return typeData.skips;
 	elseif ((typeData.typeName == "weapon" and itemInfo.type == "weapon") and (itemInfo.slotIdx and itemInfo.slotIdx == typeData.slotIdx)) then -- Weapon's
 		return typeData.skips;
@@ -601,7 +659,10 @@ end
 function PreformFilterAction(filter, itemInfo, guid)
 	Debug.Log("PreformFilterAction: "..filter.action);
 	
-	if (filter.action == "SALVAGE") then
+	if (filter.is_test) then
+		Debug.Log("Test Item passed filters: " .. tostring(itemInfo.item_sdb_id).." "..itemInfo.name);
+		Print("Test Item passed filters: " .. tostring(itemInfo.item_sdb_id).." "..itemInfo.name);
+	elseif (filter.action == "SALVAGE") then
 		Debug.Log("PreformFilterAction: " .. tostring(guid));
 		SalvageAddToQueue(guid, itemInfo.item_sdb_id, itemInfo.lootArgs.quantity);
     	UpdateSalvageQueue();
@@ -645,8 +706,8 @@ function CreateHudNote(itemInfo)
 			OnsalvagePromptResponce(false, HUDNOTE, GRP, itemInfo);
 		end, itemInfo)
 	HUDNOTE:SetPrompt(2, Component.LookupText("SALVAGE"), function()
-			OnsalvagePromptResponce(true, HUDNOTE, GRP, itemInfo)
-;		end, itemInfo)
+			OnsalvagePromptResponce(true, HUDNOTE, GRP, itemInfo);
+		end, itemInfo)
 
 	HUDNOTE:SetTimeout(HUD_NOTE_TIMEOUT, function()
 			OnsalvagePromptResponce(false, HUDNOTE, GRP, itemInfo);

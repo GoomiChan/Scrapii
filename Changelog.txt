@@ -1,3 +1,16 @@
+V 1.4
+--------------------------
+- Fixed an issue that could cause the review list to become corrupt and prevent the review UI from opening.
+- Fixed an issue where some new weapons eg. "" would not salvage.
+- Added a new command "/stest itemID" that will test an item against your filters. itemID is an SDB ID, 114495 is "Burrowing Sticky Launcher"
+
+V 1.3
+--------------------------
+- Fixed an issue that prevented it from salvaging more than one junk salvage on pick up.
+- Made it clear that the second Devils Tusk entry in settings is for the Warfront Raid.
+- Fixed an issue where on a fresh install filter would not be saved until a filter group was made.
+- Fixed an issue where the review window would be visible on UI load or loading screens
+
 V 1.1
 --------------------------
 - Moved the button in the inventory to the top left.
@@ -7,16 +20,16 @@ V 1.1
 - Added /scrapii and /scrap to open the Filter UI.
 - Added /srl and /review to open the review list.
 - Added options to the interface options allowing you to disable salvaging in certain instances, eg Baneclaw (Thanks to Kuro for the suggestion).
-- Swaped the salvage / don't salvage options on the loot pop-up, so don't salvage is on the left. This should help avoid accidental salvaging.
+- Swapped the salvage / don't salvage options on the loot pop-up, so don't salvage is on the left. This should help avoid accidental salvaging.
 - Now verifies that an item still exists when opening the review list.
 - Fixed Scrapii trying to salvage other players loot sometimes.
 - Replaced the place holder pop up with prettier ones.
 - New filters will now default to Queue for review.
-- Unneeded option in the add filter window will now be greyed out when they aren't needed.
+- Unneeded option in the add filter window will now be grayed out when they aren't needed.
 - Various small UI fixes and tweaks.
 - Added simple sorting to the filters, the order you see them in is the order that they will be processed in.
-- Added the ablity to have multiple differn't filter sets.
+- Added the ability to have multiple different filter sets.
 - Added some sounds to actions like opening a popup or on error.
-- Fixed issue with the "Include Archetype" check box always showing as checked (was only a dispaly issue).
+- Fixed issue with the "Include Archetype" check box always showing as checked (was only a display issue).
 - Added German translation by Maxunit941.
 - Added French translation by Maekess.
