@@ -9,41 +9,39 @@ DD_TYPES =
     },]]
     PRIMARY_WEAPON =
     {
-		typeName = "weapon",
-		slotIdx = 1,
+    	subTypeId = SubTypeIds.PrimaryWeapon,
 		skips = {res = true, skipFrameCheck = false},
         sortID = 2,
 	},
     SECONDARY_WEAPON =
     {
-		typeName = "weapon",
-		slotIdx = 2,
+    	subTypeId = SubTypeIds.SecondaryWeapon,
 		skips = {res = true, skipFrameCheck = true},
         sortID = 3
     },
     ABILITY =
     {
-        typeName = "ablity",
+    	subTypeId = SubTypeIds.Abilities,
         skips = {res = true, skipFrameCheck = false},
         sortID = 4
     },
     WEAPON_MODULE =
     {
-        typeName = "module",
+    	subTypeId = SubTypeIds.Modules,
         module_location = "weapon",
         skips = {res = true, skipFrameCheck = true},
         sortID = 5
     },
     ABILITY_MODULE =
     {
-        typeName = "module",
+    	subTypeId = SubTypeIds.Modules,	
         module_location = "ability_module",
         skips = {res = true, skipFrameCheck = true},
         sortID = 6
     },
     BATTLEFRAME_CORE =
     {
-		typeName = "frame_module",
+    	subTypeId = SubTypeIds.BattleframeCores,
 		all = true,
 		skips = {res = true, skipFrameCheck = true},
         sortID = 7

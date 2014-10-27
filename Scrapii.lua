@@ -26,6 +26,7 @@ require "lib/lib_HudNote";
 require "lib/lib_InterfaceOptions";
 require "lib/lib_Slash";
 require "lib/lib_RoundedPopupWindow";
+require "lib/lib_SubTypeIds";
 require "./libs/lib_SimpleDialog";
 require "./data";
 require "./Ui";
@@ -272,10 +273,23 @@ function OnItemTest(args)
 end
 
 function OnItemTest2(args)
-	OnFeedTestItem(113993); -- Myrmidon
+	Print("--------- Testing Filters ---------");
+	OnFeedTestItem("113993"); -- Myrmidon
 	OnFeedTestItem("114506"); -- Sharpeye R36 Rifle
 	OnFeedTestItem("114041"); -- Rolling Thunder
 	OnFeedTestItem("114495"); -- Burrowing Sticky Launcher
+	OnFeedTestItem("114319"); -- Governor
+	OnFeedTestItem("107795"); -- Kanaloa Rifle
+	OnFeedTestItem("107419"); -- Absorption Bomb
+	OnFeedTestItem("86106"); -- Decoy
+	OnFeedTestItem("94086"); -- Air Sprint Efficiency Battleframe Core
+	OnFeedTestItem("99625"); -- Draconis Core
+	OnFeedTestItem("93962"); -- Run Speed Battleframe Core
+	OnFeedTestItem("92283"); -- Charging Module
+	OnFeedTestItem("95801"); -- Havoc Module
+	OnFeedTestItem("100359"); -- Energized Module
+	OnFeedTestItem("96109"); -- Distant Module
+	Print("-----------------------------------");
 end
 
 function OnClose(args)
@@ -608,20 +622,16 @@ end
 function CheckType(filter, itemInfo)
 	local typeData = DD_TYPES[filter.typeName];
 
-	-- Fun little quirk with firefall api, some of the new primary weapons have  the slotIdx set to 0 while the old ones have it set to 1, so until I find out why, I'll just set it to 1 if it is 0
-	if itemInfo.slotIdx and itemInfo.slotIdx == 0 then
-		itemInfo.slotIdx = 1;
-	end
-
+	-- Some of this is a little messed up atm and inefficient but I want to play it safe instead of well noming on the wrong items
 	if (typeData.typeName == "salvage" and (itemInfo.subtitle == "Salvage" or itemInfo.rarity == "salvage" or TableHasValue(typeData.subTypeIds, itemInfo.subTypeId))) then -- Junk Salvage
 		return typeData.skips;
-	elseif (typeData.typeName == "frame_module" and itemInfo.type == "frame_module" and typeData.all) then -- Battleframe Cores
+	elseif ((filter.typeName == "BATTLEFRAME_CORE") and Game.IsItemOfType(itemInfo.itemTypeId, typeData.subTypeId) and typeData.all) then -- Battleframe Cores
 		return typeData.skips;
-	elseif (typeData.typeName == "module" and itemInfo.type == "item_module" and typeData.module_location == itemInfo.module_location) then -- Modules
+	elseif ((filter.typeName == "WEAPON_MODULE" or filter.typeName == "ABILITY_MODULE") and Game.IsItemOfType(itemInfo.itemTypeId, typeData.subTypeId) and typeData.module_location == itemInfo.module_location) then -- Modules
 		return typeData.skips;
-	elseif (typeData.typeName == "ablity"  and itemInfo.type == "ability_module") then -- Abilitys
+	elseif ((filter.typeName == "ABILITY") and Game.IsItemOfType(itemInfo.itemTypeId, typeData.subTypeId)) then -- Abilitys
 		return typeData.skips;
-	elseif ((typeData.typeName == "weapon" and itemInfo.type == "weapon") and (itemInfo.slotIdx and itemInfo.slotIdx == typeData.slotIdx)) then -- Weapon's
+	elseif ((filter.typeName == "PRIMARY_WEAPON" or filter.typeName == "SECONDARY_WEAPON") and Game.IsItemOfType(itemInfo.itemTypeId, typeData.subTypeId)) then -- Weapon's
 		return typeData.skips;
 	--[[elseif (filter.typeName == "ALL_TYPES" and itemInfo.flags and itemInfo.flags.is_salvageable == true) then -- Anything goes
 		return typeData.skips;]]
