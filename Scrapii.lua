@@ -337,8 +337,9 @@ function TestFilters()
 	end
 	
 	for id, data in pairs(resources) do
+		data.refined.itemTypeId = data.refined.item_sdb_id;
 		if (CheckAgainstFilters(data.refined)) then
-			FilteredItems[GetItemNameId(data)] = data.itemTypeId;
+			FilteredItems[GetItemNameId(data)] = data.refined.itemTypeId;
 		end
 	end
 
@@ -564,6 +565,7 @@ end
 
 function CheckAgainstFilters(itemInfo)
 	if IsActiveForZone() then
+		Debug.Log("ItemInfo:".. tostring(itemInfo));
 		Debug.Log("IsActiveForZone: true : "..itemInfo.itemTypeId);
 
 		for id, data in pairs(FiltersData) do

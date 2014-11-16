@@ -2,6 +2,7 @@ V 1.5
 --------------------------
 - Some xml tidy ups to avoid issues
 - Reduced console spam on undefined zones.
+- Fixed an issue preventing the test Filters results from showing.
 
 V 1.4
 --------------------------
