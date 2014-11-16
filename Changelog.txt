@@ -1,3 +1,8 @@
+V 1.5
+--------------------------
+- Some xml tidy ups to avoid issues
+- Reduced console spam on undefined zones.
+
 V 1.4
 --------------------------
 - Fixed an issue that could cause the review list to become corrupt and prevent the review UI from opening.

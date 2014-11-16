@@ -899,15 +899,30 @@ function SendWebStats(stats)
 	end
 end
 
+function GenerateSuportedZonesList()
+	local zones = {}
+
+	for _, zone in ipairs(ZONES) do
+		zones[zone.zone_id] = true
+	end
+
+	return zones
+end
+
 function GetZoneList()
+	local SuportedZones = GenerateSuportedZonesList()
+
 	HTTP.IssueRequest(System.GetOperatorSetting("ingame_host").."/api/v1/social/static_data.json", "GET", nil, function (args, err)
-		--Debug.Log(tostring(args));
 		--Update the labels in the UI options, these should be localised
 		for _,val in pairs(args.zones) do
-			if (val.zone_id == 1054) then -- hacky
-				InterfaceOptions.UpdateLabel("zone_"..val.zone_id, val.title..": Warfront Raid");
+			if SuportedZones[val.zone_id] then
+				if (val.zone_id == 1054) then -- hacky
+					InterfaceOptions.UpdateLabel("zone_"..val.zone_id, val.title..": Warfront Raid");
+				else
+					InterfaceOptions.UpdateLabel("zone_"..val.zone_id, val.title);
+				end
 			else
-				InterfaceOptions.UpdateLabel("zone_"..val.zone_id, val.title);
+				Debug.Log(unicode.format("Tried to update label for unsupported zone: %s Title: %s", val.zone_id, val.title));
 			end
 		end
 	end);

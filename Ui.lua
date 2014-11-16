@@ -22,8 +22,8 @@ Const =
     REVIEW_POPUP_MOVEABLE =  Component.GetWidget("ReviewPopupMoveable"),
     RP_CLOSE_BUTTON = Component.GetWidget("rp_close"),
     REVIEW_LIST_FOSTERING = Component.GetWidget("ReviewList_Fostering"),
-    REVIEW_LIST_PARENT = Component.GetWidget("ReviewList")
-,	TOOLTIP_POPUP = Component.GetWidget("ToolTipPopUp"),
+    REVIEW_LIST_PARENT = Component.GetWidget("ReviewList"),
+    TOOLTIP_POPUP = Component.GetWidget("ToolTipPopUp"),
 	RP_RESIZE_PARENT = Component.GetWidget("RP_ResizableParent"),
 	INCLUDE_ARCHTYPE = Component.GetWidget("includeArchtype"),
 	FILTER_SETS = Component.GetWidget("filterSets"),
@@ -832,11 +832,6 @@ end
 function Private.StylePopUp(popUp)
 	popUp:TintBack("#1B1E1F");
 	popUp:GetHeader():GetParent():ParamTo("tint", "#2b333a", 0, 0);
-	
-	-- Add an outline
-	--[[local widget = Component.CreateWidget('<Border dimensions="top:-15; left:0; width:100%; height:100%;" style="eatsmice:true; tint:#000000; exposure:0;"/>', popUp:GetBody():GetParent():GetParent());
-	Component.FosterWidget(popUp:GetBody():GetParent():GetParent():GetChild("{1}"), widget);
-	Component.FosterWidget(popUp:GetBody():GetParent():GetParent():GetChild("{2}"), widget);]]
 end
 
 function Private.OpenPopUp(popUp)

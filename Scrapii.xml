@@ -381,7 +381,6 @@ xsi:schemaLocation="http://www.red5studios.com/ ../../../../schemas/component.xs
             font:Demi_9;
             halign: center;
             valign: center;
-            shadow:0;
             color: textColor;
         </StyleSheet>
         
@@ -394,7 +393,6 @@ xsi:schemaLocation="http://www.red5studios.com/ ../../../../schemas/component.xs
             font:Demi_10;
             halign: left;
             valign: center;
-            shadow:0;
             color: textColor;
         </StyleSheet>
 		
@@ -407,7 +405,6 @@ xsi:schemaLocation="http://www.red5studios.com/ ../../../../schemas/component.xs
             font:Demi_12;
             halign: center;
             valign: center;
-            shadow:0;
             color: textColor;
         </StyleSheet>
 		
@@ -417,7 +414,6 @@ xsi:schemaLocation="http://www.red5studios.com/ ../../../../schemas/component.xs
             font:Demi_12;
             halign: center;
             valign: center;
-            shadow:0;
             color: textColor;
 			maxlen:3;
 			multiline:false;
@@ -434,7 +430,6 @@ xsi:schemaLocation="http://www.red5studios.com/ ../../../../schemas/component.xs
             font:Demi_12;
             halign: left;
             valign: center;
-            shadow:0;
             color: textColor;
         </StyleSheet>
      </Styles>
@@ -528,9 +523,9 @@ xsi:schemaLocation="http://www.red5studios.com/ ../../../../schemas/component.xs
          </BluePrint>
 
          <BluePrint name="ProfitLine" instantiable="true">
-            <Text name="Name" dimensions="left:5; width:0; height:22; top:0" style="halign:left; valign:center; font:Demi_9; shadow:0; color:PanelTitle"/>
+            <Text name="Name" dimensions="left:5; width:0; height:22; top:0" style="halign:left; valign:center; font:Demi_9;  color:PanelTitle"/>
             <Mask name="dash_lines" dimensions="left:0; right:100%; height:22; center-y:25%" maskdims="left:75; right:100%-85; height:100%; top:0" style="texture:dash_lines; tint:#FFFFFF"/>
-            <Text name="Quantity" dimensions="right:100%-25; width:0; height:22; top:0" style="halign:right; valign:center; font:Demi_9; shadow:0; color:#DADADA"/>
+            <Text name="Quantity" dimensions="right:100%-25; width:0; height:22; top:0" style="halign:right; valign:center; font:Demi_9;  color:#DADADA"/>
          </BluePrint>
 
          <BluePrint name="PromptBody" instantiable="true">
@@ -554,7 +549,7 @@ xsi:schemaLocation="http://www.red5studios.com/ ../../../../schemas/component.xs
 					<!-- Title -->
 					<Group dimensions="left:0; top:0; height:38; width:100%" blueprint="Panel">
 						<Group id="MovableParent" dimensions="dock:fill"/>
-						<Text id="title" key="WINDOW_TITE" dimensions="top:0; left:0; width:100%; height:38" style="font:Demi_15; halign:center; valign:center; shadow:0; color:PanelTitle;" />
+						<Text id="title" key="WINDOW_TITE" dimensions="top:0; left:0; width:100%; height:38" style="font:Demi_15; halign:center; valign:center;  color:PanelTitle;" />
 						<FocusBox id="close" dimensions="left:100%-48; right:100%; top:0; bottom:100%" class="ui_button">
 							<Border dimensions="dock:fill" style="tint:000000; alpha:0.5; padding:3; shadow:0"/>
 							<StillArt name="X" dimensions="center-x:50%; center-y:50%; width:16; height:16" style="texture:DialogWidgets; region:close; eatsmice:false"/>
@@ -617,7 +612,7 @@ xsi:schemaLocation="http://www.red5studios.com/ ../../../../schemas/component.xs
                             <Group dimensions="left:0; top:0; width:350; height:500" style="visible:false;">
                                 <Group id="ProfitToolTip" dimensions="dock:fill">
                                     <Group id="ProfitsList_Fostering" dimensions="top:0; left:0; width:100%; height:22;" style="visible:false;"/>
-                                    <Text name="Name" key="PROFIT_LIST_TITLE" dimensions="left:0; width:100%; height:32; top:0" style="halign:center; valign:center; font:Demi_12; shadow:0; color:PanelTitle"/>
+                                    <Text name="Name" key="PROFIT_LIST_TITLE" dimensions="left:0; width:100%; height:32; top:0" style="halign:center; valign:center; font:Demi_12;  color:PanelTitle"/>
                                     <Group id="ProfitsList" dimensions="left:0; width:100%; height:100%; top:32"/>
                                 </Group>
                              </Group>
@@ -663,7 +658,7 @@ xsi:schemaLocation="http://www.red5studios.com/ ../../../../schemas/component.xs
                 <!-- Title -->
                 <Group dimensions="left:0; top:0; height:38; width:100%" blueprint="Panel">
                     <Group id="ReviewPopupMoveable" dimensions="dock:fill"/>
-                    <Text id="rp_title" key="REVIEW_LIST" dimensions="top:0; left:0; width:100%; height:38" style="font:Demi_15; halign:center; valign:center; shadow:0; color:PanelTitle;" />
+                    <Text id="rp_title" key="REVIEW_LIST" dimensions="top:0; left:0; width:100%; height:38" style="font:Demi_15; halign:center; valign:center;  color:PanelTitle;" />
                     <FocusBox id="rp_close" dimensions="left:100%-48; right:100%; top:0; bottom:100%" class="ui_button">
                         <Border dimensions="dock:fill" style="tint:000000; alpha:0.5; padding:3; shadow:0"/>
                         <StillArt name="X" dimensions="center-x:50%; center-y:50%; width:16; height:16" style="texture:DialogWidgets; region:close; eatsmice:false"/>
@@ -673,7 +668,7 @@ xsi:schemaLocation="http://www.red5studios.com/ ../../../../schemas/component.xs
 
                 <!-- Body -->
                 <Group dimensions="left:0; top:40; height:35; width:100%" blueprint="Panel">
-                    <Text id="RL_CheckAll_Txt" key="CHECK_UNCHECK_ALL" dimensions="top:6; right:100%-58; width:120; height:24" style="font:Demi_11; halign:right; valign:center; shadow:0; color:textColor;" />
+                    <Text id="RL_CheckAll_Txt" key="CHECK_UNCHECK_ALL" dimensions="top:6; right:100%-58; width:120; height:24" style="font:Demi_11; halign:right; valign:center;  color:textColor;" />
                     <Group id="RL_CheckAll" dimensions="top:9; right:100%-34; width:18; height:18" />
                 </Group>
 
