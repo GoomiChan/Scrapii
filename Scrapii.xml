@@ -551,7 +551,7 @@ xsi:schemaLocation="http://www.red5studios.com/ ../../../../schemas/component.xs
 						<Group id="MovableParent" dimensions="dock:fill"/>
 						<Text id="title" key="WINDOW_TITE" dimensions="top:0; left:0; width:100%; height:38" style="font:Demi_15; halign:center; valign:center;  color:PanelTitle;" />
 						<FocusBox id="close" dimensions="left:100%-48; right:100%; top:0; bottom:100%" class="ui_button">
-							<Border dimensions="dock:fill" style="tint:000000; alpha:0.5; padding:3; shadow:0"/>
+							<Border dimensions="dock:fill" style="tint:000000; alpha:0.5; padding:3; "/>
 							<StillArt name="X" dimensions="center-x:50%; center-y:50%; width:16; height:16" style="texture:DialogWidgets; region:close; eatsmice:false"/>
 						</FocusBox>
 					</Group>
@@ -660,7 +660,7 @@ xsi:schemaLocation="http://www.red5studios.com/ ../../../../schemas/component.xs
                     <Group id="ReviewPopupMoveable" dimensions="dock:fill"/>
                     <Text id="rp_title" key="REVIEW_LIST" dimensions="top:0; left:0; width:100%; height:38" style="font:Demi_15; halign:center; valign:center;  color:PanelTitle;" />
                     <FocusBox id="rp_close" dimensions="left:100%-48; right:100%; top:0; bottom:100%" class="ui_button">
-                        <Border dimensions="dock:fill" style="tint:000000; alpha:0.5; padding:3; shadow:0"/>
+                        <Border dimensions="dock:fill" style="tint:000000; alpha:0.5; padding:3; "/>
                         <StillArt name="X" dimensions="center-x:50%; center-y:50%; width:16; height:16" style="texture:DialogWidgets; region:close; eatsmice:false"/>
                     </FocusBox>
                 </Group>
