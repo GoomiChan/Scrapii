@@ -924,7 +924,7 @@ function GetZoneList()
 					InterfaceOptions.UpdateLabel("zone_"..val.zone_id, val.title);
 				end
 			else
-				Debug.Log(unicode.format("Tried to update label for unsupported zone: %s Title: %s", val.zone_id, val.title));
+				Debug.Warn(unicode.format("Tried to update label for unsupported zone: %s Title: %s", val.zone_id, val.title));
 			end
 		end
 	end);

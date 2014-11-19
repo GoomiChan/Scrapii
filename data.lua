@@ -326,6 +326,10 @@ ZONES =
 	{
 		zone_id = 1054, 
 		title = "Devils Tusk Warfronts"
+	},
+	{
+		zone_id = 1069, 
+		title = "Miru Mining Facility"
 	}
 };
 
