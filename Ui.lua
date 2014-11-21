@@ -124,9 +124,9 @@ function Ui.ShowReview(show, isReview)
 	Const.REVIEW_POPUP:Show(show);
 	Private.IsReviewListOpen = show;
 	Private.ReviewListIsTest = isReview;
-	Private.ReviewListCheckall:Enable(not isReview);
+	Private.ReviewListCheckall:Enable(uiOpts.inventorySalvaging or not isReview);
 	Private.ReviewListCheckall:SetCheck(false);
-	Private.ReviewListSavlageSelected:Enable(not isReview);
+	Private.ReviewListSavlageSelected:Enable(uiOpts.inventorySalvaging or not isReview);
 	Private.ReviewListSavlageKeep:Enable(not isReview);
 end
 
@@ -645,7 +645,7 @@ function Private.CreateReviewPopUp()
 
 	Private.ReviewListCheckall = CheckBox.Create(Const.REVIEW_LIST_CHECKALL);
 	Private.ReviewListCheckall:AddHandler("OnStateChanged", function()
-		if (not Private.ReviewListIsTest and not Private.ReviewListCheckall_IngoreStateChange) then
+		if (uiOpts.inventorySalvaging and not Private.ReviewListCheckall_IngoreStateChange) then
 			for idx=1, Private.ReviewList:GetRowCount(), 1 do
 				Private.ReviewList:GetRow(idx).checkBox:SetCheck(Private.ReviewListCheckall:IsChecked());
 			end
@@ -655,7 +655,7 @@ function Private.CreateReviewPopUp()
 	Private.ReviewListSavlageSelected = Button.Create(Const.REVIEW_LIST_SALVAGE_SELECTED);
     Private.ReviewListSavlageSelected:SetTextKey("SAVLVAGE_SELCECTED");
 	Private.ReviewListSavlageSelected:Bind(function()
-		SalvageSelected();
+		SalvageSelected(Private.ReviewListIsTest);
 	end);
 
 	Private.ReviewListSavlageKeep = Button.Create(Const.REVIEW_LIST_KEEP_SELECTED);
@@ -711,7 +711,7 @@ function Private.AddToReviewUI(guid, sdbId, quanity, isReview)
 	end);
 
 	focus:BindEvent("OnMouseDown", function()
-    	row.checkBox:SetCheck(not row.checkBox:IsChecked() and not isReview);
+    	row.checkBox:SetCheck(not row.checkBox:IsChecked() and (uiOpts.inventorySalvaging or not isReview));
     end);
 	
 	widget:GetChild("icon"):SetUrl(itemInfo.web_icon or System.GetOperatorSetting("ingame_host").."/assets/items/64/" .. itemInfo.icon .. ".png");
@@ -730,9 +730,9 @@ function Private.AddToReviewUI(guid, sdbId, quanity, isReview)
 	--bg:SetParam("tint", Component.LookupColor(LIB_ITEMS.GetItemColor(itemInfo)));
 
 	row.checkBox = CheckBox.Create(widget:GetChild("checkbox"));
-	row.checkBox:Enable(not isReview);
+	row.checkBox:Enable(uiOpts.inventorySalvaging or not isReview);
 	row.checkBox:AddHandler("OnStateChanged", function()
-		if (not isReview) then
+		if (uiOpts.inventorySalvaging or not isReview) then
 			if (Private.ReviewListCheckall:IsChecked() and not row.checkBox:IsChecked()) then
 				Private.ReviewListCheckall_IngoreStateChange = true;
 				Private.ReviewListCheckall:SetCheck(false);
@@ -850,8 +850,11 @@ function Private.CreateUiOptions()
 	InterfaceOptions.AddChoiceEntry({menuId="printSummaryChan", label_key="CHAT_LOOT_NAME", val="loot"});
 	InterfaceOptions.AddChoiceEntry({menuId="printSummaryChan", label_key="CHAT_SYSTEM_NAME", val="system"});
 
+	InterfaceOptions.AddCheckBox({id="inventorySalvaging", label=Component.LookupText("ENABLE_INV_FILTERING"), tooltip=Component.LookupText("ENABLE_INV_FILTERING_TT"), default=uiOpts.inventorySalvaging});
+
 	InterfaceOptions.AddCheckBox({id="reportRewards", label=Component.LookupText("REPORT_REWARDS"), tooltip=Component.LookupText("REPORT_REWARDS_TT"), default=uiOpts.reportRewards});
 	
+	InterfaceOptions.AddCheckBox({id="salvageInNullZones", label=Component.LookupText("NULL_ZONES"), tooltip=Component.LookupText("NULL_ZONES_TT"), default=uiOpts.salvageInNullZones});
 	InterfaceOptions.StartGroup({id="zonesGrp", label=Component.LookupText("ACTIVE_ZONE_TITLE"), checkbox=true, default=true});
 	for _,val in pairs(ZONES) do
 		InterfaceOptions.AddCheckBox({id="zone_"..val.zone_id, label=val.title, default=true});
@@ -895,4 +898,12 @@ end
 
 function Private.UiCallbacks.processRewards(val)
 	uiOpts.processRewards = val;
+end
+
+function Private.UiCallbacks.inventorySalvaging(val)
+	uiOpts.inventorySalvaging = val;
+end
+
+function Private.UiCallbacks.salvageInNullZones(val)
+	uiOpts.salvageInNullZones = val;
 end

@@ -348,6 +348,11 @@ xsi:schemaLocation="http://www.red5studios.com/ ../../../../schemas/component.xs
 		<String key="FILTER_SET_NAME"		text="Filter Set Name" lang="EN" />
 		<String key="YELLOW"                text="Yellow" lang="EN" />
         <String key="YELLOW_AND_BELOW"      text="Yellow and below" lang="EN" />
+
+        <String key="ENABLE_INV_FILTERING"  text="Enable Inventory Filtering" lang="EN" />
+        <String key="ENABLE_INV_FILTERING_TT"  text="If checked then the test filters option will allow you to salvage items already in your inventory" lang="EN" />
+        <String key="NULL_ZONES"  text="Enable Salvaging in unknown zones" lang="EN" />
+        <String key="NULL_ZONES_TT"  text="If checked then Scrapii will salvage items in zones that it doesn't know about, eg. if a new zone was added and A Scrapii patch has not been relesed yet, then check this to enable salvaging untill it is patched" lang="EN" />
     </Strings>
     
     <Textures>
@@ -653,7 +658,7 @@ xsi:schemaLocation="http://www.red5studios.com/ ../../../../schemas/component.xs
 			<!-- <OnMessage bind="OnMessage"/> -->
 		</PanelFrame>
 
-        <PanelFrame name="ReviewPopup" dimensions="center-x:85%; center-y:40%; width:500; height:60%" visible="false" depth="-5">
+        <PanelFrame name="ReviewPopup" dimensions="center-x:85%; center-y:40%; width:500; height:60%" visible="false" depth="0">
             <Children>
                 <!-- Title -->
                 <Group dimensions="left:0; top:0; height:38; width:100%" blueprint="Panel">

@@ -254,7 +254,7 @@ ZONES =
 	{
 		zone_id = 448, 
 		title = "New Eden"
-	}, 
+	},
 	{
 		zone_id = 805, 
 		title = "Epicenter"

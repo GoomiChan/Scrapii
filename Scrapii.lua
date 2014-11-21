@@ -61,7 +61,9 @@ uiOpts =
 	reportRewards = false,
 	processLoot = true,
 	processRewards = true,
-	activeZones = {} -- A table of zone ids to salvage items in, format "id = bool", so it can be index checked
+	inventorySalvaging = false,
+	activeZones = {}, -- A table of zone ids to salvage items in, format "id = bool", so it can be index checked
+	salvageInNullZones = false
 };
 
 -- Filter related configs
@@ -331,21 +333,29 @@ function TestFilters()
 	for id, data in pairs(items) do
 		local itemInfo = Game.GetItemInfoByType(data.item_sdb_id)
 		itemInfo.item_sdb_id = data.item_sdb_id;
-		if (CheckAgainstFilters(itemInfo)) then
-			FilteredItems[GetItemNameId(itemInfo)] = data.item_sdb_id;
+
+		if (data.flags and not data.flags.is_equipped and CheckAgainstFilters(itemInfo)) then
+			FilteredItems[GetItemNameId(itemInfo)] = 
+			{
+				sdb_id = data.item_sdb_id,
+				item_id = data.item_id;
+			};
 		end
 	end
 	
 	for id, data in pairs(resources) do
 		data.refined.itemTypeId = data.refined.item_sdb_id;
 		if (CheckAgainstFilters(data.refined)) then
-			FilteredItems[GetItemNameId(data)] = data.refined.itemTypeId;
+			FilteredItems[GetItemNameId(data)] = 
+			{
+				sdb_id = data.refined.itemTypeId
+			};
 		end
 	end
 
 	local count = 0;
 	for id, data in pairs(FilteredItems) do
-		Ui.AddToReviewList(nil, data, 1, true);
+		Ui.AddToReviewList(data.item_id, data.sdb_id, 1, true);
 
 		count = count +1;
 	end
@@ -354,9 +364,9 @@ function TestFilters()
 	Ui.ShowReview(true, true);
 end
 
-function ProcessSalvageQueue()
+function ProcessSalvageQueue(salvageList)
 	local summaryStr = "";
-	for _,data in pairs(salvageQueue) do
+	for _,data in pairs(salvageList or salvageQueue) do
 		if (uiOpts.printSummary) then
 			summaryStr = summaryStr.. unicode.format("%s x %s, ", data.quantity, ChatLib.EncodeItemLink(data.item_sdb_id));
 		end
@@ -365,9 +375,12 @@ function ProcessSalvageQueue()
 	PrintLoot(unicode.sub(summaryStr, 1, -3));
 
 	isSalvageing = true;
-	Debug.Log(tostring(salvageQueue));
-	TrySalvageItems(salvageQueue);
-	salvageQueue = {};
+	Debug.Log(tostring(salvageList or salvageQueue));
+	local res = TrySalvageItems(salvageList or salvageQueue);
+	if (res) then
+		salvageQueue = {};
+	end
+	return res;
 end
 
 function LoadReviewList()
@@ -412,18 +425,23 @@ function ReviewQueueFinilise(add, guid, sdbId, quantity)
 	Debug.Log(tostring(finalisedQueue));
 end
 
-function SalvageSelected()
+function SalvageSelected(isTest)
 	if (#finalisedQueue > 0) 	then
 		Ui.ShowDialog({
 			body = Component.LookupText("SALVAGE_ARE_SURE"):format(#finalisedQueue),
 			onYes = function()
 
 				isSalvageing = true;
-				if (TrySalvageItems(finalisedQueue)) then
+				if (ProcessSalvageQueue(finalisedQueue)) then
 					RemoveSelectedFromReview();
 					finalisedQueue = {};
-					Component.SaveSetting("reviewQueue", reviewQueue);
-					LoadReviewList();
+
+					if not isTest then
+						Component.SaveSetting("reviewQueue", reviewQueue);
+						LoadReviewList();
+					else
+						Callback2.FireAndForget(TestFilters, nil, 1);
+					end
 				end
 
 			end,
@@ -931,7 +949,7 @@ function GetZoneList()
 end
 
 function IsActiveForZone()
-	return uiOpts.activeZones[zoneId];
+	return uiOpts.activeZones[zoneId] == true or (uiOpts.activeZones[zoneId] == nil and uiOpts.salvageInNullZones);
 end
 
 function SaveActiveFilterSet()
@@ -940,4 +958,13 @@ end
 
 function LoadActiveFilterSet()
 	FiltersData = Component.GetSetting("Filter_"..activeFilterSet);
+end
+
+-- Save the web zone list to use on the next UI reload
+function CacheZoneList(zones)
+	Component.SaveSetting("zone_list", zones);
+end
+
+function GetCachedZoneList()
+	return Component.LoadSetting("zone_list");
 end

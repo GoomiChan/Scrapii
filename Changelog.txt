@@ -1,3 +1,11 @@
+V 1.6
+--------------------------
+- Added Operation Miru to the salvage zones list.
+- Added the option to enable running filters over your inventory.
+- Due to the above the "Test Filters" option will no longer show equipment that you have equipped on frames.
+- Fixed the review list panel from rendering above the add filter pop up.
+- Added an option to allow salvaging in unknown zones, this is incase a new zone has been released but I haven't added it to Scrapii's zone list, if this option is checked Scrapii will salvage items in zones it doesn't know of.
+
 V 1.5
 --------------------------
 - Some xml tidy ups to avoid issues
