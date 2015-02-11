@@ -345,7 +345,7 @@ function TestFilters()
 	
 	for id, data in pairs(resources) do
 		data.refined.itemTypeId = data.refined.item_sdb_id;
-		if (CheckAgainstFilters(data.refined)) then
+		if (	(data.refined)) then
 			FilteredItems[GetItemNameId(data)] = 
 			{
 				sdb_id = data.refined.itemTypeId

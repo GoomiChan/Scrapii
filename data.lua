@@ -330,6 +330,10 @@ ZONES =
 	{
 		zone_id = 1069, 
 		title = "Miru Mining Facility"
+	},
+	{
+		zone_id = 1049, 
+		title = "The Amazon"
 	}
 };
 
