@@ -234,12 +234,12 @@ function Private.CreateWidgets()
 		LoadReviewList();
 	end);
     
-    -- Filter lsit
+    -- Filter list
     Private.FilterList = RowScroller.Create(Const.FILTER_LIST_WIDGET);
     Private.FilterList:SetSpacing(2);
     Private.FilterList:ShowSlider(true);
     
-    -- Setup the clsoe button
+    -- Setup the close button
 	Const.CLOSE_BUTTON:BindEvent("OnMouseDown", function()
 		Ui.Show(false);
 	end);
@@ -645,7 +645,7 @@ function Private.CreateReviewPopUp()
 
 	Private.ReviewListCheckall = CheckBox.Create(Const.REVIEW_LIST_CHECKALL);
 	Private.ReviewListCheckall:AddHandler("OnStateChanged", function()
-		if (uiOpts.inventorySalvaging and not Private.ReviewListCheckall_IngoreStateChange) then
+		if (not Private.ReviewListCheckall_IngoreStateChange) then
 			for idx=1, Private.ReviewList:GetRowCount(), 1 do
 				Private.ReviewList:GetRow(idx).checkBox:SetCheck(Private.ReviewListCheckall:IsChecked());
 			end
