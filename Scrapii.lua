@@ -791,7 +791,7 @@ end
 
 -- Basicly add the name, level and color together so as to prevent stackable items not stacking
 function GetItemNameId(itemInfo)
-	return itemInfo.name .. (itemInfo.required_level or "") .. (itemInfo.rarity or itemInfo.refined.rarity);
+	return (itemInfo.item_guid or "") .. itemInfo.name .. (itemInfo.required_level or "") .. (itemInfo.rarity or itemInfo.refined.rarity);
 end
 
 -- Sorting
