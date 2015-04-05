@@ -110,6 +110,7 @@ PRIVATE.ActiveLang = "";
 PRIVATE.VERSION_ID = "Lokii_Lang_Ver";
 PRIVATE.CACHED_PREFIX = "Lokii_Lang_";
 PRIVATE.CACHED_LANG_LIST = "Lokii_Lang_List";
+PRIVATE.TAG_IS_KEY_MARKER = "$";
 PRIVATE.HTTP_MAX_RETRIES = 3;
 PRIVATE.ForceLocal = false;
 PRIVATE.LocalLangVer = 1;
@@ -281,9 +282,22 @@ function PRIVATE.SetTextOnFrameChildren(frame) -- Can't think of a nice name
 end
 
 function PRIVATE.RecurseWidget(widget)
+	if widget:GetType() == "Text" then
+		local tagKey = widget:GetTag();
+
+		--log(tagKey:sub(1, #PRIVATE.TAG_IS_KEY_MARKER));
+		if tagKey and tagKey ~= "" and tagKey:sub(1, #PRIVATE.TAG_IS_KEY_MARKER) == PRIVATE.TAG_IS_KEY_MARKER then
+			local key = tagKey:sub(#PRIVATE.TAG_IS_KEY_MARKER+1);
+			local text = Lokii.GetString(key);
+
+			widget:SetText(text);
+			log("key: "..key.." Text: "..text);
+		end
+	end
+
 	for i = 1, widget:GetChildCount(), 1 do
 		local child = widget:GetChild(i)
 
-		log(tostring(child))
+		PRIVATE.RecurseWidget(child)
 	end
 end

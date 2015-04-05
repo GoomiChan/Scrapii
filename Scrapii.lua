@@ -96,12 +96,18 @@ checkList = {};
 --=====================
 --      Events       --
 --=====================
-function OnComponentLoad(args)	
+function OnComponentLoad(args)
+	-- Lokii setup
+    Lokii.AddLang("en", "./lang/EN");
+	Lokii.AddLang("de", "./lang/DE");
+	Lokii.AddLang("fr", "./lang/FR");
+	Lokii.SetBaseLang("en");
+	Lokii.SetToLocale();
+
 	LoadConfig();
 	GetZoneList();
 	LoadSalvageRewards();
     Ui.Init();
-    --Lokii.ReplaceKeysOnFrame(Const.MAIN);
 	
 	-- Migrate data
 	local oldData = Component.GetSetting("FiltersData");
@@ -566,6 +572,15 @@ function SetActiveFilterSet(name)
 		LoadActiveFilterSet();
 		Component.SaveSetting("activeFilterSet", activeFilterSet);
 		CreateList();
+
+		-- Just made or migrates, turn on for this char
+		if FiltersData == nil then
+			FiltersData = {};
+		end
+
+		if FiltersData.characters == nil then
+			ToggleActiveForChar();
+		end
 	end
 
 	Ui.UpdateActiveCharButton();
@@ -866,8 +881,8 @@ function SalvageAddToQueue(guid, sdbId, quantity)
 end
 
 function AddToReviewQueue(guid, sdbId, quantity)
-	Debug.Log("Adding item to Review Queue. CID: "..playerID);
-	Debug.Log("guid: "..tostring(guid).. "sdbId: "..tostring(sdbId).. "quantity: "..quantity);
+	--[[Debug.Log("Adding item to Review Queue. CID: "..playerID);
+	Debug.Log("guid: "..tostring(guid).. "sdbId: "..tostring(sdbId).. "quantity: "..quantity);]]
 
 	-- Increment the quantity if this item is already here
 	local has = false;
@@ -995,18 +1010,13 @@ function IsActiveForChar()
 	if playerID == nil then
 		return;
 	end
-	
+
 	local chars = FiltersData and FiltersData.characters or false;
-
 	local isActive = chars and chars[tostring(playerID)]
-
-	Print("IsActiveForChar: "..tostring(isActive).." playerID: "..playerID);
-	log("IsActiveForChar: "..playerID);
-
 	return isActive;
 end
 
-function ToggleActiveForChar(button)
+function ToggleActiveForChar()
 	if not FiltersData.characters then
 		FiltersData.characters = {};
 	end

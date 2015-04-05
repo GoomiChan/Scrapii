@@ -88,8 +88,8 @@ function Ui.Init()
 	});
 	
 	Const.MAXLEVEL = #Game.GetProgressionUnlocks();
-	
-	InterfaceOptions.SetCallbackFunc(Private.UiOptionsCallback, Component.LookupText("WINDOW_TITE"));
+
+	InterfaceOptions.SetCallbackFunc(Private.UiOptionsCallback, Lokii.GetString("WINDOW_TITE"));
 	Private.CreateUiOptions();
 
     Private.CreateWidgets();
@@ -100,6 +100,9 @@ function Ui.Init()
 
     PanelManager.RegisterFrame(Const.MAIN, ToggleWindow, {show=false});
     Ui.Show(false);
+
+    Lokii.ReplaceKeysOnFrame(Const.MAIN);
+	Lokii.ReplaceKeysOnFrame(Const.REVIEW_POPUP);
 end
 
 function Ui.Show(show)
@@ -190,7 +193,7 @@ function Ui.UpdateFilterSets(sets)
 	for i, data in pairs(sets) do
 		Private.FilterSets:AddItem(data, data);
 	end
-	Private.FilterSets:AddItem(Component.LookupText("NEW_FILTER_SET"), NEW_FILTER_SET_ID);
+	Private.FilterSets:AddItem(Lokii.GetString("NEW_FILTER_SET"), NEW_FILTER_SET_ID);
 end
 
 function Ui.SetActiveFilterSet(active)
@@ -200,8 +203,8 @@ end
 -- Private functions
 function Private.CreateWidgets()
     --
-    Private.SetHeaderText(Const.GLOBAL_SETTINGS_HEADER, Component.LookupText("GLOBAL_SETTINGS"));
-    Private.SetHeaderText(Const.BUTTONS_HEADER, Component.LookupText("ACTIONS"));
+    Private.SetHeaderText(Const.GLOBAL_SETTINGS_HEADER, Lokii.GetString("GLOBAL_SETTINGS"));
+    Private.SetHeaderText(Const.BUTTONS_HEADER, Lokii.GetString("ACTIONS"));
     
     -- Filter headers
     Private.FilterHeaderButtons = 
@@ -215,22 +218,21 @@ function Private.CreateWidgets()
     };
     
     Private.AddFilterButton = Button.Create(Component.GetWidget("AddFilterButton"));
-    Private.AddFilterButton:SetTextKey("ADD_FILTER");
+    Private.AddFilterButton:SetText(Lokii.GetString("ADD_FILTER"));
 	Private.AddFilterButton:Bind(function()
 		Private.SetAddFilterData(DEFAULT_FILTER_DATA);
-        Private.AddFilterPopUp.AddButt:SetText(Component.LookupText("ADD_FILTER"));
 		Private.OpenPopUp(Private.AddFilterPopUp.Window);
 		System.PlaySound(Const.SND.OPEN_POPUP);
 	end);
     
     Private.TestFilterButton = Button.Create(Component.GetWidget("TestFilterButton"));
-    Private.TestFilterButton:SetTextKey("TEST_FILTER");
+    Private.TestFilterButton:SetText(Lokii.GetString("TEST_FILTER"));
 	Private.TestFilterButton:Bind(function()
 		TestFilters();
 	end);
 
 	Private.OpenReviewButton = Button.Create(Component.GetWidget("ReviewListButton"));
-    Private.OpenReviewButton:SetTextKey("OPEN_REVIEW_LIST");
+    Private.OpenReviewButton:SetText(Lokii.GetString("OPEN_REVIEW_LIST"));
 	Private.OpenReviewButton:Bind(function()
 		LoadReviewList();
 	end);
@@ -275,7 +277,7 @@ function Private.CreateWidgets()
 	Private.FilterSetRemove:Bind(function()
 		Private.ShowDialog(
 		{
-			body = Component.LookupText("DELETE_FILTER_SET"):format(activeFilterSet or ""),
+			body = Lokii.GetString("DELETE_FILTER_SET"):format(activeFilterSet or ""),
 			onYes = DeleteFilterSet,
 			onNo = function()
 			
@@ -290,7 +292,7 @@ function Private.CreateWidgets()
 	-- Foster button into Inventory
 	local InvButton = Component.CreateWidget('<Group dimensions="left:5; top:50%-13; width:80; height:26;" />', Const.REVIEW_LIST_FOSTERING);
 	Private.InventoryButton = Button.Create(InvButton);
-	Private.InventoryButton:SetText(Component.LookupText("WINDOW_TITE"));
+	Private.InventoryButton:SetText(Lokii.GetString("WINDOW_TITE"));
 	Component.FosterWidget(InvButton, "Inventory:main.{1}.{1}"); -- I <3 Fostering
 	Private.InventoryButton:Bind(function()
 			Ui.Show(true);
@@ -299,10 +301,10 @@ end
 
 function Ui.UpdateActiveCharButton()
 	if IsActiveForChar() then
-		Private.ActiveForThisFrame:SetText("Deactivate for this character", true);
+		Private.ActiveForThisFrame:SetText(Lokii.GetString("DEACTIVATE_FOR_CHAR"), true);
 		Private.ActiveForThisFrame:TintPlate(Button.DEFAULT_RED_COLOR);
 	else
-		Private.ActiveForThisFrame:SetText("Activate for this character", true);
+		Private.ActiveForThisFrame:SetText(Lokii.GetString("ACTIVATE_FOR_CHAR"), true);
 		Private.ActiveForThisFrame:TintPlate(Button.DEFAULT_GREEN_COLOR);
 	end
 end
@@ -312,7 +314,7 @@ function Private.CreateFilterButton(hostWidget, key)
     
     butt.button:TintPlate(Button.DEFAULT_WHITE_COLOR);
     local Img = Component.CreateWidget("FilterHeaderTab", butt.button.GROUP);
-    Img:GetChild("text"):SetText(Component.LookupText(key));
+    Img:GetChild("text"):SetText(Lokii.GetString(key));
 	butt.button:FosterLabel(Img.GROUP);
     
     butt.button:Bind(function(args)
@@ -351,7 +353,7 @@ function Private.EditFilter(row)
 	Private.SetAddFilterData(FiltersData[row.id]);
 	Private.AddFilterPopUp.EditMode = true;
 	Private.AddFilterPopUp.EditId = row.id;
-    Private.AddFilterPopUp.AddButt:SetText(Component.LookupText("SAVE_FILTER"));
+    Private.AddFilterPopUp.AddButt:SetText(Lokii.GetString("SAVE_FILTER"));
 	Private.OpenPopUp(Private.AddFilterPopUp.Window);
 	System.PlaySound(Const.SND.OPEN_POPUP);
 end
@@ -359,7 +361,7 @@ end
 function Private.DeleteFilter(row)
 	Private.ShowDialog(
 	{
-		body=Component.LookupText("DELETE_FILTER_PROMPT"),
+		body=Lokii.GetString("DELETE_FILTER_PROMPT"),
 		onYes = function()
 			DeleteFilter(row.id);
 		end,
@@ -383,24 +385,24 @@ function Private.CreateFilterRow(id, data)
 	
 	-- format data
 	local formatedData = {};
-	formatedData.type = Component.LookupText(data.typeName);
-	formatedData.frame = Component.LookupText(data.frame);
+	formatedData.type = Lokii.GetString(data.typeName);
+	formatedData.frame = Lokii.GetString(data.frame);
 
 	-- TODO: Come back and investigate!
 	-- A random bad new row seems to get added to default.
 	Debug.Log(tostring(data));
 
 	--formatedData.levelRange = "Nyaa~";
-	formatedData.levelRange = unicode.format("%s %s %s %s", Component.LookupText("FROM"), data.levelFrom, Component.LookupText("TO"), data.levelTo);
-	formatedData.color = Component.LookupText(data.color);
+	formatedData.levelRange = unicode.format("%s %s %s %s", Lokii.GetString("FROM"), data.levelFrom, Lokii.GetString("TO"), data.levelTo);
+	formatedData.color = Lokii.GetString(data.color);
 	
 	if (data.when == "INV_PCT_FULL") then
-		formatedData.when = unicode.format(Component.LookupText("INV_PCT_FULL_FMT"), math.floor(data.precentFull*100));
+		formatedData.when = unicode.format(Lokii.GetString("INV_PCT_FULL_FMT"), math.floor(data.precentFull*100));
 	else
-		formatedData.when = Component.LookupText(data.when);
+		formatedData.when = Lokii.GetString(data.when);
 	end
 	
-	formatedData.action = Component.LookupText(data.action);
+	formatedData.action = Lokii.GetString(data.action);
 	
     Component.CreateWidget("RowField", content:GetChild("type")):GetChild("text"):SetText(formatedData.type);
     Component.CreateWidget("RowField", content:GetChild("frame")):GetChild("text"):SetText(formatedData.frame);
@@ -424,7 +426,7 @@ function Private.CreateFilterRow(id, data)
     -- Setup the context menu
 	local OpenContextMenu = function()
 	    row.ContextMenu = ContextMenu.Create();	
-        row.ContextMenu:SetTitle(Component.LookupText("FILTER_OPTIONS"));
+        row.ContextMenu:SetTitle(Lokii.GetString("FILTER_OPTIONS"));
         row.ContextMenu:AddButton({id = Const.CONTEXT_IDS.EDIT, label_key = "EDIT_FILTER"});
 		row.ContextMenu:AddButton({id = Const.CONTEXT_IDS.DELETE, label_key = "DELETE_FILTER"});
 		
@@ -457,7 +459,7 @@ end
 function Private.CreateAddFilterPopup()
 	Private.AddFilterPopUp.Window = RoundedPopupWindow.Create(Const.ADD_FILTER_POPUP_PARENT, nil);
 	local window = Private.AddFilterPopUp.Window;
-	window:SetTitle(Component.LookupText("ADD_FILTER_HEADER"));
+	window:SetTitle(Lokii.GetString("ADD_FILTER_HEADER"));
 	window:SetDims("dock:fill;");
 	window:EnableClose(true, function () end);
 	
@@ -466,22 +468,22 @@ function Private.CreateAddFilterPopup()
 	
 	-- headers
 	local header = body:GetChild("cont"):GetChild("header");
-	Component.CreateWidget("AddFilterHeader", header:GetChild("type")):GetChild("text"):SetText(Component.LookupText("FLT_TYPE"));
-    Component.CreateWidget("AddFilterHeader", header:GetChild("frame")):GetChild("text"):SetText(Component.LookupText("FLT_FRAME"));
-    Component.CreateWidget("AddFilterHeader", header:GetChild("levelRange")):GetChild("text"):SetText(Component.LookupText("FLT_LEVEL_RANGE"));
-    Component.CreateWidget("AddFilterHeader", header:GetChild("color")):GetChild("text"):SetText(Component.LookupText("FLT_COLOR"));
-	Component.CreateWidget("AddFilterHeader", header:GetChild("when")):GetChild("text"):SetText(Component.LookupText("FLT_WHEN"));
-    Component.CreateWidget("AddFilterHeader", header:GetChild("action")):GetChild("text"):SetText(Component.LookupText("FLT_ACTION"));
+	Component.CreateWidget("AddFilterHeader", header:GetChild("type")):GetChild("text"):SetText(Lokii.GetString("FLT_TYPE"));
+    Component.CreateWidget("AddFilterHeader", header:GetChild("frame")):GetChild("text"):SetText(Lokii.GetString("FLT_FRAME"));
+    Component.CreateWidget("AddFilterHeader", header:GetChild("levelRange")):GetChild("text"):SetText(Lokii.GetString("FLT_LEVEL_RANGE"));
+    Component.CreateWidget("AddFilterHeader", header:GetChild("color")):GetChild("text"):SetText(Lokii.GetString("FLT_COLOR"));
+	Component.CreateWidget("AddFilterHeader", header:GetChild("when")):GetChild("text"):SetText(Lokii.GetString("FLT_WHEN"));
+    Component.CreateWidget("AddFilterHeader", header:GetChild("action")):GetChild("text"):SetText(Lokii.GetString("FLT_ACTION"));
 	
 	local cont = body:GetChild("cont"):GetChild("cont");
 	Private.AddFilterPopUp.DD_Type = DropDownList.Create(cont:GetChild("type"));
 	for id, data in pairs(GetDataSorted(DD_TYPES)) do
-        Private.AddFilterPopUp.DD_Type:AddItem(Component.LookupText(data.id), data.id);
+        Private.AddFilterPopUp.DD_Type:AddItem(Lokii.GetString(data.id), data.id);
     end
 	
 	Private.AddFilterPopUp.DD_Frame = DropDownList.Create(cont:GetChild("frame"));
 	for id, data in pairs(GetDataSorted(DD_FRAMES)) do
-        Private.AddFilterPopUp.DD_Frame:AddItem(Component.LookupText(data.id), data.id);
+        Private.AddFilterPopUp.DD_Frame:AddItem(Lokii.GetString(data.id), data.id);
     end
 	
 	local levelRange = Component.CreateWidget("EnterLevelRange", cont:GetChild("levelRange"));
@@ -495,13 +497,13 @@ function Private.CreateAddFilterPopup()
 	
 	Private.AddFilterPopUp.DD_Color = DropDownList.Create(cont:GetChild("color"));
 	for id, data in pairs(GetDataSorted(DD_COLORS)) do
-        Private.AddFilterPopUp.DD_Color:AddItem(Component.LookupText(data.id), data.id);
+        Private.AddFilterPopUp.DD_Color:AddItem(Lokii.GetString(data.id), data.id);
     end
 	Private.AddFilterPopUp.DD_Color:SetSelectedByValue("WHITE");
 	
 	Private.AddFilterPopUp.DD_When = DropDownList.Create(cont:GetChild("when"));
 	for id, data in pairs(DD_WHEN) do
-        Private.AddFilterPopUp.DD_When:AddItem(Component.LookupText(data), data);
+        Private.AddFilterPopUp.DD_When:AddItem(Lokii.GetString(data), data);
     end
 	
 	Private.AddFilterPopUp.DD_When:BindOnSelect(function () 
@@ -517,11 +519,11 @@ function Private.CreateAddFilterPopup()
 	
 	Private.AddFilterPopUp.DD_Action = DropDownList.Create(cont:GetChild("action"));
 	for id, data in pairs(DD_ACTIONS) do
-        Private.AddFilterPopUp.DD_Action:AddItem(Component.LookupText(data), data);
+        Private.AddFilterPopUp.DD_Action:AddItem(Lokii.GetString(data), data);
     end
 	
 	Private.AddFilterPopUp.AddButt = Button.Create(body:GetChild("AddButt"));
-    Private.AddFilterPopUp.AddButt:SetText(Component.LookupText("ADD_FILTER"));
+    Private.AddFilterPopUp.AddButt:SetText(Lokii.GetString("ADD_FILTER"));
     Private.AddFilterPopUp.AddButt:Bind(function()
 		Private.PercentPopup.Window:Close();
 		window:Close();
@@ -587,7 +589,7 @@ function Private.CreatePercentPopup()
 	
 	Private.PercentPopup.Window = RoundedPopupWindow.Create(Private.AddFilterPopUp.Window:GetBody():GetParent(), nil);
 	local window = Private.PercentPopup.Window;
-	window:SetTitle(Component.LookupText("INV_PCT_FULL"));
+	window:SetTitle(Lokii.GetString("INV_PCT_FULL"));
 	window:SetDims("dock:fill;");
 	window:EnableClose(true, function () end);
 	
@@ -613,7 +615,7 @@ function Private.CreatePercentPopup()
 	end);
 	
 	local OkButt = Button.Create(body:GetChild("OkButt"));
-	OkButt:SetText(Component.LookupText("OK"));
+	OkButt:SetText(Lokii.GetString("OK"));
 	OkButt:Bind(function()
 		window:Close(false);
 	end);
@@ -674,13 +676,13 @@ function Private.CreateReviewPopUp()
 	end);
 
 	Private.ReviewListSavlageSelected = Button.Create(Const.REVIEW_LIST_SALVAGE_SELECTED);
-    Private.ReviewListSavlageSelected:SetTextKey("SAVLVAGE_SELCECTED");
+    Private.ReviewListSavlageSelected:SetText(Lokii.GetString("SAVLVAGE_SELCECTED"));
 	Private.ReviewListSavlageSelected:Bind(function()
 		SalvageSelected(Private.ReviewListIsTest);
 	end);
 
 	Private.ReviewListSavlageKeep = Button.Create(Const.REVIEW_LIST_KEEP_SELECTED);
-    Private.ReviewListSavlageKeep:SetTextKey("KEEP_SELECTED");
+    Private.ReviewListSavlageKeep:SetText(Lokii.GetString("KEEP_SELECTED"));
 	Private.ReviewListSavlageKeep:Bind(function()
 		KeepSelected();
 	end);
@@ -813,14 +815,14 @@ end
 -- {body="", onYes=function, onNo=function}
 function Private.ShowDialog(args)
 	SimpleDialog.Display(args.body);
-	SimpleDialog.SetTitle(Component.LookupText("CONFIRM"));
+	SimpleDialog.SetTitle(Lokii.GetString("CONFIRM"));
 	
-	SimpleDialog.AddOption(Component.LookupText("ABORT"), function()
+	SimpleDialog.AddOption(Lokii.GetString("ABORT"), function()
 		if args.onNo then args.onNo(); end
 		SimpleDialog.Hide();
 	end, {color = Button.DEFAULT_WHITE_COLOR});
 	
-	SimpleDialog.AddOption(Component.LookupText("ARE_YOU_SURE"), function()
+	SimpleDialog.AddOption(Lokii.GetString("ARE_YOU_SURE"), function()
 		if args.onYes then args.onYes(); end
 		SimpleDialog.Hide();
 	end, {color = Button.DEFAULT_GREEN_COLOR});
@@ -833,14 +835,14 @@ function Private.ShowTextDialog(args)
 	local textInput = widget:GetChild("Text.InputGroup.TextInput");
 	textInput:SetFocus();
 	SimpleDialog.Display(widget);
-	SimpleDialog.SetTitle(Component.LookupText("FILTER_SET_NAME"));
+	SimpleDialog.SetTitle(Lokii.GetString("FILTER_SET_NAME"));
 	
-	SimpleDialog.AddOption(Component.LookupText("ABORT"), function()
+	SimpleDialog.AddOption(Lokii.GetString("ABORT"), function()
 		if args.onNo then args.onNo(); end
 		SimpleDialog.Hide();
 	end, {color = Button.DEFAULT_WHITE_COLOR});
 	
-	SimpleDialog.AddOption(Component.LookupText("ARE_YOU_SURE"), function()
+	SimpleDialog.AddOption(Lokii.GetString("ARE_YOU_SURE"), function()
 		if args.onYes then args.onYes(textInput:GetText()); end
 		SimpleDialog.Hide();
 	end, {color = Button.DEFAULT_GREEN_COLOR});
@@ -862,21 +864,21 @@ function Private.OpenPopUp(popUp)
 end
 
 function Private.CreateUiOptions()
-	InterfaceOptions.AddCheckBox({id="enableDebug", label=Component.LookupText("ENABLE_DEBUG"), default=uiOpts.enableDebug});
-	InterfaceOptions.AddCheckBox({id="printSummary", label=Component.LookupText("PRINT_SUMMARY"), tooltip=Component.LookupText("PRINT_SUMMARY_TT"), default=uiOpts.printSummary});
-	InterfaceOptions.AddCheckBox({id="processLoot", label=Component.LookupText("PROCESS_LOOT"), tooltip=Component.LookupText("PROCESS_LOOT_TT"), default=uiOpts.processLoot});
-	InterfaceOptions.AddCheckBox({id="processRewards", label=Component.LookupText("PROCESS_REWARDS"), tooltip=Component.LookupText("PROCESS_REWARDS_TT"), default=uiOpts.processRewards});
+	InterfaceOptions.AddCheckBox({id="enableDebug", label=Lokii.GetString("ENABLE_DEBUG"), default=uiOpts.enableDebug});
+	InterfaceOptions.AddCheckBox({id="printSummary", label=Lokii.GetString("PRINT_SUMMARY"), tooltip=Lokii.GetString("PRINT_SUMMARY_TT"), default=uiOpts.printSummary});
+	InterfaceOptions.AddCheckBox({id="processLoot", label=Lokii.GetString("PROCESS_LOOT"), tooltip=Lokii.GetString("PROCESS_LOOT_TT"), default=uiOpts.processLoot});
+	InterfaceOptions.AddCheckBox({id="processRewards", label=Lokii.GetString("PROCESS_REWARDS"), tooltip=Lokii.GetString("PROCESS_REWARDS_TT"), default=uiOpts.processRewards});
 
-	InterfaceOptions.AddChoiceMenu({id="printSummaryChan", label=Component.LookupText("PRINT_SUMMARY_CHAN"), default=uiOpts.printSummaryChan});
+	InterfaceOptions.AddChoiceMenu({id="printSummaryChan", label=Lokii.GetString("PRINT_SUMMARY_CHAN"), default=uiOpts.printSummaryChan});
 	InterfaceOptions.AddChoiceEntry({menuId="printSummaryChan", label_key="CHAT_LOOT_NAME", val="loot"});
 	InterfaceOptions.AddChoiceEntry({menuId="printSummaryChan", label_key="CHAT_SYSTEM_NAME", val="system"});
 
-	InterfaceOptions.AddCheckBox({id="inventorySalvaging", label=Component.LookupText("ENABLE_INV_FILTERING"), tooltip=Component.LookupText("ENABLE_INV_FILTERING_TT"), default=uiOpts.inventorySalvaging});
+	InterfaceOptions.AddCheckBox({id="inventorySalvaging", label=Lokii.GetString("ENABLE_INV_FILTERING"), tooltip=Lokii.GetString("ENABLE_INV_FILTERING_TT"), default=uiOpts.inventorySalvaging});
 
-	InterfaceOptions.AddCheckBox({id="reportRewards", label=Component.LookupText("REPORT_REWARDS"), tooltip=Component.LookupText("REPORT_REWARDS_TT"), default=uiOpts.reportRewards});
+	InterfaceOptions.AddCheckBox({id="reportRewards", label=Lokii.GetString("REPORT_REWARDS"), tooltip=Lokii.GetString("REPORT_REWARDS_TT"), default=uiOpts.reportRewards});
 	
-	InterfaceOptions.AddCheckBox({id="salvageInNullZones", label=Component.LookupText("NULL_ZONES"), tooltip=Component.LookupText("NULL_ZONES_TT"), default=uiOpts.salvageInNullZones});
-	InterfaceOptions.StartGroup({id="zonesGrp", label=Component.LookupText("ACTIVE_ZONE_TITLE"), checkbox=true, default=true});
+	InterfaceOptions.AddCheckBox({id="salvageInNullZones", label=Lokii.GetString("NULL_ZONES"), tooltip=Lokii.GetString("NULL_ZONES_TT"), default=uiOpts.salvageInNullZones});
+	InterfaceOptions.StartGroup({id="zonesGrp", label=Lokii.GetString("ACTIVE_ZONE_TITLE"), checkbox=true, default=true});
 	for _,val in pairs(ZONES) do
 		InterfaceOptions.AddCheckBox({id="zone_"..val.zone_id, label=val.title, default=true});
 	end
