@@ -38,6 +38,7 @@ Const =
 	REVIEW_LIST_CHECKALL = Component.GetWidget("RL_CheckAll"),
 	REVIEW_LIST_SALVAGE_SELECTED = Component.GetWidget("RP_SavlageSelected"),
 	REVIEW_LIST_KEEP_SELECTED = Component.GetWidget("RP_KeepSelected"),
+	ACTIVE_FOR_FRAME = Component.GetWidget("ActiveForThisFrame"),
 
 	CONTEXT_IDS = 
 	{
@@ -281,7 +282,11 @@ function Private.CreateWidgets()
 			end
 		});
 	end);
-	
+
+	Private.ActiveForThisFrame = Button.Create(Const.ACTIVE_FOR_FRAME);
+	Private.ActiveForThisFrame:Bind(function() ToggleActiveForChar(Private.ActiveForThisFrame); end);
+	Private.ActiveForThisFrame:Autosize("left");
+
 	-- Foster button into Inventory
 	local InvButton = Component.CreateWidget('<Group dimensions="left:5; top:50%-13; width:80; height:26;" />', Const.REVIEW_LIST_FOSTERING);
 	Private.InventoryButton = Button.Create(InvButton);
@@ -290,6 +295,16 @@ function Private.CreateWidgets()
 	Private.InventoryButton:Bind(function()
 			Ui.Show(true);
 		end);
+end
+
+function Ui.UpdateActiveCharButton()
+	if IsActiveForChar() then
+		Private.ActiveForThisFrame:SetText("Deactivate for this character", true);
+		Private.ActiveForThisFrame:TintPlate(Button.DEFAULT_RED_COLOR);
+	else
+		Private.ActiveForThisFrame:SetText("Activate for this character", true);
+		Private.ActiveForThisFrame:TintPlate(Button.DEFAULT_GREEN_COLOR);
+	end
 end
 
 function Private.CreateFilterButton(hostWidget, key)
@@ -370,7 +385,13 @@ function Private.CreateFilterRow(id, data)
 	local formatedData = {};
 	formatedData.type = Component.LookupText(data.typeName);
 	formatedData.frame = Component.LookupText(data.frame);
-	formatedData.levelRange = unicode.format("%s %i %s %i", Component.LookupText("FROM"), data.levelFrom, Component.LookupText("TO"), data.levelTo);
+
+	-- TODO: Come back and investigate!
+	-- A random bad new row seems to get added to default.
+	Debug.Log(tostring(data));
+
+	--formatedData.levelRange = "Nyaa~";
+	formatedData.levelRange = unicode.format("%s %s %s %s", Component.LookupText("FROM"), data.levelFrom, Component.LookupText("TO"), data.levelTo);
 	formatedData.color = Component.LookupText(data.color);
 	
 	if (data.when == "INV_PCT_FULL") then

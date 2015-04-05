@@ -566,7 +566,7 @@ xsi:schemaLocation="http://www.red5studios.com/ ../../../../schemas/component.xs
                     <Group dimensions="left:0; top:40; height:100%; width:100%">
                         <!-- Header -->
                          <Group dimensions="left:0; top:0; height:60; width:100%" blueprint="">
-                            <Group dimensions="left:0; top:0; height:100%; width:50%-1;" blueprint="Panel">
+                            <Group dimensions="left:0; top:0; height:100%; width:60%-1;" blueprint="Panel">
                                 <Group id="GlobalSettingsHeader" dimensions="left:0; top:1; height:20; width:100%" blueprint="Header" />
 								
 								<Group dimensions="left:5; bottom:100%-12; height:22; width:100">
@@ -575,7 +575,9 @@ xsi:schemaLocation="http://www.red5studios.com/ ../../../../schemas/component.xs
 										<Text key="FILTER_SETS" dimensions="left:100%+5; center-y:50%; height:20; width:10" class="FilterRowText">
 											<Group id="filterSets" dimensions="left:100%+5; center-y:50%; height:24; width:120">
 												<Group id="filterSetRemove" dimensions="left:100%+5; center-y:50%; height:24; width:24">
-												
+												    <Group id="ActiveForThisFrame" dimensions="left:100%+5; top:0; height:24; width:210">
+
+                                                    </Group>
 												</Group>
 											</Group>
 										</Text>
@@ -584,7 +586,7 @@ xsi:schemaLocation="http://www.red5studios.com/ ../../../../schemas/component.xs
 								
                             </Group>
                             
-                            <Group name="Buttons" dimensions="left:50%+1; top:0; height:100%; width:50%;" blueprint="Panel">
+                            <Group name="Buttons" dimensions="left:60%+1; top:0; height:100%; width:40%;" blueprint="Panel">
                                 <Group id="ButtonsHeader" dimensions="left:0; top:1; height:20; width:100%" blueprint="Header"/>
                                 <Group id="AddFilterButton" dimensions="right:100%-5; bottom:100%-5; height:24; width:120"/>
                                 <Group id="TestFilterButton" dimensions="right:100%-130; bottom:100%-5; height:24; width:120"/>

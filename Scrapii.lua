@@ -28,6 +28,7 @@ require "lib/lib_Slash";
 require "lib/lib_RoundedPopupWindow";
 require "lib/lib_SubTypeIds";
 require "./libs/lib_SimpleDialog";
+require "./libs/lib_lokii";
 require "./data";
 require "./Ui";
 -- Just include them all why don't I
@@ -80,6 +81,7 @@ salvageCallBack = Callback2.Create();
 isSalvageing = false;
 activeFilterSet = "";
 filterSets = nil;
+playerID = nil;
 
 -- List of sdb ids that we are to salvage once the OnInventoryEntryChange event for them fires
 --[[ format 
@@ -99,6 +101,7 @@ function OnComponentLoad(args)
 	GetZoneList();
 	LoadSalvageRewards();
     Ui.Init();
+    --Lokii.ReplaceKeysOnFrame(Const.MAIN);
 	
 	-- Migrate data
 	local oldData = Component.GetSetting("FiltersData");
@@ -109,8 +112,6 @@ function OnComponentLoad(args)
 		SaveActiveFilterSet();
 		Component.SaveSetting("FiltersData", nil);
 	end
-	
-    LoadReviewQueue();
 
 	activeFilterSet = Component.GetSetting("activefilterset") or "";
 	if (activeFilterSet == "") then
@@ -136,10 +137,22 @@ end
 function OnPlayerReady(args)
 	c_cid = Player.GetTargetId();
 	OnEnterZone();
+	playerID = Player.GetCharacterId();
 	
 	-- See Mavoc I do listen, sometimes
 	Debug.EnableLogging(IsUserAuthor() or uiOpts.enableDebug);
     UpdateInvWeight();
+    Ui.UpdateActiveCharButton();
+
+	-- Migrate to current cid
+	local oldReviewQu = Component.GetSetting("reviewQueue");
+	if oldReviewQu ~= nil then
+		Print("Found old 'reviewQueue' data and migrating it to current character")
+		Component.SaveSetting("reviewQueue_"..playerID, oldReviewQu);
+		Component.SaveSetting("reviewQueue", nil);
+	end
+
+    LoadReviewQueue();
 end
 
 function OnInventoryEntryChange(args)
@@ -554,6 +567,8 @@ function SetActiveFilterSet(name)
 		Component.SaveSetting("activeFilterSet", activeFilterSet);
 		CreateList();
 	end
+
+	Ui.UpdateActiveCharButton();
 end
 
 --=====================
@@ -576,7 +591,9 @@ function CreateList()
 	
 	if FiltersData then
 		for id, data in pairs(FiltersData) do
-			Ui.AddFilterRow(id, data);
+			if id ~= "characters" then
+				Ui.AddFilterRow(id, data);
+			end
 		end
 	end
 end
@@ -586,9 +603,11 @@ function CheckAgainstFilters(itemInfo)
 		Debug.Log("ItemInfo:".. tostring(itemInfo));
 		Debug.Log("IsActiveForZone: true : "..itemInfo.itemTypeId);
 
-		for id, data in pairs(FiltersData) do
-			if (MatchsFilter(data, itemInfo)) then
-				return data;
+		if IsActiveForChar() then
+			for id, data in pairs(FiltersData) do
+				if (MatchsFilter(data, itemInfo)) then
+					return data;
+				end
 			end
 		end
 	end
@@ -847,6 +866,9 @@ function SalvageAddToQueue(guid, sdbId, quantity)
 end
 
 function AddToReviewQueue(guid, sdbId, quantity)
+	Debug.Log("Adding item to Review Queue. CID: "..playerID);
+	Debug.Log("guid: "..tostring(guid).. "sdbId: "..tostring(sdbId).. "quantity: "..quantity);
+
 	-- Increment the quantity if this item is already here
 	local has = false;
 	for _, data in pairs(reviewQueue) do
@@ -860,11 +882,11 @@ function AddToReviewQueue(guid, sdbId, quantity)
 		table.insert(reviewQueue, {item_guid=guid, item_sdb_id=sdbId, quantity=quantity or 1});
 	end
 
-	Component.SaveSetting("reviewQueue", reviewQueue);
+	Component.SaveSetting("reviewQueue_"..playerID, reviewQueue);
 end
 
 function LoadReviewQueue()
-	reviewQueue = Component.GetSetting("reviewQueue") or {};
+	reviewQueue = Component.GetSetting("reviewQueue_"..playerID) or {};
 end
 
 function TableHasValue(tbl, id)
@@ -967,4 +989,30 @@ end
 
 function GetCachedZoneList()
 	return Component.LoadSetting("zone_list");
+end
+
+function IsActiveForChar()
+	if playerID == nil then
+		return;
+	end
+	
+	local chars = FiltersData and FiltersData.characters or false;
+
+	local isActive = chars and chars[tostring(playerID)]
+
+	Print("IsActiveForChar: "..tostring(isActive).." playerID: "..playerID);
+	log("IsActiveForChar: "..playerID);
+
+	return isActive;
+end
+
+function ToggleActiveForChar(button)
+	if not FiltersData.characters then
+		FiltersData.characters = {};
+	end
+
+	FiltersData.characters[tostring(playerID)] = not IsActiveForChar();
+
+	Ui.UpdateActiveCharButton();
+	SaveActiveFilterSet();
 end
