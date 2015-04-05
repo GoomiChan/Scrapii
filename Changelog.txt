@@ -1,3 +1,13 @@
+V 1.7
+--------------------------
+- Added multiple character support
+	- Each filter set can be toggled on and off for each character, this will prevent Scrapii eating the NPE rewards when you swap to a new character :>
+	- The review queue is now stored per character as well (note the profits are still global and totaled from all characters)
+	- The first time you login with Scrapii your old review queue will be migrated to the current character
+
+- Swapped to using Lokii for the localization support (easier to add new languages,(Seeing that Firefall will be adding Chinese and Russian soon if anyone wants to contribute translations for those that would be great, as well as updates to the French and German))
+- Some small UI tweaks.
+
 V 1.6
 --------------------------
 - Added Operation Miru to the salvage zones list.

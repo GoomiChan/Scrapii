@@ -200,6 +200,18 @@ function Ui.SetActiveFilterSet(active)
 	Private.FilterSets:SetSelectedByValue(active);
 end
 
+--[[function AlignWidgetHorz(widgetarr, align, padding)
+	local lastpos = (align == "left") and widgetarr[1]:GetDims(true).left.offset or widgetarr[1]:GetDims(true).right.offset;
+	Print(tostring(widgetarr[1]:GetDims()));
+
+	for i, widget in ipairs(widgetarr) do
+		local width = widget:GetBounds().width;
+
+		lastpos = lastpos + width + padding;
+		widget:MoveTo(align..":"..lastpos..";", 0);
+	end
+end]]
+
 -- Private functions
 function Private.CreateWidgets()
     --
@@ -219,6 +231,7 @@ function Private.CreateWidgets()
     
     Private.AddFilterButton = Button.Create(Component.GetWidget("AddFilterButton"));
     Private.AddFilterButton:SetText(Lokii.GetString("ADD_FILTER"));
+    --Private.AddFilterButton:Autosize("right");
 	Private.AddFilterButton:Bind(function()
 		Private.SetAddFilterData(DEFAULT_FILTER_DATA);
 		Private.OpenPopUp(Private.AddFilterPopUp.Window);
@@ -227,15 +240,24 @@ function Private.CreateWidgets()
     
     Private.TestFilterButton = Button.Create(Component.GetWidget("TestFilterButton"));
     Private.TestFilterButton:SetText(Lokii.GetString("TEST_FILTER"));
+    --Private.TestFilterButton:Autosize("right");
 	Private.TestFilterButton:Bind(function()
 		TestFilters();
 	end);
 
 	Private.OpenReviewButton = Button.Create(Component.GetWidget("ReviewListButton"));
     Private.OpenReviewButton:SetText(Lokii.GetString("OPEN_REVIEW_LIST"));
+    --Private.OpenReviewButton:Autosize("right");
 	Private.OpenReviewButton:Bind(function()
 		LoadReviewList();
 	end);
+
+	--[[AlignWidgetHorz(
+	{
+		Private.OpenReviewButton:GetWidget(),
+		Private.TestFilterButton:GetWidget(),
+		Private.AddFilterButton:GetWidget()
+	}, "left", 5);]]
     
     -- Filter list
     Private.FilterList = RowScroller.Create(Const.FILTER_LIST_WIDGET);
@@ -270,7 +292,7 @@ function Private.CreateWidgets()
 	
 	Private.FilterSets = DropDownList.Create(Const.FILTER_SETS);
 	Private.FilterSets:BindOnSelect(SetActiveFilterSet);
-	
+
 	Private.FilterSetRemove = Button.Create(Const.FILTER_SET_REMOVE);
 	Private.FilterSetRemove:SetText("X");
 	Private.FilterSetRemove:TintPlate(Button.DEFAULT_RED_COLOR);
