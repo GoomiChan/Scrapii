@@ -449,8 +449,8 @@ function Private.CreateFilterRow(id, data)
 	local OpenContextMenu = function()
 	    row.ContextMenu = ContextMenu.Create();	
         row.ContextMenu:SetTitle(Lokii.GetString("FILTER_OPTIONS"));
-        row.ContextMenu:AddButton({id = Const.CONTEXT_IDS.EDIT, label_key = "EDIT_FILTER"});
-		row.ContextMenu:AddButton({id = Const.CONTEXT_IDS.DELETE, label_key = "DELETE_FILTER"});
+        row.ContextMenu:AddButton({id = Const.CONTEXT_IDS.EDIT, label = Lokii.GetString("EDIT_FILTER")});
+		row.ContextMenu:AddButton({id = Const.CONTEXT_IDS.DELETE, label = Lokii.GetString("DELETE_FILTER")});
 		
 		row.ContextMenu:BindOnSelect(function(args)
 			if (args.id == Const.CONTEXT_IDS.EDIT) then
@@ -719,7 +719,7 @@ function Private.OpenReviewPopUp()
 end
 
 function Private.AddToReviewUI(guid, sdbId, quanity, isReview)
-	local itemInfo = Game.GetItemInfoByType(sdbId);
+	local itemInfo = (guid ~= nil) and Player.GetItemInfo(guid) or Game.GetItemInfoByType(sdbId);
     local widget = Component.CreateWidget("ReviewLine", Const.REVIEW_LIST_FOSTERING); 	
     local row = Private.ReviewList:AddRow(widget);
 	local alpha = 0.2;
@@ -769,9 +769,10 @@ function Private.AddToReviewUI(guid, sdbId, quanity, isReview)
 	end
 	widget:GetChild("level"):SetText(level);
 
-	local nameStr = unicode.format("%s x %i", itemInfo.name, quanity);
-    widget:GetChild("text"):SetText(nameStr);
-	widget:GetChild("text"):SetTextColor(Component.LookupColor(itemInfo.rarity or itemInfo.refined.rarity or "white"));
+	local TF = LIB_ITEMS.GetNameTextFormat(itemInfo, {rarity = itemInfo.rarity});
+	TF:AppendText(unicode.format(" x %i", quanity))
+	TF:ApplyTo(widget:GetChild("text"));
+
 	--bg:SetParam("tint", Component.LookupColor(LIB_ITEMS.GetItemColor(itemInfo)));
 
 	row.checkBox = CheckBox.Create(widget:GetChild("checkbox"));

@@ -285,13 +285,11 @@ function PRIVATE.RecurseWidget(widget)
 	if widget:GetType() == "Text" then
 		local tagKey = widget:GetTag();
 
-		--log(tagKey:sub(1, #PRIVATE.TAG_IS_KEY_MARKER));
 		if tagKey and tagKey ~= "" and tagKey:sub(1, #PRIVATE.TAG_IS_KEY_MARKER) == PRIVATE.TAG_IS_KEY_MARKER then
 			local key = tagKey:sub(#PRIVATE.TAG_IS_KEY_MARKER+1);
 			local text = Lokii.GetString(key);
 
 			widget:SetText(text);
-			log("key: "..key.." Text: "..text);
 		end
 	end
 

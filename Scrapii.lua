@@ -138,6 +138,7 @@ function OnComponentLoad(args)
 	LIB_SLASH.BindCallback({slash_list="srl,review", description="", func=OnSlashOpenReview});
 	LIB_SLASH.BindCallback({slash_list="stest", description="", func=OnItemTest});
 	LIB_SLASH.BindCallback({slash_list="stest2", description="", func=OnItemTest2});
+	LIB_SLASH.BindCallback({slash_list="stest3", description="", func=OnItemTest2});
 end
 
 function OnPlayerReady(args)
@@ -168,7 +169,8 @@ function OnInventoryEntryChange(args)
 		if (id == tostring(args.sdb_id)) then
 			Debug.Log("================== OnInventoryEntryChange ================");
 			Debug.Log("SDB ID: ".. tostring(args.sdb_id).." GUID: ".. tostring(args.guid));
-			local itemInfo = Game.GetItemInfoByType(args.sdb_id);
+			--local itemInfo = Game.GetItemInfoByType(args.sdb_id);
+			local itemInfo = (args.guid ~= nil) and Player.GetItemInfo(args.guid) or Game.GetItemInfoByType(args.sdb_id);
 			itemInfo.item_sdb_id = args.sdb_id;
 			itemInfo.lootArgs = {quantity = val.quantity};
 			PreformFilterAction(val.filterData, itemInfo, args.guid);
@@ -313,6 +315,12 @@ function OnItemTest2(args)
 	Print("-----------------------------------");
 end
 
+function OnItemTest2(args)
+	local itemInfo = (args[1] == "1") and Game.GetItemInfoByType(114506) or Player.GetItemInfo(1465114817766559229)
+
+	CreateHudNote(itemInfo)
+end
+
 function OnClose(args)
     Ui.Show(false);
 end
@@ -447,7 +455,7 @@ end
 function SalvageSelected(isTest)
 	if (#finalisedQueue > 0) 	then
 		Ui.ShowDialog({
-			body = Component.LookupText("SALVAGE_ARE_SURE"):format(#finalisedQueue),
+			body = Lokii.GetString("SALVAGE_ARE_SURE"):format(#finalisedQueue),
 			onYes = function()
 
 				isSalvageing = true;
@@ -475,7 +483,7 @@ end
 function KeepSelected()
 	if (#finalisedQueue > 0) 	then
 		Ui.ShowDialog({
-			body = Component.LookupText("KEEP_ARE_SURE"):format(#finalisedQueue),
+			body = Lokii.GetString("KEEP_ARE_SURE"):format(#finalisedQueue),
 			onYes = function()
 
 				RemoveSelectedFromReview();
@@ -525,7 +533,7 @@ function AddNewFilterSet(name)
 		table.insert(filterSets, name);
 		Component.SaveSetting("filterSets", filterSets);
 	else
-		Print(Component.LookupText("FILTER_SET_EXISTS"):format(name));
+		Print(Lokii.GetString("FILTER_SET_EXISTS"):format(name));
 		System.PlaySound(Const.SND.ERROR);
 	end
 end
@@ -534,7 +542,7 @@ function DeleteFilterSet()
 	Debug.Log(tostring(#filterSets));
 	
 	if filterSets and #filterSets == 1 then
-		Print(Component.LookupText("FILTER_SET_NO_DELETE"));
+		Print(Lokii.GetString("FILTER_SET_NO_DELETE"));
 		System.PlaySound(Const.SND.ERROR);
 	else
 		for id, value in pairs(filterSets) do
@@ -663,6 +671,8 @@ function MatchsFilter(filter, itemInfo)
 			end
 		end
 	end
+
+	Debug.Log("Failed: "..itemInfo.itemTypeId);
 end
 
 function CheckWhen(filter, itemInfo)
@@ -749,7 +759,8 @@ end
 -- Move to ui?
 function CreateHudNote(itemInfo)
 	local HUDNOTE = HudNote.Create()
-	HUDNOTE:SetTitle(Component.LookupText("WINDOW_TITE"))
+	local subtitle = unicode.format("[%s] %s", itemInfo.rarity, itemInfo.name)
+	HUDNOTE:SetTitle(Lokii.GetString("WINDOW_TITE"), subtitle)
 	--HUDNOTE:SetDescription("("..itemInfo.lootArgs.quantity.."x) ".. itemInfo.name .. "\n" .. itemInfo.description)
 
 	local GRP = {GROUP=Component.CreateWidget("PromptBody", Const.REVIEW_LIST_FOSTERING)}
@@ -766,10 +777,10 @@ function CreateHudNote(itemInfo)
 	HUDNOTE:SetBodyHeight(bounds.height + 22)
 	HUDNOTE:SetTags({"scrapii"})
 
-	HUDNOTE:SetPrompt(1, Component.LookupText("DONT_SALVAGE"), function()
+	HUDNOTE:SetPrompt(1, Lokii.GetString("DONT_SALVAGE"), function()
 			OnsalvagePromptResponce(false, HUDNOTE, GRP, itemInfo);
 		end, itemInfo)
-	HUDNOTE:SetPrompt(2, Component.LookupText("SALVAGE"), function()
+	HUDNOTE:SetPrompt(2, Lokii.GetString("SALVAGE"), function()
 			OnsalvagePromptResponce(true, HUDNOTE, GRP, itemInfo);
 		end, itemInfo)
 

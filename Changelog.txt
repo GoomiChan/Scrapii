@@ -7,6 +7,9 @@ V 1.7
 
 - Swapped to using Lokii for the localization support (easier to add new languages,(Seeing that Firefall will be adding Chinese and Russian soon if anyone wants to contribute translations for those that would be great, as well as updates to the French and German))
 - Some small UI tweaks.
+- Fixed an issue where the review list would break when trying to salvage an item with a guid with a quantity of more than one.
+- Prompts and the review list will now properly show a weapons full name including the prefix.
+- Prompts now show the rarity and items name in the center screen flash instead of jsut "- Scrapii -".
 
 V 1.6
 --------------------------

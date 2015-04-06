@@ -133,7 +133,7 @@ xsi:schemaLocation="http://www.red5studios.com/ ../../../../schemas/component.xs
         
         <BluePrint name="RowField" instantiable="true">
             <StillArt name="bg" dimensions="dock:fill" style="texture:colors; tint:#ff000000; region:white; alpha:0.2;"/>
-            <Text    name="text"   tag="$WINDOW_TITE"  dimensions="dock:fill" class="FilterRowText" />
+            <Text    name="text" dimensions="dock:fill" class="FilterRowText" />
         </BluePrint>
         
         <BluePrint name="ListRow" instantiable="true">
@@ -144,7 +144,7 @@ xsi:schemaLocation="http://www.red5studios.com/ ../../../../schemas/component.xs
 		
 		<BluePrint name="AddFilterHeader" instantiable="true">
             <Border dimensions="dock:fill;" class="RoundedBorders" style="padding:6; tint:#27333F; alpha:1;" />
-            <Text    name="text"   tag="$WINDOW_TITE"  dimensions="dock:fill" class="AddFilterText" />
+            <Text    name="text"   dimensions="dock:fill" class="AddFilterText" />
         </BluePrint>
 		
 		<!-- Positioned in Lua to match with text -->
