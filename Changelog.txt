@@ -1,4 +1,4 @@
-V 1.7
+V 1.8
 --------------------------
 - Added multiple character support
 	- Each filter set can be toggled on and off for each character, this will prevent Scrapii eating the NPE rewards when you swap to a new character :>
@@ -13,6 +13,11 @@ V 1.7
 - Made the "zones to salvaging in" feature more future proof, if R5 add new zones then Scrapii is self update after the first load (that is after you first login do a "/rui" and they should be in the list).
 - Swapped over to the new lib_ContexualMenu for shiny context menus!
 - Fixed an issue that could prevent new filters being added to a filterset.
+
+V 1.7
+--------------------------
+- Added The Amazon to the zone list.
+- Fixed the select all check box not selecting all.
 
 V 1.6
 --------------------------
