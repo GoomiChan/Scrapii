@@ -335,8 +335,13 @@ function CreateNewFilter(data)
 		FiltersData = {};
 	end
 	
-    table.insert(FiltersData, data);
+    --table.insert(FiltersData, data);
+    local idx = GetFiltersCount(FiltersData)
+    FiltersData[tostring(idx)] = data
 	SaveActiveFilterSet();
+	Debug.Log("#FiltersData: ", idx)
+	Debug.Log(unicode.format("Added new filter to filter set %s: %s", activeFilterSet, tostring(data) or "no data"))
+	Debug.Table(FiltersData)
 	Ui.AddFilterRow(#FiltersData, data);
 end
 
@@ -372,7 +377,7 @@ function TestFilters()
 	
 	for id, data in pairs(resources) do
 		data.refined.itemTypeId = data.refined.item_sdb_id;
-		if (	(data.refined)) then
+		if (data.refined and CheckAgainstFilters(Game.GetItemInfoByType(data.refined.itemTypeId))) then
 			FilteredItems[GetItemNameId(data)] = 
 			{
 				sdb_id = data.refined.itemTypeId
@@ -382,7 +387,7 @@ function TestFilters()
 
 	local count = 0;
 	for id, data in pairs(FilteredItems) do
-		Ui.AddToReviewList(data.item_id, data.sdb_id, 1, true);
+		Ui.AddToReviewList(data.item_id, data.sdb_id, (data.sdb_id) ~= nil and Player.GetItemCount(data.sdb_id) or 1, true);
 
 		count = count +1;
 	end
@@ -1049,6 +1054,8 @@ function GetCachedZoneList()
 	return Component.GetSetting("zone_list");
 end
 
+-- I know this is a messy way to do it but I don't want to have to migrate from the old format to a newer one so hacky it is for now
+-- maybe if it payed
 function IsActiveForChar()
 	if playerID == nil then
 		return;
@@ -1068,4 +1075,16 @@ function ToggleActiveForChar()
 
 	Ui.UpdateActiveCharButton();
 	SaveActiveFilterSet();
+end
+
+function GetFiltersCount(tbl) -- ;^;
+	local idx = 0
+
+	for key,_ in pairs(tbl) do
+		if key ~= "characters" then
+			idx = idx + 1
+		end
+	end
+
+	return idx
 end

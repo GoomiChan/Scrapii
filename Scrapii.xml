@@ -237,9 +237,9 @@ xsi:schemaLocation="http://www.red5studios.com/ ../../../../schemas/component.xs
 								
 								<Group dimensions="left:5; bottom:100%-12; height:22; width:100">
 									<Group id="includeArchtype" dimensions="left:3; top:3; height:20; width:20" />
-									<Text tag="$INCLUDE_ARCHTYPE" dimensions="left:22; top:3; height:20; width:20" class="FilterRowText">
-										<Text tag="$FILTER_SETS" dimensions="left:100%+5; center-y:50%; height:20; width:10" class="FilterRowText">
-											<Group id="filterSets" dimensions="left:100%+5; center-y:50%; height:24; width:140">
+									<Text tag="$INCLUDE_ARCHTYPE" dimensions="left:28; top:3; height:20; width:20" class="FilterRowText">
+										<Text tag="$FILTER_SETS" dimensions="left:100%+10; center-y:50%; height:20; width:10" class="FilterRowText">
+											<Group id="filterSets" dimensions="left:100%; center-y:50%; height:24; width:140">
 												<Group id="filterSetRemove" dimensions="left:100%+5; center-y:50%; height:24; width:24">
 												    <Group id="ActiveForThisFrame" dimensions="left:100%+5; top:0; height:24; width:210">
 

@@ -404,11 +404,6 @@ function Private.CreateFilterRow(id, data)
 	formatedData.type = Lokii.GetString(data.typeName);
 	formatedData.frame = Lokii.GetString(data.frame);
 
-	-- TODO: Come back and investigate!
-	-- A random bad new row seems to get added to default.
-	Debug.Log(tostring(data));
-
-	--formatedData.levelRange = "Nyaa~";
 	formatedData.levelRange = unicode.format("%s %s %s %s", Lokii.GetString("FROM"), data.levelFrom, Lokii.GetString("TO"), data.levelTo);
 	formatedData.color = Lokii.GetString(data.color);
 	
