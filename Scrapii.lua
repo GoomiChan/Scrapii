@@ -8,7 +8,7 @@ require "unicode";
 require "lib/lib_MovablePanel";
 require "lib/lib_Button";
 require "lib/lib_RowScroller";
-require "lib/lib_ContextMenu";
+require "lib/lib_ContextualMenu";
 require "lib/lib_RoundedPopupWindow";
 require "lib/lib_DropDownList";
 require "lib/lib_Slider";

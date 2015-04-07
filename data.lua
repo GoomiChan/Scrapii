@@ -243,10 +243,6 @@ DEFAULT_FILTER_DATA =
 
 ZONES = 
 {
-	--[[
-		zone_id = 12, 
-		title = "Nothing"
-	}, ]]
 	{
 		zone_id = 162, 
 		title = "Devil's Tusk"

@@ -39,12 +39,6 @@ Const =
 	REVIEW_LIST_SALVAGE_SELECTED = Component.GetWidget("RP_SavlageSelected"),
 	REVIEW_LIST_KEEP_SELECTED = Component.GetWidget("RP_KeepSelected"),
 	ACTIVE_FOR_FRAME = Component.GetWidget("ActiveForThisFrame"),
-
-	CONTEXT_IDS = 
-	{
-		EDIT = 0,
-		DELETE = 1
-	},
 	
 	SND = 
 	{
@@ -447,19 +441,11 @@ function Private.CreateFilterRow(id, data)
     
     -- Setup the context menu
 	local OpenContextMenu = function()
-	    row.ContextMenu = ContextMenu.Create();	
-        row.ContextMenu:SetTitle(Lokii.GetString("FILTER_OPTIONS"));
-        row.ContextMenu:AddButton({id = Const.CONTEXT_IDS.EDIT, label = Lokii.GetString("EDIT_FILTER")});
-		row.ContextMenu:AddButton({id = Const.CONTEXT_IDS.DELETE, label = Lokii.GetString("DELETE_FILTER")});
-		
-		row.ContextMenu:BindOnSelect(function(args)
-			if (args.id == Const.CONTEXT_IDS.EDIT) then
-				Private.EditFilter(row);
-			elseif (args.id == Const.CONTEXT_IDS.DELETE) then
-				Private.DeleteFilter(row);
-			end
-		end);
-        row.ContextMenu:Show();
+		row.ContextMenu = ContextualMenu.Create()
+		row.ContextMenu:AddLabel({label=Lokii.GetString("FILTER_OPTIONS")})
+		row.ContextMenu:AddButton({label=Lokii.GetString("EDIT_FILTER")}, function(args) Private.EditFilter(row); end)
+		row.ContextMenu:AddButton({label=Lokii.GetString("DELETE_FILTER")}, function(args) Private.DeleteFilter(row); end)
+		row.ContextMenu:Show()
 	end
     focus:BindEvent("OnRightMouse", OpenContextMenu);
 	focus:BindEvent("OnMouseDown",  OpenContextMenu);
