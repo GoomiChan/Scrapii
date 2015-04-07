@@ -337,6 +337,11 @@ ZONES =
 	}
 };
 
+ZONES_TO_INGORE =
+{
+	["12"] = true
+};
+
 HEADER_LOOKUP = 
 {
 	FLT_TYPE = "typeName",

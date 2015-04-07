@@ -974,6 +974,36 @@ function GenerateSuportedZonesList()
 		zones[zone.zone_id] = true
 	end
 
+	-- Try add any cached zones
+	local cachedZones = GetCachedZoneList()
+	if cachedZones then
+		for _, zone in ipairs(cachedZones) do
+			if not zones[zone.zone_id] and ZONES_TO_INGORE[tostring(zone.zone_id)] == nil then
+				zones[zone.zone_id] = true
+			end
+		end
+	end
+
+	return zones
+end
+
+function GenrateDetailedZoneList()
+	local zones = {}
+
+	for _, zone in ipairs(ZONES) do
+		zones[zone.zone_id] = zone
+	end
+
+	-- Try add any cached zones
+	local cachedZones = GetCachedZoneList()
+	if cachedZones then
+		for _, zone in ipairs(cachedZones) do
+			if not zones[zone.zone_id] and ZONES_TO_INGORE[tostring(zone.zone_id)] == nil then
+				zones[zone.zone_id] = zone
+			end
+		end
+	end
+
 	return zones
 end
 
@@ -981,6 +1011,8 @@ function GetZoneList()
 	local SuportedZones = GenerateSuportedZonesList()
 
 	HTTP.IssueRequest(System.GetOperatorSetting("ingame_host").."/api/v1/social/static_data.json", "GET", nil, function (args, err)
+		CacheZoneList(args.zones)
+
 		--Update the labels in the UI options, these should be localised
 		for _,val in pairs(args.zones) do
 			if SuportedZones[val.zone_id] then
@@ -1014,7 +1046,7 @@ function CacheZoneList(zones)
 end
 
 function GetCachedZoneList()
-	return Component.LoadSetting("zone_list");
+	return Component.GetSetting("zone_list");
 end
 
 function IsActiveForChar()

@@ -902,7 +902,8 @@ function Private.CreateUiOptions()
 	
 	InterfaceOptions.AddCheckBox({id="salvageInNullZones", label=Lokii.GetString("NULL_ZONES"), tooltip=Lokii.GetString("NULL_ZONES_TT"), default=uiOpts.salvageInNullZones});
 	InterfaceOptions.StartGroup({id="zonesGrp", label=Lokii.GetString("ACTIVE_ZONE_TITLE"), checkbox=true, default=true});
-	for _,val in pairs(ZONES) do
+
+	for _,val in pairs(GenrateDetailedZoneList()) do
 		InterfaceOptions.AddCheckBox({id="zone_"..val.zone_id, label=val.title, default=true});
 	end
 	InterfaceOptions.StopGroup()
