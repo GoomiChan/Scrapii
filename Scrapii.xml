@@ -133,7 +133,7 @@ xsi:schemaLocation="http://www.red5studios.com/ ../../../../schemas/component.xs
         
         <BluePrint name="RowField" instantiable="true">
             <StillArt name="bg" dimensions="dock:fill" style="texture:colors; tint:#ff000000; region:white; alpha:0.2;"/>
-            <Text    name="text" dimensions="dock:fill" class="FilterRowText" />
+            <Text    name="text" dimensions="left:2; width:100%-2; top:0; height:100%;" class="FilterRowText" />
         </BluePrint>
         
         <BluePrint name="ListRow" instantiable="true">
@@ -232,7 +232,7 @@ xsi:schemaLocation="http://www.red5studios.com/ ../../../../schemas/component.xs
                     <Group dimensions="left:0; top:40; height:100%; width:100%">
                         <!-- Header -->
                          <Group dimensions="left:0; top:0; height:60; width:100%" blueprint="">
-                            <Group dimensions="left:0; top:0; height:100%; width:60%-1;" blueprint="Panel">
+                            <Group id="GlobalSettingsHeaderCont" dimensions="left:0; top:0; height:100%; width:60%-1;" blueprint="Panel">
                                 <Group id="GlobalSettingsHeader" dimensions="left:0; top:1; height:20; width:100%" blueprint="Header" />
 								
 								<Group dimensions="left:5; bottom:100%-12; height:22; width:100">
@@ -252,7 +252,7 @@ xsi:schemaLocation="http://www.red5studios.com/ ../../../../schemas/component.xs
 								
                             </Group>
                             
-                            <Group name="Buttons" dimensions="left:60%+1; top:0; height:100%; width:40%;" blueprint="Panel">
+                            <Group id="ButtonsHeaderCont" name="Buttons" dimensions="left:60%+1; top:0; height:100%; width:40%;" blueprint="Panel">
                                 <Group id="ButtonsHeader" dimensions="left:0; top:1; height:20; width:100%" blueprint="Header"/>
 
                                 <!-- <Group id="ReviewListButton" dimensions="right:100%+5; bottom:100%-5; height:24; width:120">
@@ -263,15 +263,17 @@ xsi:schemaLocation="http://www.red5studios.com/ ../../../../schemas/component.xs
                                     </Group>
                                 </Group> -->
 
-                                <Group id="AddFilterButton" dimensions="right:100%-5; bottom:100%-5; height:24; width:130"/>
-                                <Group id="TestFilterButton" dimensions="right:100%-140; bottom:100%-5; height:24; width:130"/>
-                                <Group id="ReviewListButton" dimensions="right:100%-275; bottom:100%-5; height:24; width:130"/>
-                                
+                                <Group id="ButtonsGroup" dimensions="right:100%-10; bottom:100%-5; height:24; width:400">
+                                    <Group id="AddFilterButton" dimensions="left:0; bottom:100%-5; height:24; width:130"/>
+                                    <Group id="TestFilterButton" dimensions="left:140; bottom:100%-5; height:24; width:130"/>
+                                    <Group id="ReviewListButton" dimensions="left:275; bottom:100%-5; height:24; width:130"/>
+                                </Group>
+                                    
                             </Group>
                         </Group>
                         <!-- Header -->
                         
-                        <Group dimensions="left:0; top:62; height:100%; width:100%" blueprint="Panel">
+                        <Group id="Filters" dimensions="left:0; top:62; height:100%; width:100%" blueprint="Panel">
                         <!-- Filters -->
                             <Group id="FiltersHeaders" dimensions="left:2; top:2; height:24; width:100%-22" blueprint="FilterRow"/>
                             
@@ -300,7 +302,7 @@ xsi:schemaLocation="http://www.red5studios.com/ ../../../../schemas/component.xs
                                 </Group>
                              </Group>
 
-                            <Group dimensions="right:100%; top:0; bottom:100%; width:300">
+                            <Group dimensions="right:100%-15; top:0; bottom:100%; width:300">
                                 <FocusBox id="ProfitFocus" dimensions="dock:fill" style="eatsmice:true;"/>
 								<StillArt name="cy_icon" dimensions="right:100%-12; center-y:50%; width:19; height:19;" style="texture:currency_new; region:crystite_32">
 									<Text id="cy_text" dimensions="right:100%-24; width:10; top:0; bottom:100%" style="font:Demi_9; halign:right; valign:center">
@@ -313,6 +315,8 @@ xsi:schemaLocation="http://www.red5studios.com/ ../../../../schemas/component.xs
 								</StillArt>
                             </Group>
                             <!-- Profits -->
+
+                            <Group id="ResizableParent" dimensions="bottom:100%; height:15; right:100%; width:15" style="depth:5;"/>
                         </Group>
                         <!-- Footer -->
                         </Group>

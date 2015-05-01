@@ -7,12 +7,14 @@ V 1.8
 
 - Swapped to using Lokii for the localization support (easier to add new languages,(Seeing that Firefall will be adding Chinese and Russian soon if anyone wants to contribute translations for those that would be great, as well as updates to the French and German))
 - Some small UI tweaks.
-- Fixed an issue where the review list would break when trying to salvage an item with a guid with a quantity of more than one.
+- Fixed an issue where the review list would break when trying to salvage an item with a guid with a quantity of more than one (for real this time, I hope).
 - Prompts and the review list will now properly show a weapons full name including the prefix.
 - Prompts now show the rarity and items name in the center screen flash instead of just "- Scrapii -".
-- Made the "zones to salvaging in" feature more future proof, if R5 add new zones then Scrapii is self update after the first load (that is after you first login do a "/rui" and they should be in the list).
+- Made the "zones to salvaging in" feature more future proof, if R5 add new zones then Scrapii will self update after the first load (that is after you first login do a "/rui" and they should be in the list).
 - Swapped over to the new lib_ContexualMenu for shiny context menus!
 - Fixed an issue that could prevent new filters being added to a filterset.
+- Made the main window resizeable.
+- Added better small screen support.
 
 V 1.7
 --------------------------

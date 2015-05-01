@@ -6,6 +6,7 @@ Ui = {}; -- Public object
 Const = 
 {
 	MAXLEVEL = 40,
+	SMALL_SCREEN_LIMIT = 1120,
     MAIN = Component.GetFrame("Main"),
     WINDOW = Component.GetWidget("Window"),
     MOVABLE_PARENT = Component.GetWidget("MovableParent"),
@@ -39,7 +40,12 @@ Const =
 	REVIEW_LIST_SALVAGE_SELECTED = Component.GetWidget("RP_SavlageSelected"),
 	REVIEW_LIST_KEEP_SELECTED = Component.GetWidget("RP_KeepSelected"),
 	ACTIVE_FOR_FRAME = Component.GetWidget("ActiveForThisFrame"),
-	
+	RESIZEABLE_PARENT = Component.GetWidget("ResizableParent"),
+	GLOBAL_SETTINGS_HEADER_CONT = Component.GetWidget("GlobalSettingsHeaderCont"),
+	BUTTONS_HEADER_CONT = Component.GetWidget("ButtonsHeaderCont"),
+	FILTERS = Component.GetWidget("Filters"),
+	BUTTONS_GROUP = Component.GetWidget("ButtonsGroup"),
+
 	SND = 
 	{
 		OPEN_POPUP = "Play_SFX_UI_TipPopUp",
@@ -71,14 +77,21 @@ local Private = -- Private object, easier to keep track of important vars like t
 	ReviewListIsTest = false,
 	ReviewListCheckall = nil,
 	FilterSets = nil,
-	FilterSetRemove = nil
+	FilterSetRemove = nil,
+	IsInSmallScreenMode = false
 };
 
 -- Public functions
 function Ui.Init()
     MovablePanel.ConfigFrame({
 		frame = Const.MAIN,
-		MOVABLE_PARENT = Const.MOVABLE_PARENT
+		MOVABLE_PARENT = Const.MOVABLE_PARENT,
+		RESIZABLE_PARENT = Const.RESIZEABLE_PARENT,
+		min_height = 420,
+		min_width = 670,
+		step_height = 1,
+		step_width = 10,
+		OnResize = Private.OnMainWindowRezise
 	});
 	
 	Const.MAXLEVEL = #Game.GetProgressionUnlocks();
@@ -695,6 +708,35 @@ function Private.OnReviewWindowRezise()
 	Private.ReviewList:UpdateSize();
 end
 
+-- aka Choob mode :3
+function Private.OnMainWindowRezise()
+	local dims = Const.MAIN:GetBounds()
+	local width = dims.width
+
+	local isSmall = false
+	if width < Const.SMALL_SCREEN_LIMIT then
+		isSmall = true
+	elseif width > Const.SMALL_SCREEN_LIMIT then
+		isSmall = false
+	end
+
+	if isSmall and not Private.IsInSmallScreenMode then
+		Const.GLOBAL_SETTINGS_HEADER_CONT:MoveTo("left:_; top:_; height:_; width:100%;", 0.5)
+		Const.BUTTONS_HEADER_CONT:MoveTo("left:0; top:62; height:_; width:100%;", 0.5)
+		Const.FILTERS:MoveTo("left:0; top:124; height:100%; width:100%", 0.5)
+		Const.BUTTONS_GROUP:MoveTo("left:5; top:_; height:_; width:_;", 0.5)
+		Debug.Log("Entered small mode")
+	elseif not isSmall and Private.IsInSmallScreenMode then
+		Const.GLOBAL_SETTINGS_HEADER_CONT:MoveTo("left:_; top:_; height:_; width:60%-1;", 0.5)
+		Const.BUTTONS_HEADER_CONT:MoveTo("left:60%+1; top:0; height:_; width:40%;", 0.5)
+		Const.FILTERS:MoveTo("left:0; top:62; height:100%; width:100%", 0.5)
+		Const.BUTTONS_GROUP:MoveTo("right:100%-10; top:_; height:_; width:_;", 0.5)
+		Debug.Log("Entered large mode")
+	end
+
+	Private.IsInSmallScreenMode = isSmall
+end
+
 function Private.OpenReviewPopUp()
     Const.REVIEW_POPUP:Show(true);
 end
@@ -740,7 +782,7 @@ function Private.AddToReviewUI(guid, sdbId, quanity, isReview)
     	row.checkBox:SetCheck(not row.checkBox:IsChecked() and (uiOpts.inventorySalvaging or not isReview));
     end);
 	
-	widget:GetChild("icon"):SetUrl(itemInfo.web_icon or System.GetOperatorSetting("ingame_host").."/assets/items/64/" .. itemInfo.icon .. ".png");
+	widget:GetChild("icon"):SetUrl(itemInfo.web_icon or System.GetOperatorSetting("ingame_host").."/assets/items/64/" .. itemInfo.icon or "" .. ".png");
 
 	local level = 0;
 	if (itemInfo.required_level == nil or itemInfo.required_level == 0) then

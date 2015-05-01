@@ -138,7 +138,8 @@ function OnComponentLoad(args)
 	LIB_SLASH.BindCallback({slash_list="srl,review", description="", func=OnSlashOpenReview});
 	LIB_SLASH.BindCallback({slash_list="stest", description="", func=OnItemTest});
 	LIB_SLASH.BindCallback({slash_list="stest2", description="", func=OnItemTest2});
-	LIB_SLASH.BindCallback({slash_list="stest3", description="", func=OnItemTest2});
+	LIB_SLASH.BindCallback({slash_list="stest3", description="", func=OnItemTest3});
+	LIB_SLASH.BindCallback({slash_list="stest4", description="", func=OnItemTest4});
 end
 
 function OnPlayerReady(args)
@@ -315,10 +316,14 @@ function OnItemTest2(args)
 	Print("-----------------------------------");
 end
 
-function OnItemTest2(args)
+function OnItemTest3(args)
 	local itemInfo = (args[1] == "1") and Game.GetItemInfoByType(114506) or Player.GetItemInfo(1465114817766559229)
 
 	CreateHudNote(itemInfo)
+end
+
+function OnItemTest4(args)
+	
 end
 
 function OnClose(args)
@@ -359,6 +364,7 @@ end
 
 function TestFilters()
 	local items, resources = Player.GetInventory();
+	local testReviewQ = {};
 	FilteredItems = {};
 
 	Ui.ClearReviewList();
@@ -367,27 +373,20 @@ function TestFilters()
 		itemInfo.item_sdb_id = data.item_sdb_id;
 
 		if (data.flags and not data.flags.is_equipped and CheckAgainstFilters(itemInfo)) then
-			FilteredItems[GetItemNameId(itemInfo)] = 
-			{
-				sdb_id = data.item_sdb_id,
-				item_id = data.item_id;
-			};
+			AddToReviewQueue(data.item_id, data.item_sdb_id, 1, testReviewQ)
 		end
 	end
 	
 	for id, data in pairs(resources) do
 		data.refined.itemTypeId = data.refined.item_sdb_id;
 		if (data.refined and CheckAgainstFilters(Game.GetItemInfoByType(data.refined.itemTypeId))) then
-			FilteredItems[GetItemNameId(data)] = 
-			{
-				sdb_id = data.refined.itemTypeId
-			};
+			AddToReviewQueue(nil, data.refined.itemTypeId, 1, testReviewQ)
 		end
 	end
 
 	local count = 0;
-	for id, data in pairs(FilteredItems) do
-		Ui.AddToReviewList(data.item_id, data.sdb_id, (data.sdb_id) ~= nil and Player.GetItemCount(data.sdb_id) or 1, true);
+	for id, data in ipairs(testReviewQ) do
+		Ui.AddToReviewList(data.item_guid, data.item_sdb_id, data.quantity, true);
 
 		count = count +1;
 	end
@@ -896,21 +895,23 @@ function SalvageAddToQueue(guid, sdbId, quantity)
 	end
 end
 
-function AddToReviewQueue(guid, sdbId, quantity)
+function AddToReviewQueue(guid, sdbId, quantity, testReviewQ)
 	--[[Debug.Log("Adding item to Review Queue. CID: "..playerID);
 	Debug.Log("guid: "..tostring(guid).. "sdbId: "..tostring(sdbId).. "quantity: "..quantity);]]
 
 	-- Increment the quantity if this item is already here
-	local has = false;
-	for _, data in pairs(reviewQueue) do
-		if ((guid and data.item_guid and data.item_guid == guid) or data.item_sdb_id == sdbId) then
-			data.quantity = data.quantity + (quantity or 1);
-			has = true;
+	if not guid then
+		local has = false;
+		for _, data in pairs(testReviewQ or reviewQueue) do
+			if data.item_sdb_id == sdbId then
+				data.quantity = data.quantity + (quantity or 1);
+				has = true;
+			end
 		end
 	end
 
 	if (not has) then
-		table.insert(reviewQueue, {item_guid=guid, item_sdb_id=sdbId, quantity=quantity or 1});
+		table.insert(testReviewQ or reviewQueue, {item_guid=guid, item_sdb_id=sdbId, quantity=quantity or 1});
 	end
 
 	Component.SaveSetting("reviewQueue_"..playerID, reviewQueue);
