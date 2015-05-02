@@ -911,6 +911,8 @@ end
 
 function Private.CreateUiOptions()
 	InterfaceOptions.AddCheckBox({id="enableDebug", label=Lokii.GetString("ENABLE_DEBUG"), default=uiOpts.enableDebug});
+	InterfaceOptions.AddCheckBox({id="enableDebugTimes", label=Lokii.GetString("ENABLE_DEBUG_TIMES"), default=uiOpts.debugLogTimes});
+
 	InterfaceOptions.AddCheckBox({id="printSummary", label=Lokii.GetString("PRINT_SUMMARY"), tooltip=Lokii.GetString("PRINT_SUMMARY_TT"), default=uiOpts.printSummary});
 	InterfaceOptions.AddCheckBox({id="processLoot", label=Lokii.GetString("PROCESS_LOOT"), tooltip=Lokii.GetString("PROCESS_LOOT_TT"), default=uiOpts.processLoot});
 	InterfaceOptions.AddCheckBox({id="processRewards", label=Lokii.GetString("PROCESS_REWARDS"), tooltip=Lokii.GetString("PROCESS_REWARDS_TT"), default=uiOpts.processRewards});
@@ -946,7 +948,7 @@ end
 
 function Private.UiCallbacks.enableDebug(val)
 	uiOpts.enableDebug = val;
-	Debug.EnableLogging(IsUserAuthor() or uiOpts.enableDebug);
+	Debug.EnableLogging(--[[IsUserAuthor() or ]]uiOpts.enableDebug);
 end
 
 function Private.UiCallbacks.printSummary(val)
@@ -976,4 +978,8 @@ end
 
 function Private.UiCallbacks.salvageInNullZones(val)
 	uiOpts.salvageInNullZones = val;
+end
+
+function Private.UiCallbacks.enableDebugTimes(val)
+	uiOpts.debugLogTimes = val;
 end

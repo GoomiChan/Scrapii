@@ -64,7 +64,8 @@ uiOpts =
 	processRewards = true,
 	inventorySalvaging = false,
 	activeZones = {}, -- A table of zone ids to salvage items in, format "id = bool", so it can be index checked
-	salvageInNullZones = false
+	salvageInNullZones = false,
+	debugLogTimes = true -- debug log how long actions take
 };
 
 -- Filter related configs
@@ -148,7 +149,7 @@ function OnPlayerReady(args)
 	playerID = Player.GetCharacterId();
 	
 	-- See Mavoc I do listen, sometimes
-	Debug.EnableLogging(IsUserAuthor() or uiOpts.enableDebug);
+	Debug.EnableLogging(--[[IsUserAuthor() or ]]uiOpts.enableDebug);
     UpdateInvWeight();
     Ui.UpdateActiveCharButton();
 
@@ -185,6 +186,8 @@ function OnLootCollected(args)
 		return;
 	end
 
+	DebugLogPrecisionTime("OnLootCollected", true)
+
     local itemTypeId = args.itemTypeId;
     local info = Game.GetItemInfoByType(itemTypeId);
 
@@ -197,6 +200,8 @@ function OnLootCollected(args)
 	    	AddToCheckList(itemTypeId, result, args.quantity);
 	    end
 	end
+
+	DebugLogPrecisionTime()
 end
 
 function OnsalvageResponce(args)
@@ -241,6 +246,8 @@ function OnEncounterReward(args)
 	Debug.Log(tostring(args));
 
 	if (uiOpts.processRewards) then
+		DebugLogPrecisionTime("OnEncounterReward", true)
+
 		for id, data in pairs(args.rewards) do
 			local itemTypeId = data.itemTypeId;
 		    local info = Game.GetItemInfoByType(itemTypeId);
@@ -255,11 +262,14 @@ function OnEncounterReward(args)
 			    end
 			end
 		end
+
+		DebugLogPrecisionTime()
 	end
 end
 
 function OnFeedTestItem(itemID)
 	Debug.Log("==== Test Item: "..itemID.. " ====");
+	DebugLogPrecisionTime("OnFeedTestItem", true)
 
 	local info = Game.GetItemInfoByType(itemID);
 	local result = CheckAgainstFilters(info);
@@ -275,6 +285,8 @@ function OnFeedTestItem(itemID)
 			guid = nil
 		});
     end
+
+    DebugLogPrecisionTime()
 end
 
 function OnEnterZone(args)
@@ -626,6 +638,8 @@ function CreateList()
 end
 
 function CheckAgainstFilters(itemInfo)
+	DebugLogPrecisionTime("CheckAgainstFilters start")
+
 	if IsActiveForZone() then
 		Debug.Log("ItemInfo:".. tostring(itemInfo));
 		Debug.Log("IsActiveForZone: true : "..itemInfo.itemTypeId);
@@ -633,6 +647,7 @@ function CheckAgainstFilters(itemInfo)
 		if IsActiveForChar() then
 			for id, data in pairs(FiltersData) do
 				if (MatchsFilter(data, itemInfo)) then
+					DebugLogPrecisionTime("CheckAgainstFilters end")
 					return data;
 				end
 			end
@@ -645,6 +660,7 @@ end
 
 function MatchsFilter(filter, itemInfo)
 	Debug.Log("========= Checking against filter =========");
+
 	-- Skip Equipped items, just in case
 	if ((itemInfo.dynamic_flags and itemInfo.dynamic_flags.is_equipped) or (itemInfo.flags and not itemInfo.flags.is_salvageable)) then
 		Debug.Log("MatchsFilter, earlyied out: "..itemInfo.itemTypeId);
@@ -654,20 +670,24 @@ function MatchsFilter(filter, itemInfo)
 	-- Early out if we can
 	if (CheckWhen(filter, itemInfo) ) then
 		Debug.Log("Passed, CheckWhen: "..itemInfo.itemTypeId);
-
+		DebugLogPrecisionTime("CheckWhen")
 		-- Check Type
 		local typeCheck = CheckType(filter, itemInfo);
 		if (typeCheck and typeCheck.res == true) then
 			Debug.Log("Passed, typeCheck: "..itemInfo.itemTypeId);
+			DebugLogPrecisionTime("typeCheck")
 
 			if (CheckFrame(filter, itemInfo) or typeCheck.skipFrameCheck) then
 				Debug.Log("Passed, CheckFrame: "..itemInfo.itemTypeId);
+				DebugLogPrecisionTime("CheckFrame")
 
 				if (CheckLevelRange(filter, itemInfo) or typeCheck.skipLevelCheck) then
 					Debug.Log("Passed, CheckLevelRange: "..itemInfo.itemTypeId);
+					DebugLogPrecisionTime("CheckLevelRange")
 
 					if (CheckRarity(filter, itemInfo) or typeCheck.skipRarityCheck) then
 						Debug.Log("Passed, CheckRarity: "..itemInfo.itemTypeId);
+						DebugLogPrecisionTime("CheckRarity")
 
 						return true;
 					end
@@ -1088,4 +1108,10 @@ function GetFiltersCount(tbl) -- ;^;
 	end
 
 	return idx
+end
+
+function DebugLogPrecisionTime(...)
+	if uiOpts.debugLogTimes then
+		System.LogPrecisionTime(unpack(arg))
+	end
 end

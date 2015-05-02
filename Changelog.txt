@@ -14,7 +14,8 @@ V 1.8
 - Swapped over to the new lib_ContexualMenu for shiny context menus!
 - Fixed an issue that could prevent new filters being added to a filterset.
 - Made the main window resizeable.
-- Added better small screen support.
+- Added better small screen support aka Choob mode.
+- Added option to debug filter execution times.
 
 V 1.7
 --------------------------

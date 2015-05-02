@@ -104,5 +104,7 @@ LANG =
 	NULL_ZONES				=	"Enable Salvaging in unknown zones",
 	NULL_ZONES_TT				=	"If checked then Scrapii will salvage items in zones that it doesn't know about, eg. if a new zone was added and A Scrapii patch has not been released yet, then check this to enable salvaging until it is patched",
 	ACTIVATE_FOR_CHAR				=	"Activate for this character",
-	DEACTIVATE_FOR_CHAR				=	"Deactivate for this character"
+	DEACTIVATE_FOR_CHAR				=	"Deactivate for this character",
+	ENABLE_DEBUG_TIMES				=	"Enable debug times",
+	ENABLE_DEBUG_TIMES_TT			=	"If enabled the time to execute an item filter check will be logged to the console, best used with debug off",
 }
