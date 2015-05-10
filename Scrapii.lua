@@ -85,8 +85,8 @@ filterSets = nil;
 playerID = nil;
 
 -- List of sdb ids that we are to salvage once the OnInventoryEntryChange event for them fires
---[[ format 
-"sdbid" = 
+--[[ format
+"sdbid" =
 {
 	quantity,
 	filterData
@@ -109,7 +109,7 @@ function OnComponentLoad(args)
 	GetZoneList();
 	LoadSalvageRewards();
     Ui.Init();
-	
+
 	-- Migrate data
 	local oldData = Component.GetSetting("FiltersData");
 	if oldData then
@@ -125,16 +125,16 @@ function OnComponentLoad(args)
 		AddNewFilterSet("Default");
 		SetActiveFilterSet("Default");
 	end
-	
+
 	Ui.UpdateProfitsTootip(salvageRewards);
 	FiltersData = Component.GetSetting("FiltersData") or {};
 	filterSets = Component.GetSetting("filterSets") or {};
 	Ui.UpdateFilterSets(filterSets, activeFilterSet);
 	Ui.SetActiveFilterSet(activeFilterSet);
-	
+
 	CreateList();
 	salvageCallBack:Bind(ProcessSalvageQueue);
-	
+
 	LIB_SLASH.BindCallback({slash_list="scrapii,scrap", description="", func=OnSlashOpen});
 	LIB_SLASH.BindCallback({slash_list="srl,review", description="", func=OnSlashOpenReview});
 	LIB_SLASH.BindCallback({slash_list="stest", description="", func=OnItemTest});
@@ -147,7 +147,7 @@ function OnPlayerReady(args)
 	c_cid = Player.GetTargetId();
 	OnEnterZone();
 	playerID = Player.GetCharacterId();
-	
+
 	-- See Mavoc I do listen, sometimes
 	Debug.EnableLogging(--[[IsUserAuthor() or ]]uiOpts.enableDebug);
     UpdateInvWeight();
@@ -335,7 +335,7 @@ function OnItemTest3(args)
 end
 
 function OnItemTest4(args)
-	
+
 end
 
 function OnClose(args)
@@ -351,7 +351,7 @@ function CreateNewFilter(data)
 	if not FiltersData then
 		FiltersData = {};
 	end
-	
+
     --table.insert(FiltersData, data);
     local idx = GetFiltersCount(FiltersData)
     FiltersData[tostring(idx)] = data
@@ -388,7 +388,7 @@ function TestFilters()
 			AddToReviewQueue(data.item_id, data.item_sdb_id, 1, testReviewQ)
 		end
 	end
-	
+
 	for id, data in pairs(resources) do
 		data.refined.itemTypeId = data.refined.item_sdb_id;
 		if (data.refined and CheckAgainstFilters(Game.GetItemInfoByType(data.refined.itemTypeId))) then
@@ -429,7 +429,7 @@ end
 function LoadReviewList()
 	finalisedQueue = {};
 	Ui.ClearReviewList();
-	
+
 	local count = 0;
 	for id, data in pairs(reviewQueue) do
 		local num = Player.GetItemCount(data.item_sdb_id);
@@ -517,7 +517,7 @@ end
 
 function SortFilterList(key, descending)
 	local field = HEADER_LOOKUP[key];
-	
+
 	table.sort(FiltersData, function (a, b)
 		if key == "FLT_LEVEL_RANGE" and a and b then
 			if descending then
@@ -532,10 +532,10 @@ function SortFilterList(key, descending)
 				return (a ~= nil and a[field] or "") > (b ~= nil and b[field] or "");
 			end
 		end
-		
+
 		return false;
 	end);
-	
+
 	SaveActiveFilterSet();
 	CreateList();
 end
@@ -544,7 +544,7 @@ function AddNewFilterSet(name)
 	if filterSets == nil then
 		filterSets = {};
 	end
-	
+
 	if not TableHasValue(filterSets, name) then
 		table.insert(filterSets, name);
 		Component.SaveSetting("filterSets", filterSets);
@@ -556,7 +556,7 @@ end
 
 function DeleteFilterSet()
 	Debug.Log(tostring(#filterSets));
-	
+
 	if filterSets and #filterSets == 1 then
 		Print(Lokii.GetString("FILTER_SET_NO_DELETE"));
 		System.PlaySound(Const.SND.ERROR);
@@ -566,12 +566,12 @@ function DeleteFilterSet()
 				filterSets[id] = nil;
 			end
 		end
-		
+
 		FiltersData = nil;
 		SaveActiveFilterSet();
-		
+
 		SetActiveFilterSet(filterSets[1]);
-		
+
 		Component.SaveSetting("filterSets", filterSets);
 		Ui.UpdateFilterSets(filterSets);
 		Ui.SetActiveFilterSet(name);
@@ -586,7 +586,7 @@ function SetActiveFilterSet(name)
 				activeFilterSet = name;
 				Ui.UpdateFilterSets(filterSets);
 				Ui.SetActiveFilterSet(name);
-			end, 
+			end,
 			onNo = function()
 				Ui.SetActiveFilterSet(activeFilterSet);
 			end
@@ -615,7 +615,7 @@ end
 --=====================
 function UpdateInvWeight()
     local curr, maxii = Player.GetInventoryWeight();
-    inventoryLimts = 
+    inventoryLimts =
     {
     	current = curr,
     	max = maxii;
@@ -627,7 +627,7 @@ end
 
 function CreateList()
 	Ui.ClearFilters();
-	
+
 	if FiltersData then
 		for id, data in pairs(FiltersData) do
 			if id ~= "characters" then
@@ -738,7 +738,7 @@ function CheckFrame(filter, itemInfo)
 				return true;
 			end
 		end
-		
+
 		return fasle;
     end
 end
@@ -750,13 +750,13 @@ end
 
 function CheckRarity(filter, itemInfo)
 	local filterInfo = DD_COLORS[filter.color];
-	
+
     return TableHasValue(filterInfo.raritys, itemInfo.rarity);
 end
 
 function PreformFilterAction(filter, itemInfo, guid)
 	Debug.Log("PreformFilterAction: "..filter.action);
-	
+
 	if (filter.is_test) then
 		Debug.Log("Test Item passed filters: " .. tostring(itemInfo.item_sdb_id).." "..itemInfo.name);
 		Print("Test Item passed filters: " .. tostring(itemInfo.item_sdb_id).." "..itemInfo.name);
@@ -850,7 +850,7 @@ end
 function IsUserAuthor()
 	local _, _, author, _ = Component.GetInfo();
 	local name, _, _, _, _ = Player.GetInfo();
-	
+
 	return ChatLib.StripArmyTag(name) == author;
 end
 
@@ -889,7 +889,7 @@ function AddToCheckList(sdbID, filterData, quantity)
 	if (data) then
 		data.quantity = data.quantity + quantity;
 	else
-		checkList[tostring(sdbID)] = 
+		checkList[tostring(sdbID)] =
 		{
 			quantity = quantity,
 			filterData = filterData
@@ -899,7 +899,7 @@ end
 
 function SalvageAddToQueue(guid, sdbId, quantity)
 	Debug.Log("SalvageAddToQueue: " .. tostring(guid));
-	
+
 	-- Increment the quantity if this item is already here
 	local has = false;
 	for _, data in pairs(salvageQueue) do
@@ -947,7 +947,7 @@ function TableHasValue(tbl, id)
 			return true;
 		end
 	end
-	
+
 	return false;
 end
 
@@ -986,7 +986,7 @@ end
 
 function SendWebStats(stats)
 	local url = "http://firefall.nyaasync.net/scrapii/stats.php";
-	if (not HTTP.IsRequestPending(url)) then -- Not important if we can't send it 
+	if (not HTTP.IsRequestPending(url)) then -- Not important if we can't send it
 		HTTP.IssueRequest(url, "POST", stats, function(args, err) end);
 	else
 		Debug.Log("Stats request pending");
