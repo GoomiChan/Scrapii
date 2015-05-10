@@ -16,6 +16,7 @@ V 1.8
 - Made the main window resizeable.
 - Added better small screen support aka Choob mode.
 - Added option to debug filter execution times.
+- Added a buton beside the Scrapii button to open the review list UI.
 
 V 1.7
 --------------------------

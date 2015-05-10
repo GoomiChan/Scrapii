@@ -3,7 +3,7 @@
 
 -- Varables
 Ui = {}; -- Public object
-Const = 
+Const =
 {
 	MAXLEVEL = 40,
 	SMALL_SCREEN_LIMIT = 1120,
@@ -46,7 +46,7 @@ Const =
 	FILTERS = Component.GetWidget("Filters"),
 	BUTTONS_GROUP = Component.GetWidget("ButtonsGroup"),
 
-	SND = 
+	SND =
 	{
 		OPEN_POPUP = "Play_SFX_UI_TipPopUp",
 		FILTER_ROLL = "",
@@ -68,6 +68,7 @@ local Private = -- Private object, easier to keep track of important vars like t
 	IsOddReviewRow = false,
 	IncludeArchtypeCB = nil,
 	InventoryButton = nil,
+	InventoryButtonRL = nil,
 	IsReviewListOpen = false,
 	ProfitsList = nil,
 	ProfitsListIdLookup = {},
@@ -93,7 +94,7 @@ function Ui.Init()
 		step_width = 10,
 		OnResize = Private.OnMainWindowRezise
 	});
-	
+
 	Const.MAXLEVEL = #Game.GetProgressionUnlocks();
 
 	InterfaceOptions.SetCallbackFunc(Private.UiOptionsCallback, Lokii.GetString("WINDOW_TITE"));
@@ -131,7 +132,7 @@ function Ui.ShowReview(show, isReview)
 	if not Const.MAIN:IsVisible() then
 		Component.SetInputMode(show and "cursor" or "none");
 	end
-	
+
 	Const.REVIEW_POPUP:Show(show);
 	Private.IsReviewListOpen = show;
 	Private.ReviewListIsTest = isReview;
@@ -152,13 +153,13 @@ end
 
 function Ui.AddFilterRow(id, data)
     local row = Private.CreateFilterRow(id, data);
-    
+
     if Private.IsOddRow then
         row:SetBGAlpha(0.2);
     else
         row:SetBGAlpha(0.4);
     end
-    
+
     Private.IsOddRow = not Private.IsOddRow;
 end
 
@@ -224,9 +225,9 @@ function Private.CreateWidgets()
     --
     Private.SetHeaderText(Const.GLOBAL_SETTINGS_HEADER, Lokii.GetString("GLOBAL_SETTINGS"));
     Private.SetHeaderText(Const.BUTTONS_HEADER, Lokii.GetString("ACTIONS"));
-    
+
     -- Filter headers
-    Private.FilterHeaderButtons = 
+    Private.FilterHeaderButtons =
     {
         FLT_TYPE = Private.CreateFilterButton(Const.FILTER_HEADERS:GetChild("type"), "FLT_TYPE"),
         FLT_FRAME = Private.CreateFilterButton(Const.FILTER_HEADERS:GetChild("frame"), "FLT_FRAME"),
@@ -235,7 +236,7 @@ function Private.CreateWidgets()
         FLT_WHEN = Private.CreateFilterButton(Const.FILTER_HEADERS:GetChild("when"), "FLT_WHEN"),
         FLT_ACTION = Private.CreateFilterButton(Const.FILTER_HEADERS:GetChild("action"), "FLT_ACTION")
     };
-    
+
     Private.AddFilterButton = Button.Create(Component.GetWidget("AddFilterButton"));
     Private.AddFilterButton:SetText(Lokii.GetString("ADD_FILTER"));
     --Private.AddFilterButton:Autosize("right");
@@ -244,7 +245,7 @@ function Private.CreateWidgets()
 		Private.OpenPopUp(Private.AddFilterPopUp.Window);
 		System.PlaySound(Const.SND.OPEN_POPUP);
 	end);
-    
+
     Private.TestFilterButton = Button.Create(Component.GetWidget("TestFilterButton"));
     Private.TestFilterButton:SetText(Lokii.GetString("TEST_FILTER"));
     --Private.TestFilterButton:Autosize("right");
@@ -265,12 +266,12 @@ function Private.CreateWidgets()
 		Private.TestFilterButton:GetWidget(),
 		Private.AddFilterButton:GetWidget()
 	}, "left", 5);]]
-    
+
     -- Filter list
     Private.FilterList = RowScroller.Create(Const.FILTER_LIST_WIDGET);
     Private.FilterList:SetSpacing(2);
     Private.FilterList:ShowSlider(true);
-    
+
     -- Setup the close button
 	Const.CLOSE_BUTTON:BindEvent("OnMouseDown", function()
 		Ui.Show(false);
@@ -284,11 +285,11 @@ function Private.CreateWidgets()
 		X:ParamTo("tint", Component.LookupColor("white"), 0.15);
 		X:ParamTo("glow", "#00000000", 0.15);
 	end);
-	
+
 	-- Item tooltip card
 	Private.ItemCard = LIB_ITEMS.CreateToolTip(Const.TOOLTIP_POPUP);
 	--Const.TOOLTIP_POPUP:SetDims("height:" .. Private.ItemCard.GetWidget():GetChild("List"):GetLength())
-	
+
 	-- Settings
 	Private.IncludeArchtypeCB = CheckBox.Create(Const.INCLUDE_ARCHTYPE);
 	Private.IncludeArchtypeCB:SetCheck(config.includeArchtype);
@@ -296,7 +297,7 @@ function Private.CreateWidgets()
 		config.includeArchtype = Private.IncludeArchtypeCB:IsChecked();
 		ConfigSaveSetting("includeArchtype");
 	end);
-	
+
 	Private.FilterSets = DropDownList.Create(Const.FILTER_SETS);
 	Private.FilterSets:BindOnSelect(SetActiveFilterSet);
 
@@ -309,7 +310,7 @@ function Private.CreateWidgets()
 			body = Lokii.GetString("DELETE_FILTER_SET"):format(activeFilterSet or ""),
 			onYes = DeleteFilterSet,
 			onNo = function()
-			
+
 			end
 		});
 	end);
@@ -326,6 +327,14 @@ function Private.CreateWidgets()
 	Private.InventoryButton:Bind(function()
 			Ui.Show(true);
 		end);
+
+	local InvButtonRL = Component.CreateWidget('<Group dimensions="left:88; top:50%-13; width:25; height:26;" />', Const.REVIEW_LIST_FOSTERING);
+	Private.InventoryButtonRL = Button.Create(InvButtonRL);
+	Private.InventoryButtonRL:SetText(Lokii.GetString("RL"));
+	Component.FosterWidget(InvButtonRL, "Inventory:main.{1}.{1}");
+	Private.InventoryButtonRL:Bind(function()
+			LoadReviewList();
+		end);
 end
 
 function Ui.UpdateActiveCharButton()
@@ -340,24 +349,24 @@ end
 
 function Private.CreateFilterButton(hostWidget, key)
     local butt = { button = Button.Create(hostWidget), descending = true };
-    
+
     butt.button:TintPlate(Button.DEFAULT_WHITE_COLOR);
     local Img = Component.CreateWidget("FilterHeaderTab", butt.button.GROUP);
     Img:GetChild("text"):SetText(Lokii.GetString(key));
 	butt.button:FosterLabel(Img.GROUP);
-    
+
     butt.button:Bind(function(args)
         butt.descending = not butt.descending;
         Img:GetChild("icon"):SetRegion(butt.descending and "normal" or "mirrored");
         Private.OnFiltersSortChanged(key, butt.descending);
 		SortFilterList(key, butt.descending);
     end);
-    
+
     butt.Reset = function()
         Img:GetChild("icon"):SetRegion("normal");
         butt.descending = true;
     end
-    
+
     return butt; -- hehe
 end
 
@@ -395,7 +404,7 @@ function Private.DeleteFilter(row)
 			DeleteFilter(row.id);
 		end,
 		onNo = function()
-			
+
 		end
 	});
 end
@@ -411,7 +420,7 @@ function Private.CreateFilterRow(id, data)
     row.widget = Component.CreateWidget("ListRow", Const.FILTER_LIST_FOSTERING);
     local content = row.widget:GetChild("content");
     row.id = id;
-	
+
 	-- format data
 	local formatedData = {};
 	formatedData.type = Lokii.GetString(data.typeName);
@@ -419,22 +428,22 @@ function Private.CreateFilterRow(id, data)
 
 	formatedData.levelRange = unicode.format("%s %s %s %s", Lokii.GetString("FROM"), data.levelFrom, Lokii.GetString("TO"), data.levelTo);
 	formatedData.color = Lokii.GetString(data.color);
-	
+
 	if (data.when == "INV_PCT_FULL") then
 		formatedData.when = unicode.format(Lokii.GetString("INV_PCT_FULL_FMT"), math.floor(data.precentFull*100));
 	else
 		formatedData.when = Lokii.GetString(data.when);
 	end
-	
+
 	formatedData.action = Lokii.GetString(data.action);
-	
+
     Component.CreateWidget("RowField", content:GetChild("type")):GetChild("text"):SetText(formatedData.type);
     Component.CreateWidget("RowField", content:GetChild("frame")):GetChild("text"):SetText(formatedData.frame);
     Component.CreateWidget("RowField", content:GetChild("levelRange")):GetChild("text"):SetText(formatedData.levelRange);
     Component.CreateWidget("RowField", content:GetChild("color")):GetChild("text"):SetText(formatedData.color);
     Component.CreateWidget("RowField", content:GetChild("when")):GetChild("text"):SetText(formatedData.when);
     Component.CreateWidget("RowField", content:GetChild("action")):GetChild("text"):SetText(formatedData.action);
-    
+
     local focus = row.widget:GetChild("focusBox");
     row.bg = row.widget:GetChild("bg");
     focus:BindEvent("OnMouseEnter", function()
@@ -446,7 +455,7 @@ function Private.CreateFilterRow(id, data)
 		row.bg:ParamTo("tint", Component.LookupColor("RowDefault"), 0.15);
         row.bg:ParamTo("alpha", row.defaultBgAlpha, 0.15);
 	end);
-    
+
     -- Setup the context menu
 	local OpenContextMenu = function()
 		row.ContextMenu = ContextualMenu.Create()
@@ -459,7 +468,7 @@ function Private.CreateFilterRow(id, data)
 	focus:BindEvent("OnMouseDown",  OpenContextMenu);
 
 	row.ListRef = Private.FilterList:AddRow(row.widget);
-	
+
     return row;
 end
 
@@ -478,10 +487,10 @@ function Private.CreateAddFilterPopup()
 	window:SetTitle(Lokii.GetString("ADD_FILTER_HEADER"));
 	window:SetDims("dock:fill;");
 	window:EnableClose(true, function () end);
-	
+
 	Private.AddFilterPopUp.Body = Component.CreateWidget("AddFilterBody", window:GetBody());
 	local body = Private.AddFilterPopUp.Body;
-	
+
 	-- headers
 	local header = body:GetChild("cont"):GetChild("header");
 	Component.CreateWidget("AddFilterHeader", header:GetChild("type")):GetChild("text"):SetText(Lokii.GetString("FLT_TYPE"));
@@ -490,39 +499,39 @@ function Private.CreateAddFilterPopup()
     Component.CreateWidget("AddFilterHeader", header:GetChild("color")):GetChild("text"):SetText(Lokii.GetString("FLT_COLOR"));
 	Component.CreateWidget("AddFilterHeader", header:GetChild("when")):GetChild("text"):SetText(Lokii.GetString("FLT_WHEN"));
     Component.CreateWidget("AddFilterHeader", header:GetChild("action")):GetChild("text"):SetText(Lokii.GetString("FLT_ACTION"));
-	
+
 	local cont = body:GetChild("cont"):GetChild("cont");
 	Private.AddFilterPopUp.DD_Type = DropDownList.Create(cont:GetChild("type"));
 	for id, data in pairs(GetDataSorted(DD_TYPES)) do
         Private.AddFilterPopUp.DD_Type:AddItem(Lokii.GetString(data.id), data.id);
     end
-	
+
 	Private.AddFilterPopUp.DD_Frame = DropDownList.Create(cont:GetChild("frame"));
 	for id, data in pairs(GetDataSorted(DD_FRAMES)) do
         Private.AddFilterPopUp.DD_Frame:AddItem(Lokii.GetString(data.id), data.id);
     end
-	
+
 	local levelRange = Component.CreateWidget("EnterLevelRange", cont:GetChild("levelRange"));
 	Private.AddFilterPopUp.DD_FromLevel = DropDownList.Create(levelRange:GetChild("{1}.dropDown1"));
 	Private.AddFilterPopUp.DD_ToLevel = DropDownList.Create(levelRange:GetChild("{1}.{1}.{1}.dropDown2"));
-	
+
 	for i = 1, Const.MAXLEVEL, 1 do
 		Private.AddFilterPopUp.DD_FromLevel:AddItem(tostring(i), tostring(i));
 		Private.AddFilterPopUp.DD_ToLevel:AddItem(tostring(i), tostring(i));
 	end
-	
+
 	Private.AddFilterPopUp.DD_Color = DropDownList.Create(cont:GetChild("color"));
 	for id, data in pairs(GetDataSorted(DD_COLORS)) do
         Private.AddFilterPopUp.DD_Color:AddItem(Lokii.GetString(data.id), data.id);
     end
 	Private.AddFilterPopUp.DD_Color:SetSelectedByValue("WHITE");
-	
+
 	Private.AddFilterPopUp.DD_When = DropDownList.Create(cont:GetChild("when"));
 	for id, data in pairs(DD_WHEN) do
         Private.AddFilterPopUp.DD_When:AddItem(Lokii.GetString(data), data);
     end
-	
-	Private.AddFilterPopUp.DD_When:BindOnSelect(function () 
+
+	Private.AddFilterPopUp.DD_When:BindOnSelect(function ()
 		local selected = Private.AddFilterPopUp.DD_When:GetSelected();
 		if (selected == "INV_PCT_FULL") then
 			Private.PercentPopup.SetPercent(0.50);
@@ -532,18 +541,18 @@ function Private.CreateAddFilterPopup()
 			System.PlaySound(Const.SND.OPEN_POPUP);
 		end
 	end);
-	
+
 	Private.AddFilterPopUp.DD_Action = DropDownList.Create(cont:GetChild("action"));
 	for id, data in pairs(DD_ACTIONS) do
         Private.AddFilterPopUp.DD_Action:AddItem(Lokii.GetString(data), data);
     end
-	
+
 	Private.AddFilterPopUp.AddButt = Button.Create(body:GetChild("AddButt"));
     Private.AddFilterPopUp.AddButt:SetText(Lokii.GetString("ADD_FILTER"));
     Private.AddFilterPopUp.AddButt:Bind(function()
 		Private.PercentPopup.Window:Close();
 		window:Close();
-		
+
 		if (Private.AddFilterPopUp.EditMode == true) then
 			EditFilter(Private.AddFilterPopUp.EditId, Private.GetAddFilterData());
 			Private.AddFilterPopUp.EditMode = false;
@@ -551,13 +560,13 @@ function Private.CreateAddFilterPopup()
 			CreateNewFilter(Private.GetAddFilterData());
 		end
 	end);
-	
+
 	-- Grey out unneed options
 	Private.AddFilterPopUp.DD_Type:BindOnSelect(function (args)
 		local skips = DD_TYPES[args].skips;
 		if skips.skipFrameCheck  then Private.AddFilterPopUp.DD_Frame:Disable(true); else Private.AddFilterPopUp.DD_Frame:Enable(true); end
 		if skips.skipRarityCheck then Private.AddFilterPopUp.DD_Color:Disable(true); else Private.AddFilterPopUp.DD_Color:Enable(true); end
-		
+
 		if skips.skipRarityCheck then
 			Private.AddFilterPopUp.DD_FromLevel:Disable(true);
 			Private.AddFilterPopUp.DD_ToLevel:Disable(true);
@@ -566,15 +575,15 @@ function Private.CreateAddFilterPopup()
 			Private.AddFilterPopUp.DD_ToLevel:Enable(true);
 		end
 	end);
-	
+
 	window:Close();
-		
+
 	-- Adjsut the style a little
 	Private.StylePopUp(Private.AddFilterPopUp.Window);
 end
 
 function Private.GetAddFilterData()
-	local data = 
+	local data =
 	{
 		typeName = Private.AddFilterPopUp.DD_Type:GetSelected(),
 		frame = Private.AddFilterPopUp.DD_Frame:GetSelected(),
@@ -585,7 +594,7 @@ function Private.GetAddFilterData()
 		action = Private.AddFilterPopUp.DD_Action:GetSelected(),
 		precentFull = Private.PercentPopup.GetPercent()
 	};
-	
+
 	return data;
 end
 
@@ -602,20 +611,20 @@ end
 
 function Private.CreatePercentPopup()
 	Private.PercentPopup.Percent = 0;
-	
+
 	Private.PercentPopup.Window = RoundedPopupWindow.Create(Private.AddFilterPopUp.Window:GetBody():GetParent(), nil);
 	local window = Private.PercentPopup.Window;
 	window:SetTitle(Lokii.GetString("INV_PCT_FULL"));
 	window:SetDims("dock:fill;");
 	window:EnableClose(true, function () end);
-	
+
 	Private.PercentPopup.Body = Component.CreateWidget("PercentPopUp", window:GetBody());
 	local body = Private.PercentPopup.Body;
-	
+
 	local controls = body:GetChild("Controls");
 	local textInput = controls:GetChild("InputGroup"):GetChild("TextInput");
 	textInput:SetText("0");
-	Private.PercentPopup.Slider = Slider.Create(controls:GetChild("Slider"), "adjuster");	
+	Private.PercentPopup.Slider = Slider.Create(controls:GetChild("Slider"), "adjuster");
 	Private.PercentPopup.Slider:SetSteps(101);
 	Private.PercentPopup.Slider:SetScrollSteps(1);
 	Private.PercentPopup.Slider:BindEvent("OnStateChanged", function(arg)
@@ -623,30 +632,30 @@ function Private.CreatePercentPopup()
 		textInput:SetText(tostring(pct));
 		Private.PercentPopup.Percent = Private.PercentPopup.Slider:GetPercent();
 	end);
-	
+
 	textInput:BindEvent("OnTextChange", function(arg)
 		local pct = tonumber(textInput:GetText()/100);
 		Private.PercentPopup.Slider:SetPercent(pct);
 		Private.PercentPopup.Percent = pct;
 	end);
-	
+
 	local OkButt = Button.Create(body:GetChild("OkButt"));
 	OkButt:SetText(Lokii.GetString("OK"));
 	OkButt:Bind(function()
 		window:Close(false);
 	end);
-	
+
 	Private.PercentPopup.SetPercent = function(p)
 		Private.PercentPopup.Percent = p;
 		textInput:SetText(tostring(math.floor(p*100)));
 		Private.PercentPopup.Slider:SetPercent(p);
 	end;
-	
+
 	Private.PercentPopup.GetPercent = function(p)
 		Private.PercentPopup.Percent = Private.PercentPopup.Slider:GetPercent();
 		return Private.PercentPopup.Percent;
 	end;
-	
+
 	window:Close(false);
 	Private.StylePopUp(Private.PercentPopup.Window);
 end
@@ -656,7 +665,7 @@ function Private.CreateReviewPopUp()
     Private.ReviewList = RowScroller.Create(Const.REVIEW_LIST_PARENT);
     Private.ReviewList:SetSpacing(2);
     Private.ReviewList:ShowSlider(true);
-	
+
     MovablePanel.ConfigFrame({
         frame = Const.REVIEW_POPUP,
         MOVABLE_PARENT = Const.REVIEW_POPUP_MOVEABLE,
@@ -743,10 +752,10 @@ end
 
 function Private.AddToReviewUI(guid, sdbId, quanity, isReview)
 	local itemInfo = (guid ~= nil) and Player.GetItemInfo(guid) or Game.GetItemInfoByType(sdbId);
-    local widget = Component.CreateWidget("ReviewLine", Const.REVIEW_LIST_FOSTERING); 	
+    local widget = Component.CreateWidget("ReviewLine", Const.REVIEW_LIST_FOSTERING);
     local row = Private.ReviewList:AddRow(widget);
 	local alpha = 0.2;
-	
+
 	local bg = widget:GetChild("bg");
 	if Private.IsOddReviewRow then
 		alpha = 0.2;
@@ -755,9 +764,9 @@ function Private.AddToReviewUI(guid, sdbId, quanity, isReview)
     end
 	bg:ParamTo("alpha", 0.4, 0);
 	Private.IsOddReviewRow = not Private.IsOddReviewRow;
-	
+
 	local focus = widget:GetChild("focusBox");
-	focus:BindEvent("OnMouseEnter", function()	
+	focus:BindEvent("OnMouseEnter", function()
 		if (itemInfo.rarity) then
 			Private.ItemCard:DisplayInfo(itemInfo);
 			Private.ItemCard:DisplayPaperdoll(true);
@@ -767,11 +776,11 @@ function Private.AddToReviewUI(guid, sdbId, quanity, isReview)
 
 		bg:ParamTo("tint", Component.LookupColor("RowHover"), 0.15);
         bg:ParamTo("alpha", 0.3, 0.15);
-		
+
 		--System.PlaySound(Const.SND.FILTER_ROLL);
 	end);
-	
-	focus:BindEvent("OnMouseLeave", function()	
+
+	focus:BindEvent("OnMouseLeave", function()
 		Tooltip.Show();
 		bg:ParamTo("tint", Component.LookupColor("RowDefault"), 0.15);
         bg:ParamTo("alpha", alpha, 0.15);
@@ -781,7 +790,7 @@ function Private.AddToReviewUI(guid, sdbId, quanity, isReview)
 	focus:BindEvent("OnMouseDown", function()
     	row.checkBox:SetCheck(not row.checkBox:IsChecked() and (uiOpts.inventorySalvaging or not isReview));
     end);
-	
+
 	widget:GetChild("icon"):SetUrl(itemInfo.web_icon or System.GetOperatorSetting("ingame_host").."/assets/items/64/" .. itemInfo.icon or "" .. ".png");
 
 	local level = 0;
@@ -807,7 +816,7 @@ function Private.AddToReviewUI(guid, sdbId, quanity, isReview)
 				Private.ReviewListCheckall:SetCheck(false);
 				Private.ReviewListCheckall_IngoreStateChange = false;
 			end
-			
+
 			ReviewQueueFinilise(row.checkBox:IsChecked(), guid, sdbId, quanity);
 		end
 	end);
@@ -862,18 +871,18 @@ end
 function Private.ShowDialog(args)
 	SimpleDialog.Display(args.body);
 	SimpleDialog.SetTitle(Lokii.GetString("CONFIRM"));
-	
+
 	SimpleDialog.AddOption(Lokii.GetString("ABORT"), function()
 		if args.onNo then args.onNo(); end
 		SimpleDialog.Hide();
 	end, {color = Button.DEFAULT_WHITE_COLOR});
-	
+
 	SimpleDialog.AddOption(Lokii.GetString("ARE_YOU_SURE"), function()
 		if args.onYes then args.onYes(); end
 		SimpleDialog.Hide();
 	end, {color = Button.DEFAULT_GREEN_COLOR});
 	System.PlaySound(Const.SND.OPEN_POPUP);
-	
+
 end
 
 function Private.ShowTextDialog(args)
@@ -882,17 +891,17 @@ function Private.ShowTextDialog(args)
 	textInput:SetFocus();
 	SimpleDialog.Display(widget);
 	SimpleDialog.SetTitle(Lokii.GetString("FILTER_SET_NAME"));
-	
+
 	SimpleDialog.AddOption(Lokii.GetString("ABORT"), function()
 		if args.onNo then args.onNo(); end
 		SimpleDialog.Hide();
 	end, {color = Button.DEFAULT_WHITE_COLOR});
-	
+
 	SimpleDialog.AddOption(Lokii.GetString("ARE_YOU_SURE"), function()
 		if args.onYes then args.onYes(textInput:GetText()); end
 		SimpleDialog.Hide();
 	end, {color = Button.DEFAULT_GREEN_COLOR});
-	
+
 	SimpleDialog.SetDims("center-x:50%; center-y:50%; width:300; height:150;");
 	System.PlaySound(Const.SND.OPEN_POPUP);
 end
@@ -924,7 +933,7 @@ function Private.CreateUiOptions()
 	InterfaceOptions.AddCheckBox({id="inventorySalvaging", label=Lokii.GetString("ENABLE_INV_FILTERING"), tooltip=Lokii.GetString("ENABLE_INV_FILTERING_TT"), default=uiOpts.inventorySalvaging});
 
 	InterfaceOptions.AddCheckBox({id="reportRewards", label=Lokii.GetString("REPORT_REWARDS"), tooltip=Lokii.GetString("REPORT_REWARDS_TT"), default=uiOpts.reportRewards});
-	
+
 	InterfaceOptions.AddCheckBox({id="salvageInNullZones", label=Lokii.GetString("NULL_ZONES"), tooltip=Lokii.GetString("NULL_ZONES_TT"), default=uiOpts.salvageInNullZones});
 	InterfaceOptions.StartGroup({id="zonesGrp", label=Lokii.GetString("ACTIVE_ZONE_TITLE"), checkbox=true, default=true});
 
