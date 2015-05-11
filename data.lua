@@ -1,6 +1,6 @@
 -- Data like id's and dopdown keys
 
-DD_TYPES = 
+DD_TYPES =
 {
     --[[ALL_TYPES =
     {
@@ -34,7 +34,7 @@ DD_TYPES =
     },
     ABILITY_MODULE =
     {
-    	subTypeId = SubTypeIds.Modules,	
+    	subTypeId = SubTypeIds.Modules,
         module_location = "ability_module",
         skips = {res = true, skipFrameCheck = true},
         sortID = 6
@@ -63,99 +63,99 @@ DD_TYPES =
 };
 
 -- I could get this from the api  >,>
-DD_FRAMES = 
+DD_FRAMES =
 {
-	ANY_FRAME = 
+	ANY_FRAME =
 	{
 		certId = "",
         sortID = 1
 	},
-	ACCORD_BIOTECH = 
+	ACCORD_BIOTECH =
 	{
         certId = 738,
         sortID = 2
 	},
-	DRAGONFLY = 
+	DRAGONFLY =
 	{
         certId = 739,
 		baseFrame = "ACCORD_BIOTECH",
         sortID = 3
 	},
-	RECLUSE = 
+	RECLUSE =
 	{
         certId = 740,
 		baseFrame = "ACCORD_BIOTECH",
         sortID = 4
 	},
-	ACCORD_ASSAULT = 
+	ACCORD_ASSAULT =
 	{
         certId = 732,
         sortID = 5
 	},
-	FIRECAT = 
+	FIRECAT =
 	{
         certId = 733,
 		baseFrame = "ACCORD_ASSAULT",
         sortID = 6
 	},
-	TIGERCLAW = 
+	TIGERCLAW =
 	{
         certId = 734,
 		baseFrame = "ACCORD_ASSAULT",
         sortID = 7
 	},
-	ACCORD_DREADNAUGHT = 
+	ACCORD_DREADNAUGHT =
 	{
         certId = 741,
         sortID = 8
 	},
-	ARSENAL = 
+	ARSENAL =
 	{
         certId = 748,
 		baseFrame = "ACCORD_DREADNAUGHT",
         sortID = 9
 	},
-	MAMMOTH = 
+	MAMMOTH =
 	{
         certId = 742,
 		baseFrame = "ACCORD_DREADNAUGHT",
         sortID = 10
 	},
-	RHINO = 
+	RHINO =
 	{
         certId = 743,
 		baseFrame = "ACCORD_DREADNAUGHT",
         sortID = 11
 	},
-	ACCORD_ENGINEER = 
+	ACCORD_ENGINEER =
 	{
         certId = 735,
         sortID = 12
 	},
-	BASTION = 
+	BASTION =
 	{
         certId = 737,
 		baseFrame = "ACCORD_ENGINEER",
         sortID = 13
 	},
-	ELECTRON = 
+	ELECTRON =
 	{
         certId = 736,
 		baseFrame = "ACCORD_ENGINEER",
         sortID = 14
 	},
-	ACCORD_RECON = 
+	ACCORD_RECON =
 	{
         certId = 744,
         sortID = 15
 	},
-	NIGHTHAWK = 
+	NIGHTHAWK =
 	{
         certId = 745,
 		baseFrame = "ACCORD_RECON",
         sortID = 16
 	},
-	RAPTOR = 
+	RAPTOR =
 	{
         certId = 746,
 		baseFrame = "ACCORD_RECON",
@@ -163,7 +163,7 @@ DD_FRAMES =
 	},
 };
 
-DD_COLORS = 
+DD_COLORS =
 {
 	ORANGE =
     {
@@ -222,13 +222,13 @@ DD_COLORS =
     },
 };
 
-DD_WHEN = 
+DD_WHEN =
 {
 	"ON_PICKUP",
 	"INV_PCT_FULL"
 };
 
-DD_ACTIONS = 
+DD_ACTIONS =
 {
 	"SALVAGE",
 	"PROMPT",
@@ -248,94 +248,94 @@ DEFAULT_FILTER_DATA =
 	precentFull = 80
 };
 
-ZONES = 
+ZONES =
 {
 	{
-		zone_id = 162, 
+		zone_id = 162,
 		title = "Devil's Tusk"
-	}, 
+	},
 	{
-		zone_id = 448, 
+		zone_id = 448,
 		title = "New Eden"
 	},
 	{
-		zone_id = 805, 
+		zone_id = 805,
 		title = "Epicenter"
-	}, 
+	},
 	{
-		zone_id = 833, 
+		zone_id = 833,
 		title = "Campaign Chapter 1 - Blackwater Anomaly"
-	}, 
+	},
 	{
-		zone_id = 861, 
+		zone_id = 861,
 		title = "Campaign Chapter 1 - Research Station"
-	}, 
+	},
 	{
-		zone_id = 863, 
+		zone_id = 863,
 		title = "Cliff's Edge"
-	}, 
+	},
 	{
-		zone_id = 864, 
+		zone_id = 864,
 		title = "Campaign Chapter 1 - Bandit Cave"
-	}, 
+	},
 	{
-		zone_id = 865, 
+		zone_id = 865,
 		title = "Abyss"
-	}, 
+	},
 	{
-		zone_id = 868, 
+		zone_id = 868,
 		title = "Cinerarium"
-	}, 
+	},
 	{
-		zone_id = 878, 
+		zone_id = 878,
 		title = "The Wages of SIN"
-	}, 
+	},
 	{
-		zone_id = 1003, 
+		zone_id = 1003,
 		title = "Campaign Chapter 1 - Harvester Island"
-	}, 
+	},
 	{
-		zone_id = 1007, 
+		zone_id = 1007,
 		title = "Campaign Chapter 1 - Power Grab"
-	}, 
+	},
 	{
-		zone_id = 1008, 
+		zone_id = 1008,
 		title = "Campaign Chapter 1 - Risky Business"
-	}, 
+	},
 	{
-		zone_id = 1021, 
+		zone_id = 1021,
 		title = "Broken Peninsula"
-	}, 
+	},
 	{
-		zone_id = 1022, 
+		zone_id = 1022,
 		title = "Lair of the Destroyer"
-	}, 
+	},
 	{
-		zone_id = 1024, 
+		zone_id = 1024,
 		title = "The Wages of SIN"
-	}, 
+	},
 	{
-		zone_id = 1028, 
+		zone_id = 1028,
 		title = "Operation: Cinderblock"
-	}, 
+	},
 	{
-		zone_id = 1030, 
+		zone_id = 1030,
 		title = "Sertao"
-	}, 
+	},
 	{
-		zone_id = 1051, 
+		zone_id = 1051,
 		title = "Baneclaw Lair"
-	}, 
+	},
 	{
-		zone_id = 1054, 
+		zone_id = 1054,
 		title = "Devils Tusk Warfronts"
 	},
 	{
-		zone_id = 1069, 
+		zone_id = 1069,
 		title = "Miru Mining Facility"
 	},
 	{
-		zone_id = 1049, 
+		zone_id = 1049,
 		title = "The Amazon"
 	}
 };
@@ -345,7 +345,7 @@ ZONES_TO_INGORE =
 	["12"] = true
 };
 
-HEADER_LOOKUP = 
+HEADER_LOOKUP =
 {
 	FLT_TYPE = "typeName",
 	FLT_FRAME = "frame",
@@ -353,4 +353,12 @@ HEADER_LOOKUP =
 	FLT_COLOR = "color",
 	FLT_WHEN = "when",
 	FLT_ACTION = "action"
+};
+
+LOCALES =
+{
+	"SYSTEM_DEFAULT",
+    "en",
+    "de",
+    "fr"
 };

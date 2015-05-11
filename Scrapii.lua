@@ -65,7 +65,8 @@ uiOpts =
 	inventorySalvaging = false,
 	activeZones = {}, -- A table of zone ids to salvage items in, format "id = bool", so it can be index checked
 	salvageInNullZones = false,
-	debugLogTimes = true -- debug log how long actions take
+	debugLogTimes = true, -- debug log how long actions take
+	localeOverride = LOCALES.SYSTEM_DEFAULT
 };
 
 -- Filter related configs
@@ -103,7 +104,13 @@ function OnComponentLoad(args)
 	Lokii.AddLang("de", "./lang/DE");
 	Lokii.AddLang("fr", "./lang/FR");
 	Lokii.SetBaseLang("en");
-	Lokii.SetToLocale();
+
+	local locale = Component.GetSetting("option-listmenu:locale")
+	if locale then
+		Lokii.SetLang(locale)
+	else
+		Lokii.SetToLocale()
+	end
 
 	LoadConfig();
 	GetZoneList();

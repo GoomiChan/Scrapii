@@ -107,5 +107,11 @@ LANG =
 	DEACTIVATE_FOR_CHAR				=	"Deactivate for this character",
 	ENABLE_DEBUG_TIMES				=	"Enable debug times",
 	ENABLE_DEBUG_TIMES_TT			=	"If enabled the time to execute an item filter check will be logged to the console, best used with debug off",
-	RL 								=	"RL"
+	RL 								=	"RL",
+	LOCALE_OVERRIDE					=	"Locale",
+	SYSTEM_DEFAULT					=	"System Default",
+	en								=	"EN",
+	de								=	"DE",
+	fr								=	"FR",
+	RELOADUI_NEEDED					=	"You need to reload your ui for these settings to take effect"
 }

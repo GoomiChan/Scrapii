@@ -1,6 +1,9 @@
 -- The main Ui code, I'm trying to seprate it to see if this makes it cleaner :>
 -- Arkii
 
+require "./libs/lib_lokii";
+require "./data";
+
 -- Varables
 Ui = {}; -- Public object
 Const =
@@ -922,6 +925,12 @@ function Private.CreateUiOptions()
 	InterfaceOptions.AddCheckBox({id="enableDebug", label=Lokii.GetString("ENABLE_DEBUG"), default=uiOpts.enableDebug});
 	InterfaceOptions.AddCheckBox({id="enableDebugTimes", label=Lokii.GetString("ENABLE_DEBUG_TIMES"), default=uiOpts.debugLogTimes});
 
+	InterfaceOptions.AddChoiceMenu({id="locale", label=Lokii.GetString("LOCALE_OVERRIDE"), default=uiOpts.localeOverride});
+	for i, value in ipairs(LOCALES) do
+		local val = tostring(value)
+		InterfaceOptions.AddChoiceEntry({menuId="locale", label=Lokii.GetString(val), val=val});
+	end
+
 	InterfaceOptions.AddCheckBox({id="printSummary", label=Lokii.GetString("PRINT_SUMMARY"), tooltip=Lokii.GetString("PRINT_SUMMARY_TT"), default=uiOpts.printSummary});
 	InterfaceOptions.AddCheckBox({id="processLoot", label=Lokii.GetString("PROCESS_LOOT"), tooltip=Lokii.GetString("PROCESS_LOOT_TT"), default=uiOpts.processLoot});
 	InterfaceOptions.AddCheckBox({id="processRewards", label=Lokii.GetString("PROCESS_REWARDS"), tooltip=Lokii.GetString("PROCESS_REWARDS_TT"), default=uiOpts.processRewards});
@@ -991,4 +1000,18 @@ end
 
 function Private.UiCallbacks.enableDebugTimes(val)
 	uiOpts.debugLogTimes = val;
+end
+
+function Private.UiCallbacks.locale(val)
+	if val == "SYSTEM_DEFAULT" then
+		Lokii.SetToLocale()
+	else
+		Lokii.SetLang(val)
+	end
+
+	if Component.GetSetting("option-listmenu:locale") ~= val then
+		Print(Lokii.GetString("RELOADUI_NEEDED"))
+	end
+
+	uiOpts.localeOverride = val
 end
