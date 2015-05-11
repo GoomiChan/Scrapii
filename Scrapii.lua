@@ -526,7 +526,16 @@ end
 function SortFilterList(key, descending)
 	local field = HEADER_LOOKUP[key];
 
-	table.sort(FiltersData, function (a, b)
+	-- Oh boy is this a hack
+	-- If I get more time for Firefall I should do this right :>
+	local sortList = {}
+	for key, value in pairs(FiltersData) do
+		if key ~= "characters" then
+			table.insert(sortList, value)
+		end
+	end
+
+	table.sort(sortList, function (a, b)
 		if key == "FLT_LEVEL_RANGE" and a and b then
 			if descending then
 				return (a ~= nil and (a.levelTo - a.levelFrom) or 0) < (b ~= nil and (b.levelTo - b.levelFrom) or 0);
@@ -543,6 +552,9 @@ function SortFilterList(key, descending)
 
 		return false;
 	end);
+
+	sortList.characters = FiltersData.characters
+	FiltersData = sortList
 
 	SaveActiveFilterSet();
 	CreateList();
