@@ -113,5 +113,6 @@ LANG =
 	en								=	"EN",
 	de								=	"DE",
 	fr								=	"FR",
+	es 								=	"ES",
 	RELOADUI_NEEDED					=	"You need to reload your ui for these settings to take effect"
 }

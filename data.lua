@@ -360,5 +360,6 @@ LOCALES =
 	"SYSTEM_DEFAULT",
     "en",
     "de",
-    "fr"
+    "fr",
+    "es"
 };

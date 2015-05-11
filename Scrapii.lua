@@ -103,6 +103,7 @@ function OnComponentLoad(args)
     Lokii.AddLang("en", "./lang/EN");
 	Lokii.AddLang("de", "./lang/DE");
 	Lokii.AddLang("fr", "./lang/FR");
+	Lokii.AddLang("es", "./lang/ES");
 	Lokii.SetBaseLang("en");
 
 	local locale = Component.GetSetting("option-listmenu:locale")
