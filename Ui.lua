@@ -68,6 +68,7 @@ local Private = -- Private object, easier to keep track of important vars like t
 	AddFilterPopUp = {},
 	PercentPopup = {},
     ReviewPopUp = {},
+	ConsumablePopup = {},
 	IsOddReviewRow = false,
 	IncludeArchtypeCB = nil,
 	InventoryButton = nil,
@@ -108,6 +109,7 @@ function Ui.Init()
     Private.CreatePercentPopup();
     Private.CreateReviewPopUp();
 	Private.CreateProfitsTootip();
+	Private.CreateConsumablePopup();
 
     PanelManager.RegisterFrame(Const.MAIN, ToggleWindow, {show=false});
     Ui.Show(false);
@@ -363,6 +365,7 @@ function Private.CreateFilterButton(hostWidget, key)
         Img:GetChild("icon"):SetRegion(butt.descending and "normal" or "mirrored");
         Private.OnFiltersSortChanged(key, butt.descending);
 		SortFilterList(key, butt.descending);
+		Component.SaveSetting("FilterSortOrder", {key=key, order=butt.descending})
     end);
 
     butt.Reset = function()
@@ -391,7 +394,7 @@ function Private.SetHeaderText(widget, text)
 end
 
 function Private.EditFilter(row)
-	Private.SetAddFilterData(FiltersData[row.id]);
+	Private.SetAddFilterData(FiltersData.filters[row.id]);
 	Private.AddFilterPopUp.EditMode = true;
 	Private.AddFilterPopUp.EditId = row.id;
     Private.AddFilterPopUp.AddButt:SetText(Lokii.GetString("SAVE_FILTER"));
@@ -566,6 +569,8 @@ function Private.CreateAddFilterPopup()
 
 	-- Grey out unneed options
 	Private.AddFilterPopUp.DD_Type:BindOnSelect(function (args)
+		local selected = Private.AddFilterPopUp.DD_Type:GetSelected();
+
 		local skips = DD_TYPES[args].skips;
 		if skips.skipFrameCheck  then Private.AddFilterPopUp.DD_Frame:Disable(true); else Private.AddFilterPopUp.DD_Frame:Enable(true); end
 		if skips.skipRarityCheck then Private.AddFilterPopUp.DD_Color:Disable(true); else Private.AddFilterPopUp.DD_Color:Enable(true); end
@@ -576,6 +581,10 @@ function Private.CreateAddFilterPopup()
 		else
 			Private.AddFilterPopUp.DD_FromLevel:Enable(true);
 			Private.AddFilterPopUp.DD_ToLevel:Enable(true);
+		end
+
+		if selected == "CONSUMABLE" then
+			Private.OpenPopUp(Private.ConsumablePopup.Window);
 		end
 	end);
 
@@ -661,6 +670,17 @@ function Private.CreatePercentPopup()
 
 	window:Close(false);
 	Private.StylePopUp(Private.PercentPopup.Window);
+end
+
+function Private.CreateConsumablePopup()
+	Private.ConsumablePopup.Window = RoundedPopupWindow.Create(Private.AddFilterPopUp.Window:GetBody():GetParent(), nil);
+	local window = Private.ConsumablePopup.Window;
+	window:SetTitle(Lokii.GetString("INV_PCT_FULL"));
+	window:SetDims("dock:fill;");
+	window:EnableClose(true, function () end);
+
+	window:Close(false);
+	Private.StylePopUp(Private.ConsumablePopup.Window);
 end
 
 -- Review PopUP
@@ -1005,7 +1025,7 @@ end
 function Private.UiCallbacks.locale(val)
 	if val == "SYSTEM_DEFAULT" then
 		Lokii.SetToLocale()
-	else
+	elseif val then
 		Lokii.SetLang(val)
 	end
 

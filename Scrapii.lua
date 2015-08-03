@@ -99,6 +99,8 @@ checkList = {};
 --      Events       --
 --=====================
 function OnComponentLoad(args)
+	Debug.EnableLogging(true); -- Always log error during startup
+
 	-- Lokii setup
     Lokii.AddLang("en", "./lang/EN");
 	Lokii.AddLang("de", "./lang/DE");
@@ -118,6 +120,9 @@ function OnComponentLoad(args)
 	LoadSalvageRewards();
     Ui.Init();
 
+    FiltersData = Component.GetSetting("FiltersData") or {};
+	filterSets = Component.GetSetting("filterSets") or {};
+
 	-- Migrate data
 	local oldData = Component.GetSetting("FiltersData");
 	if oldData then
@@ -128,6 +133,31 @@ function OnComponentLoad(args)
 		Component.SaveSetting("FiltersData", nil);
 	end
 
+	-- And again
+	Debug.Log("filterSets: "..tostring(filterSets))
+	local didMigration = false
+	for i, filtersetName in ipairs(filterSets) do
+		local fs = GetFilterSet(filtersetName)
+		if not fs.filters then
+			local newFs = {}
+			newFs.characters = fs.characters or {}
+			newFs.filters = {}
+
+			for _, value in ipairs(fs) do
+				table.insert(newFs.filters, value)
+			end
+
+			SaveFilterSet(filtersetName, newFs)
+			Debug.Log("Migrated filter set!")
+			didMigration = true
+		end
+	end
+
+	if didMigration then
+		Print(Lokii.GetString("MIGRATED_FILTERS"))
+		Print(Lokii.GetString("NEED_TO_ACTIVATE_FILTERS"))
+	end
+
 	activeFilterSet = Component.GetSetting("activefilterset") or "";
 	if (activeFilterSet == "") then
 		AddNewFilterSet("Default");
@@ -135,8 +165,6 @@ function OnComponentLoad(args)
 	end
 
 	Ui.UpdateProfitsTootip(salvageRewards);
-	FiltersData = Component.GetSetting("FiltersData") or {};
-	filterSets = Component.GetSetting("filterSets") or {};
 	Ui.UpdateFilterSets(filterSets, activeFilterSet);
 	Ui.SetActiveFilterSet(activeFilterSet);
 
@@ -165,6 +193,7 @@ function OnPlayerReady(args)
 	local oldReviewQu = Component.GetSetting("reviewQueue");
 	if oldReviewQu ~= nil then
 		Print("Found old 'reviewQueue' data and migrating it to current character")
+		Debug.Log("oldReviewQu: "..tostring(oldReviewQu))
 		Component.SaveSetting("reviewQueue_"..playerID, oldReviewQu);
 		Component.SaveSetting("reviewQueue", nil);
 	end
@@ -360,24 +389,25 @@ function CreateNewFilter(data)
 		FiltersData = {};
 	end
 
-    --table.insert(FiltersData, data);
-    local idx = GetFiltersCount(FiltersData)
-    FiltersData[tostring(idx)] = data
+    table.insert(FiltersData.filters, data);
 	SaveActiveFilterSet();
+
+	local sortOrder = Component.GetSetting("FilterSortOrder") or {key="FLT_TYPE", order=true}
+	SortFilterList(sortOrder.key, sortOrder.order)
+
 	Debug.Log("#FiltersData: ", idx)
 	Debug.Log(unicode.format("Added new filter to filter set %s: %s", activeFilterSet, tostring(data) or "no data"))
-	Debug.Table(FiltersData)
-	Ui.AddFilterRow(#FiltersData, data);
+	Debug.Table(FiltersData.filters)
 end
 
 function EditFilter(id, data)
-	FiltersData[id] = data;
+	FiltersData.filters[id] = data;
 	SaveActiveFilterSet();
 	CreateList();
 end
 
 function DeleteFilter(id)
-	FiltersData[id] = nil;
+	FiltersData.filters[id] = nil;
 	SaveActiveFilterSet();
 	CreateList();
 end
@@ -444,9 +474,10 @@ function LoadReviewList()
 		if (num > 0) then
 			Debug.Log("data.item_guid: ".. tostring(data.item_guid));
 			Debug.Log("data.item_sdb_id: "..tostring(data.item_sdb_id));
-			Debug.Log("data: "..tostring(data));
+			--Debug.Log("data: "..tostring(Player.GetItemProperties(data.item_guid)));
 			local itemGuidData = data.item_guid and Player.GetItemProperties(data.item_guid) or nil;
-			if (data.item_guid == nil or (itemGuidData and itemGuidData.flags.is_equipped == false)) then
+			if (itemGuidData == nil or (itemGuidData and itemGuidData.flags.is_equipped == false)) then
+				Debug.Log("Adding to review list UI: "..tostring(itemGuidData));
 				local quant = math.min(data.quantity, num);
 				Ui.AddToReviewList(data.item_guid, data.item_sdb_id, quant, false);
 				count = count + quant;
@@ -488,7 +519,7 @@ function SalvageSelected(isTest)
 					finalisedQueue = {};
 
 					if not isTest then
-						Component.SaveSetting("reviewQueue", reviewQueue);
+						Component.SaveSetting("reviewQueue_"..playerID, reviewQueue);
 						LoadReviewList();
 					else
 						Callback2.FireAndForget(TestFilters, nil, 1);
@@ -513,7 +544,7 @@ function KeepSelected()
 				RemoveSelectedFromReview();
 
 				finalisedQueue = {};
-				Component.SaveSetting("reviewQueue", reviewQueue);
+				Component.SaveSetting("reviewQueue_"..playerID, reviewQueue);
 				LoadReviewList();
 			end,
 			onNo = function()
@@ -526,13 +557,9 @@ end
 function SortFilterList(key, descending)
 	local field = HEADER_LOOKUP[key];
 
-	-- Oh boy is this a hack
-	-- If I get more time for Firefall I should do this right :>
 	local sortList = {}
-	for key, value in pairs(FiltersData) do
-		if key ~= "characters" then
-			table.insert(sortList, value)
-		end
+	for key, value in pairs(FiltersData.filters) do
+		table.insert(sortList, value)
 	end
 
 	table.sort(sortList, function (a, b)
@@ -553,8 +580,7 @@ function SortFilterList(key, descending)
 		return false;
 	end);
 
-	sortList.characters = FiltersData.characters
-	FiltersData = sortList
+	FiltersData.filters = sortList
 
 	SaveActiveFilterSet();
 	CreateList();
@@ -648,8 +674,8 @@ end
 function CreateList()
 	Ui.ClearFilters();
 
-	if FiltersData then
-		for id, data in pairs(FiltersData) do
+	if FiltersData and FiltersData.filters then
+		for id, data in pairs(FiltersData.filters) do
 			if id ~= "characters" then
 				Ui.AddFilterRow(id, data);
 			end
@@ -665,7 +691,7 @@ function CheckAgainstFilters(itemInfo)
 		Debug.Log("IsActiveForZone: true : "..itemInfo.itemTypeId);
 
 		if IsActiveForChar() then
-			for id, data in pairs(FiltersData) do
+			for id, data in pairs(FiltersData.filters) do
 				if (MatchsFilter(data, itemInfo)) then
 					DebugLogPrecisionTime("CheckAgainstFilters end")
 					return data;
@@ -940,12 +966,14 @@ function AddToReviewQueue(guid, sdbId, quantity, testReviewQ)
 	Debug.Log("guid: "..tostring(guid).. "sdbId: "..tostring(sdbId).. "quantity: "..quantity);]]
 
 	-- Increment the quantity if this item is already here
+	local has = false;
 	if not guid then
-		local has = false;
 		for _, data in pairs(testReviewQ or reviewQueue) do
 			if data.item_sdb_id == sdbId then
 				data.quantity = data.quantity + (quantity or 1);
 				has = true;
+			else
+				has = false;
 			end
 		end
 	end
@@ -1079,11 +1107,19 @@ function IsActiveForZone()
 end
 
 function SaveActiveFilterSet()
-	Component.SaveSetting("Filter_"..activeFilterSet, FiltersData);
+	SaveFilterSet(activeFilterSet, FiltersData)
+end
+
+function SaveFilterSet(name, set)
+	Component.SaveSetting("Filter_"..name, set);
 end
 
 function LoadActiveFilterSet()
-	FiltersData = Component.GetSetting("Filter_"..activeFilterSet);
+	FiltersData = GetFilterSet(activeFilterSet)
+end
+
+function GetFilterSet(name)
+	return Component.GetSetting("Filter_"..name);
 end
 
 -- Save the web zone list to use on the next UI reload
@@ -1095,8 +1131,6 @@ function GetCachedZoneList()
 	return Component.GetSetting("zone_list");
 end
 
--- I know this is a messy way to do it but I don't want to have to migrate from the old format to a newer one so hacky it is for now
--- maybe if it payed
 function IsActiveForChar()
 	if playerID == nil then
 		return;

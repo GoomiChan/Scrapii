@@ -17,7 +17,8 @@ V 1.8
 - Added better small screen support aka Choob mode.
 - Added option to debug filter execution times.
 - Added a buton beside the Scrapii button to open the review list UI.
-- Added support for locales that Firefall doesn't itself suport, some text may still show up as Firefalls default locale becasue I'm pulling the data from there.
+- Added support for locales that Firefall doesn't itself support, some text may still show up as Firefalls default locale because I'm pulling the data from there.
+- Added Earth_Soldier's spanish translation.
 
 V 1.7
 --------------------------

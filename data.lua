@@ -52,14 +52,14 @@ DD_TYPES =
 		subTypeIds = {"3617"},
 		skips = {res = true, skipFrameCheck = true, skipRarityCheck = true, skipLevelCheck = true},
         sortID = 8
-    }--[[,
+    },
     CONSUMABLE =
     {
 		typeName = "consumable",
 		subTypeIds = {"82"},
 		skips = {res = true, skipFrameCheck = true, skipRarityCheck = true, skipLevelCheck = true},
         sortID = 9
-    }]]
+    }
 };
 
 -- I could get this from the api  >,>
