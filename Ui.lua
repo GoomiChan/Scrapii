@@ -713,8 +713,9 @@ function Private.CreateReviewPopUp()
     Private.ReviewList = RowScroller.Create(Const.REVIEW_LIST_PARENT);
     Private.ReviewList:SetSpacing(2);
     Private.ReviewList:ShowSlider(true);
+    Const.REVIEW_POPUP:SetTitle("Yay")
 
-    MovablePanel.ConfigFrame({
+    --[[MovablePanel.ConfigFrame({
         frame = Const.REVIEW_POPUP,
         MOVABLE_PARENT = Const.REVIEW_POPUP_MOVEABLE,
 		RESIZABLE_PARENT = Const.RP_RESIZE_PARENT,
@@ -737,7 +738,7 @@ function Private.CreateReviewPopUp()
     Const.RP_CLOSE_BUTTON:BindEvent("OnMouseLeave", function()
         X:ParamTo("tint", Component.LookupColor("white"), 0.15);
         X:ParamTo("glow", "#00000000", 0.15);
-    end);
+    end);]]
 
 	Private.ReviewListCheckall = Component.CreateWidget('LibCheckbox', Const.REVIEW_LIST_CHECKALL):GetChild("Checkbox");
 	Private.ReviewListCheckall:BindEvent("OnStateChanged", function()
