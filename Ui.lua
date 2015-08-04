@@ -9,6 +9,7 @@ Ui = {}; -- Public object
 Const =
 {
 	MAXLEVEL = 40,
+	CURRENT_LEVEL_MINUS_RANGE = 5,
 	SMALL_SCREEN_LIMIT = 1120,
     MAIN = Component.GetFrame("Main"),
     WINDOW = Component.GetWidget("Window"),
@@ -454,7 +455,12 @@ function Private.CreateFilterRow(id, data)
 	formatedData.type = Lokii.GetString(data.typeName);
 	formatedData.frame = Lokii.GetString(data.frame);
 
-	formatedData.levelRange = unicode.format("%s %s %s %s", Lokii.GetString("FROM"), data.levelFrom, Lokii.GetString("TO"), data.levelTo);
+	local levelTo = tonumber(data.levelTo)
+	if levelTo <= 0 then
+		levelTo = Private.FormatCurrentLevelMinus(levelTo)
+	end
+
+	formatedData.levelRange = unicode.format("%s %s %s %s", Lokii.GetString("FROM"), data.levelFrom, Lokii.GetString("TO"), levelTo);
 	formatedData.color = Lokii.GetString(data.color);
 
 	if (data.when == "INV_PCT_FULL") then
@@ -546,6 +552,12 @@ function Private.CreateAddFilterPopup()
 	for i = 1, Const.MAXLEVEL, 1 do
 		Private.AddFilterPopUp.DD_FromLevel:AddItemAndValue(tostring(i), tostring(i));
 		Private.AddFilterPopUp.DD_ToLevel:AddItemAndValue(tostring(i), tostring(i));
+	end
+
+	-- The players current level - the value
+	for i = 0, Const.CURRENT_LEVEL_MINUS_RANGE, 1 do
+		local val = -i
+		Private.AddFilterPopUp.DD_ToLevel:AddItemAndValue(Private.FormatCurrentLevelMinus(val), val);
 	end
 
 	Private.AddFilterPopUp.DD_Color = DropDown.Create(cont:GetChild("color"));
@@ -925,12 +937,12 @@ function Private.ShowDialog(args)
 	SimpleDialog.AddOption(Lokii.GetString("ABORT"), function()
 		if args.onNo then args.onNo(); end
 		SimpleDialog.Hide();
-	end, {color = Button.DEFAULT_WHITE_COLOR});
+	end, {color = Const.BUTTON_COLORS.DEFAULT_WHITE_COLOR});
 
 	SimpleDialog.AddOption(Lokii.GetString("ARE_YOU_SURE"), function()
 		if args.onYes then args.onYes(); end
 		SimpleDialog.Hide();
-	end, {color = Button.DEFAULT_GREEN_COLOR});
+	end, {color = Const.BUTTON_COLORS.DEFAULT_GREEN_COLOR});
 	System.PlaySound(Const.SND.OPEN_POPUP);
 
 end
@@ -945,12 +957,12 @@ function Private.ShowTextDialog(args)
 	SimpleDialog.AddOption(Lokii.GetString("ABORT"), function()
 		if args.onNo then args.onNo(); end
 		SimpleDialog.Hide();
-	end, {color = Button.DEFAULT_WHITE_COLOR});
+	end, {color = Const.BUTTON_COLORS.DEFAULT_WHITE_COLOR});
 
 	SimpleDialog.AddOption(Lokii.GetString("ARE_YOU_SURE"), function()
 		if args.onYes then args.onYes(textInput:GetText()); end
 		SimpleDialog.Hide();
-	end, {color = Button.DEFAULT_GREEN_COLOR});
+	end, {color = Const.BUTTON_COLORS.DEFAULT_GREEN_COLOR});
 
 	SimpleDialog.SetDims("center-x:50%; center-y:50%; width:300; height:150;");
 	System.PlaySound(Const.SND.OPEN_POPUP);
@@ -1061,4 +1073,12 @@ function Private.UiCallbacks.locale(val)
 	end
 
 	uiOpts.localeOverride = val
+end
+
+function Private.FormatCurrentLevelMinus(level)
+	if level == 0 then
+		return Lokii.GetString("CURRENT")
+	else
+		return unicode.format(Lokii.GetString("CURRENT").." %i", level)
+	end
 end

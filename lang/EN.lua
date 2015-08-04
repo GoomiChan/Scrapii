@@ -117,5 +117,6 @@ LANG =
 	RELOADUI_NEEDED					=	"You need to reload your ui for these settings to take effect",
 	CONSUMABLE						=	"Consumable",
 	MIGRATED_FILTERS				=	"Migrated old filters to new format :>",
-	NEED_TO_ACTIVATE_FILTERS		=	"You need to mark the filtersets you want as active for your character now and then all is back to normal"
+	NEED_TO_ACTIVATE_FILTERS		=	"You need to mark the filtersets you want as active for your character now and then all is back to normal",
+	CURRENT							=	"Current"
 }

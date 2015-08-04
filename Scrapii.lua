@@ -642,7 +642,7 @@ function SetActiveFilterSet(name)
 		Debug.Log("SetActiveFilterSet name: "..name)
 		activeFilterSet = name;
 		Ui.SetActiveFilterSet(activeFilterSet, true);
-		
+
 		LoadActiveFilterSet();
 		Component.SaveSetting("activeFilterSet", activeFilterSet);
 		CreateList();
@@ -798,7 +798,16 @@ end
 
 function CheckLevelRange(filter, itemInfo)
     local level = tonumber(itemInfo.required_level);
-    return (level == 0 or (level >= tonumber(filter.levelFrom) and level <= tonumber(filter.levelTo))); -- Some junk is level 0
+
+    local levelTo = tonumber(filter.levelTo)
+    if levelTo <= 0 then
+    	local pl = Player.GetLevel() -- cache between bulk filter searches?
+    	Debug.Log("CheckLevelRange: levelTo is "..levelTo)
+    	levelTo = pl + levelTo
+    	Debug.Log("CheckLevelRange: Level is "..levelTo)
+    end
+
+    return (level == 0 or (level >= tonumber(filter.levelFrom) and level <= levelTo)); -- Some junk is level 0
 end
 
 function CheckRarity(filter, itemInfo)
