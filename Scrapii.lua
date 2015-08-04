@@ -6,18 +6,18 @@ require "math";
 require "table";
 require "unicode";
 require "lib/lib_MovablePanel";
-require "lib/lib_Button";
+-- require "lib/lib_Button";
 require "lib/lib_RowScroller";
 require "lib/lib_ContextualMenu";
 require "lib/lib_RoundedPopupWindow";
-require "lib/lib_DropDownList";
-require "lib/lib_Slider";
+-- require "lib/lib_DropDownList";
+-- require "lib/lib_Slider";
 require "lib/lib_table";
 require "lib/lib_Tooltip";
 require "lib/lib_Items";
 require "lib/lib_Debug";
 require "lib/lib_ChatLib";
-require "lib/lib_CheckBox";
+-- require "lib/lib_CheckBox";
 require "lib/lib_PanelManager";
 require "lib/lib_Callback2";
 require "lib/lib_MultiArt";
@@ -29,6 +29,7 @@ require "lib/lib_RoundedPopupWindow";
 require "lib/lib_SubTypeIds";
 require "./libs/lib_SimpleDialog";
 require "./libs/lib_lokii";
+require "./libs/lib_UIpolyfill";
 require "./data";
 require "./Ui";
 -- Just include them all why don't I
@@ -137,7 +138,7 @@ function OnComponentLoad(args)
 	Debug.Log("filterSets: "..tostring(filterSets))
 	local didMigration = false
 	for i, filtersetName in ipairs(filterSets) do
-		local fs = GetFilterSet(filtersetName)
+		local fs = GetFilterSet(filtersetName) or {filters = {}}
 		if not fs.filters then
 			local newFs = {}
 			newFs.characters = fs.characters or {}
@@ -638,14 +639,20 @@ function SetActiveFilterSet(name)
 			end
 		});
 	else
+		Debug.Log("SetActiveFilterSet name: "..name)
 		activeFilterSet = name;
+		Ui.SetActiveFilterSet(activeFilterSet, true);
+		
 		LoadActiveFilterSet();
 		Component.SaveSetting("activeFilterSet", activeFilterSet);
 		CreateList();
 
 		-- Just made or migrates, turn on for this char
 		if FiltersData == nil then
-			FiltersData = {};
+			FiltersData = 
+			{
+				filters = {}
+			};
 		end
 
 		if FiltersData.characters == nil then

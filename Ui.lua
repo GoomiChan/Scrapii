@@ -54,6 +54,16 @@ Const =
 		OPEN_POPUP = "Play_SFX_UI_TipPopUp",
 		FILTER_ROLL = "",
 		ERROR = "Play_SFX_UI_SIN_CooldownFail"
+	},
+
+	BUTTON_COLORS = 
+	{
+		DEFAULT_PLATE_COLOR = "#0E7192",
+		DEFAULT_BLUE_COLOR = "#106288",
+		DEFAULT_WHITE_COLOR = "#9C9C9C",
+		DEFAULT_GREEN_COLOR = "#629E0A",
+		DEFAULT_RED_COLOR = "#8E0909",
+		DEFAULT_YELLOW_COLOR = "#FFFF00"		
 	}
 };
 
@@ -204,13 +214,20 @@ end
 function Ui.UpdateFilterSets(sets)
 	Private.FilterSets:ClearItems();
 	for i, data in pairs(sets) do
-		Private.FilterSets:AddItem(data, data);
+		Private.FilterSets:AddItemAndValue(data, data);
 	end
-	Private.FilterSets:AddItem(Lokii.GetString("NEW_FILTER_SET"), NEW_FILTER_SET_ID);
+	Private.FilterSets:AddItemAndValue(Lokii.GetString("NEW_FILTER_SET"), NEW_FILTER_SET_ID);
 end
 
-function Ui.SetActiveFilterSet(active)
-	Private.FilterSets:SetSelectedByValue(active);
+function Ui.SetActiveFilterSet(active, noSet)
+	if active then
+		Private.FilterSets:SetSelectedByValue(active);
+		if not noSet then
+			SetActiveFilterSet(active);
+		end
+	else
+		Debug.Warn("active was nil! D:");
+	end
 end
 
 --[[function AlignWidgetHorz(widgetarr, align, padding)
@@ -242,26 +259,26 @@ function Private.CreateWidgets()
         FLT_ACTION = Private.CreateFilterButton(Const.FILTER_HEADERS:GetChild("action"), "FLT_ACTION")
     };
 
-    Private.AddFilterButton = Button.Create(Component.GetWidget("AddFilterButton"));
+    Private.AddFilterButton = Component.CreateWidget('LibButton', Component.GetWidget("AddFilterButton")):GetChild("Button");
     Private.AddFilterButton:SetText(Lokii.GetString("ADD_FILTER"));
     --Private.AddFilterButton:Autosize("right");
-	Private.AddFilterButton:Bind(function()
+	Private.AddFilterButton:BindEvent("OnSubmit", function()
 		Private.SetAddFilterData(DEFAULT_FILTER_DATA);
 		Private.OpenPopUp(Private.AddFilterPopUp.Window);
 		System.PlaySound(Const.SND.OPEN_POPUP);
 	end);
 
-    Private.TestFilterButton = Button.Create(Component.GetWidget("TestFilterButton"));
+    Private.TestFilterButton = Component.CreateWidget('LibButton', Component.GetWidget("TestFilterButton")):GetChild("Button");
     Private.TestFilterButton:SetText(Lokii.GetString("TEST_FILTER"));
     --Private.TestFilterButton:Autosize("right");
-	Private.TestFilterButton:Bind(function()
+	Private.TestFilterButton:BindEvent("OnSubmit", function()
 		TestFilters();
 	end);
 
-	Private.OpenReviewButton = Button.Create(Component.GetWidget("ReviewListButton"));
+	Private.OpenReviewButton = Component.CreateWidget('LibButton', Component.GetWidget("ReviewListButton")):GetChild("Button");
     Private.OpenReviewButton:SetText(Lokii.GetString("OPEN_REVIEW_LIST"));
     --Private.OpenReviewButton:Autosize("right");
-	Private.OpenReviewButton:Bind(function()
+	Private.OpenReviewButton:BindEvent("OnSubmit", function()
 		LoadReviewList();
 	end);
 
@@ -296,20 +313,24 @@ function Private.CreateWidgets()
 	--Const.TOOLTIP_POPUP:SetDims("height:" .. Private.ItemCard.GetWidget():GetChild("List"):GetLength())
 
 	-- Settings
-	Private.IncludeArchtypeCB = CheckBox.Create(Const.INCLUDE_ARCHTYPE);
+	Private.IncludeArchtypeCB = Component.CreateWidget('LibCheckbox', Const.INCLUDE_ARCHTYPE):GetChild("Checkbox");
 	Private.IncludeArchtypeCB:SetCheck(config.includeArchtype);
-	Private.IncludeArchtypeCB:AddHandler("OnStateChanged", function()
-		config.includeArchtype = Private.IncludeArchtypeCB:IsChecked();
+	Private.IncludeArchtypeCB:BindEvent("OnStateChanged", function()
+		config.includeArchtype = Private.IncludeArchtypeCB:GetCheck();
 		ConfigSaveSetting("includeArchtype");
 	end);
 
-	Private.FilterSets = DropDownList.Create(Const.FILTER_SETS);
-	Private.FilterSets:BindOnSelect(SetActiveFilterSet);
+	--Private.FilterSets = Component.CreateWidget('LibDropdown', Const.FILTER_SETS):GetChild("Dropdown");
+	Private.FilterSets = DropDown.Create(Const.FILTER_SETS)
+	Private.FilterSets:BindEvent("OnSelect", function()
+		local value = Private.FilterSets:GetValueByLabel(Private.FilterSets:GetSelected())
+		SetActiveFilterSet(value)
+	end);
 
-	Private.FilterSetRemove = Button.Create(Const.FILTER_SET_REMOVE);
+	Private.FilterSetRemove = Component.CreateWidget('LibButton', Const.FILTER_SET_REMOVE):GetChild("Button");
 	Private.FilterSetRemove:SetText("X");
-	Private.FilterSetRemove:TintPlate(Button.DEFAULT_RED_COLOR);
-	Private.FilterSetRemove:Bind(function()
+	Private.FilterSetRemove:SetParam("tint", Const.BUTTON_COLORS.DEFAULT_RED_COLOR);
+	Private.FilterSetRemove:BindEvent("OnSubmit", function()
 		Private.ShowDialog(
 		{
 			body = Lokii.GetString("DELETE_FILTER_SET"):format(activeFilterSet or ""),
@@ -320,24 +341,23 @@ function Private.CreateWidgets()
 		});
 	end);
 
-	Private.ActiveForThisFrame = Button.Create(Const.ACTIVE_FOR_FRAME);
-	Private.ActiveForThisFrame:Bind(function() ToggleActiveForChar(Private.ActiveForThisFrame); end);
-	Private.ActiveForThisFrame:Autosize("left");
+	Private.ActiveForThisFrame = Component.CreateWidget('LibButton', Const.ACTIVE_FOR_FRAME):GetChild("Button");
+	Private.ActiveForThisFrame:BindEvent("OnSubmit", function() ToggleActiveForChar(Private.ActiveForThisFrame); end);
 
 	-- Foster button into Inventory
-	local InvButton = Component.CreateWidget('<Group dimensions="left:5; top:50%-13; width:80; height:26;" />', Const.REVIEW_LIST_FOSTERING);
-	Private.InventoryButton = Button.Create(InvButton);
+	local InvButton = Component.CreateWidget('<Group dimensions="left:5; top:-33; width:80; height:26;" />', Const.REVIEW_LIST_FOSTERING);
+	Private.InventoryButton = Component.CreateWidget('LibButton', InvButton):GetChild("Button");
 	Private.InventoryButton:SetText(Lokii.GetString("WINDOW_TITE"));
 	Component.FosterWidget(InvButton, "Inventory:main.{1}.{1}"); -- I <3 Fostering
-	Private.InventoryButton:Bind(function()
+	Private.InventoryButton:BindEvent("OnSubmit", function()
 			Ui.Show(true);
 		end);
 
-	local InvButtonRL = Component.CreateWidget('<Group dimensions="left:88; top:50%-13; width:25; height:26;" />', Const.REVIEW_LIST_FOSTERING);
-	Private.InventoryButtonRL = Button.Create(InvButtonRL);
+	local InvButtonRL = Component.CreateWidget('<Group dimensions="left:88; top:-33; width:25; height:26;" />', Const.REVIEW_LIST_FOSTERING);
+	Private.InventoryButtonRL = Component.CreateWidget('LibButton', InvButtonRL):GetChild("Button");
 	Private.InventoryButtonRL:SetText(Lokii.GetString("RL"));
 	Component.FosterWidget(InvButtonRL, "Inventory:main.{1}.{1}");
-	Private.InventoryButtonRL:Bind(function()
+	Private.InventoryButtonRL:BindEvent("OnSubmit", function()
 			LoadReviewList();
 		end);
 end
@@ -345,31 +365,31 @@ end
 function Ui.UpdateActiveCharButton()
 	if IsActiveForChar() then
 		Private.ActiveForThisFrame:SetText(Lokii.GetString("DEACTIVATE_FOR_CHAR"), true);
-		Private.ActiveForThisFrame:TintPlate(Button.DEFAULT_RED_COLOR);
+		Private.ActiveForThisFrame:SetParam("tint", Const.BUTTON_COLORS.DEFAULT_RED_COLOR);
+		Private.ActiveForThisFrame:Autosize("left", 0.25);
 	else
 		Private.ActiveForThisFrame:SetText(Lokii.GetString("ACTIVATE_FOR_CHAR"), true);
-		Private.ActiveForThisFrame:TintPlate(Button.DEFAULT_GREEN_COLOR);
+		Private.ActiveForThisFrame:SetParam("tint", Const.BUTTON_COLORS.DEFAULT_GREEN_COLOR);
+		Private.ActiveForThisFrame:Autosize("left", 0.25);
 	end
 end
 
 function Private.CreateFilterButton(hostWidget, key)
-    local butt = { button = Button.Create(hostWidget), descending = true };
+	local widget = Component.CreateWidget('FilterHeaderButton', hostWidget)
+    local butt = { widget = widget, button = widget:GetChild("Button"), descending = true };
 
-    butt.button:TintPlate(Button.DEFAULT_WHITE_COLOR);
-    local Img = Component.CreateWidget("FilterHeaderTab", butt.button.GROUP);
-    Img:GetChild("text"):SetText(Lokii.GetString(key));
-	butt.button:FosterLabel(Img.GROUP);
+	butt.button:SetText(Lokii.GetString(key));
 
-    butt.button:Bind(function(args)
+    butt.button:BindEvent("OnSubmit", function(args)
         butt.descending = not butt.descending;
-        Img:GetChild("icon"):SetRegion(butt.descending and "normal" or "mirrored");
+        widget:GetChild("SortOrient.Arrow"):SetRegion(butt.descending and "down" or "up");
         Private.OnFiltersSortChanged(key, butt.descending);
 		SortFilterList(key, butt.descending);
 		Component.SaveSetting("FilterSortOrder", {key=key, order=butt.descending})
     end);
 
     butt.Reset = function()
-        Img:GetChild("icon"):SetRegion("normal");
+        widget:GetChild("SortOrient.Arrow"):SetRegion("down");
         butt.descending = true;
     end
 
@@ -426,6 +446,8 @@ function Private.CreateFilterRow(id, data)
     row.widget = Component.CreateWidget("ListRow", Const.FILTER_LIST_FOSTERING);
     local content = row.widget:GetChild("content");
     row.id = id;
+
+    Debug.Log("Add filter row Data: "..tostring(data))
 
 	-- format data
 	local formatedData = {};
@@ -507,38 +529,38 @@ function Private.CreateAddFilterPopup()
     Component.CreateWidget("AddFilterHeader", header:GetChild("action")):GetChild("text"):SetText(Lokii.GetString("FLT_ACTION"));
 
 	local cont = body:GetChild("cont"):GetChild("cont");
-	Private.AddFilterPopUp.DD_Type = DropDownList.Create(cont:GetChild("type"));
+	Private.AddFilterPopUp.DD_Type = DropDown.Create(cont:GetChild("type"));
 	for id, data in pairs(GetDataSorted(DD_TYPES)) do
-        Private.AddFilterPopUp.DD_Type:AddItem(Lokii.GetString(data.id), data.id);
+        Private.AddFilterPopUp.DD_Type:AddItemAndValue(Lokii.GetString(data.id), data.id);
     end
 
-	Private.AddFilterPopUp.DD_Frame = DropDownList.Create(cont:GetChild("frame"));
+	Private.AddFilterPopUp.DD_Frame = DropDown.Create(cont:GetChild("frame"));
 	for id, data in pairs(GetDataSorted(DD_FRAMES)) do
-        Private.AddFilterPopUp.DD_Frame:AddItem(Lokii.GetString(data.id), data.id);
+        Private.AddFilterPopUp.DD_Frame:AddItemAndValue(Lokii.GetString(data.id), data.id);
     end
 
 	local levelRange = Component.CreateWidget("EnterLevelRange", cont:GetChild("levelRange"));
-	Private.AddFilterPopUp.DD_FromLevel = DropDownList.Create(levelRange:GetChild("{1}.dropDown1"));
-	Private.AddFilterPopUp.DD_ToLevel = DropDownList.Create(levelRange:GetChild("{1}.{1}.{1}.dropDown2"));
+	Private.AddFilterPopUp.DD_FromLevel = DropDown.Create(levelRange:GetChild("{1}.dropDown1"));
+	Private.AddFilterPopUp.DD_ToLevel = DropDown.Create(levelRange:GetChild("{1}.{1}.{1}.dropDown2"));
 
 	for i = 1, Const.MAXLEVEL, 1 do
-		Private.AddFilterPopUp.DD_FromLevel:AddItem(tostring(i), tostring(i));
-		Private.AddFilterPopUp.DD_ToLevel:AddItem(tostring(i), tostring(i));
+		Private.AddFilterPopUp.DD_FromLevel:AddItemAndValue(tostring(i), tostring(i));
+		Private.AddFilterPopUp.DD_ToLevel:AddItemAndValue(tostring(i), tostring(i));
 	end
 
-	Private.AddFilterPopUp.DD_Color = DropDownList.Create(cont:GetChild("color"));
+	Private.AddFilterPopUp.DD_Color = DropDown.Create(cont:GetChild("color"));
 	for id, data in pairs(GetDataSorted(DD_COLORS)) do
-        Private.AddFilterPopUp.DD_Color:AddItem(Lokii.GetString(data.id), data.id);
+        Private.AddFilterPopUp.DD_Color:AddItemAndValue(Lokii.GetString(data.id), data.id);
     end
 	Private.AddFilterPopUp.DD_Color:SetSelectedByValue("WHITE");
 
-	Private.AddFilterPopUp.DD_When = DropDownList.Create(cont:GetChild("when"));
+	Private.AddFilterPopUp.DD_When = DropDown.Create(cont:GetChild("when"));
 	for id, data in pairs(DD_WHEN) do
-        Private.AddFilterPopUp.DD_When:AddItem(Lokii.GetString(data), data);
+        Private.AddFilterPopUp.DD_When:AddItemAndValue(Lokii.GetString(data), data);
     end
 
-	Private.AddFilterPopUp.DD_When:BindOnSelect(function ()
-		local selected = Private.AddFilterPopUp.DD_When:GetSelected();
+	Private.AddFilterPopUp.DD_When:BindEvent("OnSelect", function ()
+		local selected = Private.AddFilterPopUp.DD_When:GetValueByLabel(Private.AddFilterPopUp.DD_When:GetSelected());
 		if (selected == "INV_PCT_FULL") then
 			Private.PercentPopup.SetPercent(0.50);
 			Private.OpenPopUp(Private.PercentPopup.Window);
@@ -548,14 +570,14 @@ function Private.CreateAddFilterPopup()
 		end
 	end);
 
-	Private.AddFilterPopUp.DD_Action = DropDownList.Create(cont:GetChild("action"));
+	Private.AddFilterPopUp.DD_Action = DropDown.Create(cont:GetChild("action"));
 	for id, data in pairs(DD_ACTIONS) do
-        Private.AddFilterPopUp.DD_Action:AddItem(Lokii.GetString(data), data);
+        Private.AddFilterPopUp.DD_Action:AddItemAndValue(Lokii.GetString(data), data);
     end
 
-	Private.AddFilterPopUp.AddButt = Button.Create(body:GetChild("AddButt"));
+	Private.AddFilterPopUp.AddButt = Component.CreateWidget('LibButton', body:GetChild("AddButt")):GetChild("Button");
     Private.AddFilterPopUp.AddButt:SetText(Lokii.GetString("ADD_FILTER"));
-    Private.AddFilterPopUp.AddButt:Bind(function()
+    Private.AddFilterPopUp.AddButt:BindEvent("OnSubmit", function()
 		Private.PercentPopup.Window:Close();
 		window:Close();
 
@@ -568,10 +590,11 @@ function Private.CreateAddFilterPopup()
 	end);
 
 	-- Grey out unneed options
-	Private.AddFilterPopUp.DD_Type:BindOnSelect(function (args)
-		local selected = Private.AddFilterPopUp.DD_Type:GetSelected();
+	Private.AddFilterPopUp.DD_Type:BindEvent("OnSelect", function (args)
+		local selected = Private.AddFilterPopUp.DD_When:GetValueByLabel(Private.AddFilterPopUp.DD_When:GetSelected());
+		local selectedType = Private.AddFilterPopUp.DD_Type:GetValueByLabel(Private.AddFilterPopUp.DD_Type:GetSelected());
 
-		local skips = DD_TYPES[args].skips;
+		local skips = DD_TYPES[selectedType].skips;
 		if skips.skipFrameCheck  then Private.AddFilterPopUp.DD_Frame:Disable(true); else Private.AddFilterPopUp.DD_Frame:Enable(true); end
 		if skips.skipRarityCheck then Private.AddFilterPopUp.DD_Color:Disable(true); else Private.AddFilterPopUp.DD_Color:Enable(true); end
 
@@ -597,15 +620,17 @@ end
 function Private.GetAddFilterData()
 	local data =
 	{
-		typeName = Private.AddFilterPopUp.DD_Type:GetSelected(),
-		frame = Private.AddFilterPopUp.DD_Frame:GetSelected(),
-		levelFrom = Private.AddFilterPopUp.DD_FromLevel:GetSelected(),
-		levelTo = Private.AddFilterPopUp.DD_ToLevel:GetSelected(),
-		color = Private.AddFilterPopUp.DD_Color:GetSelected(),
-		when = Private.AddFilterPopUp.DD_When:GetSelected(),
-		action = Private.AddFilterPopUp.DD_Action:GetSelected(),
+		typeName = Private.AddFilterPopUp.DD_Type:GetValueByLabel(Private.AddFilterPopUp.DD_Type:GetSelected()),
+		frame = Private.AddFilterPopUp.DD_Frame:GetValueByLabel(Private.AddFilterPopUp.DD_Frame:GetSelected()),
+		levelFrom = Private.AddFilterPopUp.DD_FromLevel:GetValueByLabel(Private.AddFilterPopUp.DD_FromLevel:GetSelected()),
+		levelTo = Private.AddFilterPopUp.DD_ToLevel:GetValueByLabel(Private.AddFilterPopUp.DD_ToLevel:GetSelected()),
+		color = Private.AddFilterPopUp.DD_Color:GetValueByLabel(Private.AddFilterPopUp.DD_Color:GetSelected()),
+		when = Private.AddFilterPopUp.DD_When:GetValueByLabel(Private.AddFilterPopUp.DD_When:GetSelected()),
+		action = Private.AddFilterPopUp.DD_Action:GetValueByLabel(Private.AddFilterPopUp.DD_Action:GetSelected()),
 		precentFull = Private.PercentPopup.GetPercent()
 	};
+
+	Debug.Log(tostring(data))
 
 	return data;
 end
@@ -636,9 +661,9 @@ function Private.CreatePercentPopup()
 	local controls = body:GetChild("Controls");
 	local textInput = controls:GetChild("InputGroup"):GetChild("TextInput");
 	textInput:SetText("0");
-	Private.PercentPopup.Slider = Slider.Create(controls:GetChild("Slider"), "adjuster");
-	Private.PercentPopup.Slider:SetSteps(101);
-	Private.PercentPopup.Slider:SetScrollSteps(1);
+	Private.PercentPopup.Slider = Component.CreateWidget('<Adjuster dimensions="dock:fill;" style="tabbable:true; scrollsteps:101; horizontal:true;"/>', controls:GetChild("Slider"));
+	--[[Private.PercentPopup.Slider:SetSteps(101);
+	Private.PercentPopup.Slider:SetScrollSteps(1);]]
 	Private.PercentPopup.Slider:BindEvent("OnStateChanged", function(arg)
 		local pct = math.floor(Private.PercentPopup.Slider:GetPercent()*100);
 		textInput:SetText(tostring(pct));
@@ -651,9 +676,9 @@ function Private.CreatePercentPopup()
 		Private.PercentPopup.Percent = pct;
 	end);
 
-	local OkButt = Button.Create(body:GetChild("OkButt"));
+	local OkButt = Component.CreateWidget('LibButton', body:GetChild("OkButt")):GetChild("Button");
 	OkButt:SetText(Lokii.GetString("OK"));
-	OkButt:Bind(function()
+	OkButt:BindEvent("OnSubmit", function()
 		window:Close(false);
 	end);
 
@@ -714,24 +739,24 @@ function Private.CreateReviewPopUp()
         X:ParamTo("glow", "#00000000", 0.15);
     end);
 
-	Private.ReviewListCheckall = CheckBox.Create(Const.REVIEW_LIST_CHECKALL);
-	Private.ReviewListCheckall:AddHandler("OnStateChanged", function()
+	Private.ReviewListCheckall = Component.CreateWidget('LibCheckbox', Const.REVIEW_LIST_CHECKALL):GetChild("Checkbox");
+	Private.ReviewListCheckall:BindEvent("OnStateChanged", function()
 		if (not Private.ReviewListCheckall_IngoreStateChange) then
 			for idx=1, Private.ReviewList:GetRowCount(), 1 do
-				Private.ReviewList:GetRow(idx).checkBox:SetCheck(Private.ReviewListCheckall:IsChecked());
+				Private.ReviewList:GetRow(idx).checkBox:SetCheck(Private.ReviewListCheckall:GetCheck());
 			end
 		end
 	end);
 
-	Private.ReviewListSavlageSelected = Button.Create(Const.REVIEW_LIST_SALVAGE_SELECTED);
+	Private.ReviewListSavlageSelected = Component.CreateWidget('LibButton', Const.REVIEW_LIST_SALVAGE_SELECTED):GetChild("Button");
     Private.ReviewListSavlageSelected:SetText(Lokii.GetString("SAVLVAGE_SELCECTED"));
-	Private.ReviewListSavlageSelected:Bind(function()
+	Private.ReviewListSavlageSelected:BindEvent("OnSubmit", function()
 		SalvageSelected(Private.ReviewListIsTest);
 	end);
 
-	Private.ReviewListSavlageKeep = Button.Create(Const.REVIEW_LIST_KEEP_SELECTED);
+	Private.ReviewListSavlageKeep = Component.CreateWidget('LibButton', Const.REVIEW_LIST_KEEP_SELECTED):GetChild("Button");
     Private.ReviewListSavlageKeep:SetText(Lokii.GetString("KEEP_SELECTED"));
-	Private.ReviewListSavlageKeep:Bind(function()
+	Private.ReviewListSavlageKeep:BindEvent("OnSubmit", function()
 		KeepSelected();
 	end);
 end
@@ -807,14 +832,14 @@ function Private.AddToReviewUI(guid, sdbId, quanity, isReview)
 		Tooltip.Show();
 		bg:ParamTo("tint", Component.LookupColor("RowDefault"), 0.15);
         bg:ParamTo("alpha", alpha, 0.15);
-        Paperdoll.Release();
+        --Paperdoll.Release();
 	end);
 
 	focus:BindEvent("OnMouseDown", function()
-    	row.checkBox:SetCheck(not row.checkBox:IsChecked() and (uiOpts.inventorySalvaging or not isReview));
+    	row.checkBox:SetCheck(not row.checkBox:GetCheck() and (uiOpts.inventorySalvaging or not isReview));
     end);
 
-	widget:GetChild("icon"):SetUrl(itemInfo.web_icon or System.GetOperatorSetting("ingame_host").."/assets/items/64/" .. itemInfo.icon or "" .. ".png");
+	widget:GetChild("icon"):SetIcon(itemInfo.web_icon_id)
 
 	local level = 0;
 	if (itemInfo.required_level == nil or itemInfo.required_level == 0) then
@@ -830,17 +855,17 @@ function Private.AddToReviewUI(guid, sdbId, quanity, isReview)
 
 	--bg:SetParam("tint", Component.LookupColor(LIB_ITEMS.GetItemColor(itemInfo)));
 
-	row.checkBox = CheckBox.Create(widget:GetChild("checkbox"));
+	row.checkBox = Component.CreateWidget("libCheckbox", widget:GetChild("checkbox")):GetChild("Checkbox");
 	row.checkBox:Enable(uiOpts.inventorySalvaging or not isReview);
-	row.checkBox:AddHandler("OnStateChanged", function()
+	row.checkBox:BindEvent("OnStateChanged", function()
 		if (uiOpts.inventorySalvaging or not isReview) then
-			if (Private.ReviewListCheckall:IsChecked() and not row.checkBox:IsChecked()) then
+			if (Private.ReviewListCheckall:GetCheck() and not row.checkBox:GetCheck()) then
 				Private.ReviewListCheckall_IngoreStateChange = true;
 				Private.ReviewListCheckall:SetCheck(false);
 				Private.ReviewListCheckall_IngoreStateChange = false;
 			end
 
-			ReviewQueueFinilise(row.checkBox:IsChecked(), guid, sdbId, quanity);
+			ReviewQueueFinilise(row.checkBox:GetCheck(), guid, sdbId, quanity);
 		end
 	end);
 end
@@ -873,10 +898,11 @@ function Private.AddToProfitsList(sdbId, quanity)
 		widget:GetChild("Name"):SetText(info.name);
 		widget:GetChild("Quantity"):SetText(_math.MakeReadable(quanity));
 
-		local ICON = MultiArt.Create(widget);
-
-		ICON:SetUrl(info.web_icon);
-		ICON:SetDims("right:100%; width:24; height:24; top:-2");
+		if info.web_icon_id then
+			widget:GetChild("icon"):SetIcon(info.web_icon_id);
+		else
+			Debug.Warn("info.web_icon was nil!")
+		end
 
 		local name_bounds = widget:GetChild("Name"):GetTextDims().width
 		local quantity_bounds = widget:GetChild("Quantity"):GetTextDims().width

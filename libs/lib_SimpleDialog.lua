@@ -11,8 +11,9 @@ SimpleDialog = {};
 require "unicode"
 require "lib/lib_Callback2";
 require "lib/lib_RoundedPopupWindow";
-require "lib/lib_Button";
+-- require "lib/lib_Button";
 require "lib/lib_MovablePanel";
+require "./libs/lib_UIpolyfill";
 
 -- private API
 local OPTION_API = {};
@@ -143,7 +144,7 @@ end
 
 function SimpleDialog.ResetOptions()
 	for _,BUTTON in ipairs(o_BUTTONS) do
-		BUTTON:Destroy();
+		Component.RemoveWidget(BUTTON)
 	end
 	o_BUTTONS = {};
 end
@@ -172,18 +173,18 @@ end
 CB2_CleanUp:Bind(CleanUpPopUp);
 
 function AddOption(label, onPress, args)
-	local BUTTON = Button.Create(OPTIONS_GROUP);
+	local BUTTON = Component.CreateWidget('<Button name="Button" dimensions="dock:fill" style="font:Demi_10;"/>', OPTIONS_GROUP);
 	o_BUTTONS[#o_BUTTONS + 1] = BUTTON;
 	BUTTON:SetText(label);
 	BUTTON:SetDims("center-x:50%; width:"..(100/#o_BUTTONS).."%");
 	BUTTON:Autosize("center");
-	BUTTON:TintPlate(DEFAULT_ERROR_BUTTON_COLOR);
+	BUTTON:SetParam("tint", DEFAULT_ERROR_BUTTON_COLOR);
 	if (args) then
 		if (args.color) then
-			BUTTON:TintPlate(args.color);
+			BUTTON:SetParam("tint", args.color);
 		end
 	end
-	BUTTON:AddHandler("OnMouseUp", function()
+	BUTTON:BindEvent("OnSubmit", function()
 		onPress();
 	end);
 	return BUTTON;
