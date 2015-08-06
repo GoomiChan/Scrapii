@@ -19,6 +19,7 @@ function DropDown.Create(parent)
 
 	-- Forward the dropdown funcs
 	for name, func in pairs(getmetatable(widget).__index) do
+		--log(name)
 		if name ~= "Clear" then
 			dropdown[name] = function(...) return func(widget, select(2, unpack(arg))) end
 		end
@@ -55,7 +56,7 @@ function DropDown.SetSelectedByValue(self, value)
 		end
 	end
 
-	if index >= 1 then
+	if index <= 1 then
 		self.widget:SetSelectedByIndex(index)
 	end
 end
