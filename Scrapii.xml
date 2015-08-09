@@ -228,7 +228,7 @@ xsi:schemaLocation="http://www.red5studios.com/ ../../../../schemas/component.xs
 
          <BluePrint name="PromptBody" instantiable="true">
             <Border name="tooltip" dimensions="left:0; width:250; top:0; height:500" class="PanelBackDrop" />
-            <WebImage name="icon" dimensions="dock:fill" style="fixed-bounds:true"/>
+            <Icon name="icon" dimensions="dock:fill" style="fixed-bounds:true"/>
         </BluePrint>
 		
 		<BluePrint name="TextPopup" instantiable="true">

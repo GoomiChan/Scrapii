@@ -367,7 +367,7 @@ function OnItemTest2(args)
 end
 
 function OnItemTest3(args)
-	local itemInfo = (args[1] == "1") and Game.GetItemInfoByType(114506) or Player.GetItemInfo(1465114817766559229)
+	local itemInfo = Game.GetItemInfoByType(114506) --(args[1] == "1") and Game.GetItemInfoByType(114506) or Player.GetItemInfo(1465114817766559229)
 
 	CreateHudNote(itemInfo)
 end
@@ -855,7 +855,7 @@ function CreateHudNote(itemInfo)
 
 	local GRP = {GROUP=Component.CreateWidget("PromptBody", Const.REVIEW_LIST_FOSTERING)}
 	GRP.ICON = GRP.GROUP:GetChild("icon")
-	GRP.ICON:SetUrl(itemInfo.web_icon)
+	GRP.ICON:SetIcon(itemInfo.web_icon_id)
 	GRP.TOOLTIP_GROUP = GRP.GROUP:GetChild("tooltip")
 	GRP.TOOLTIP = LIB_ITEMS.CreateToolTip(GRP.TOOLTIP_GROUP)
 	GRP.TOOLTIP:DisplayInfo(itemInfo)
