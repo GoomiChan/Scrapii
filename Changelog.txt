@@ -1,3 +1,9 @@
+V 1.9
+--------------------------
+- Ported to the new UI widgets
+- Added current level relative options, eg salvage gear that between level one and your current level or your current level -5
+- Added options to salvage the new battleframe gear, arms legs etc
+
 V 1.8
 --------------------------
 - Added multiple character support

@@ -41,24 +41,87 @@ DD_TYPES =
     },
     BATTLEFRAME_CORE =
     {
+    	isBattleframeGear = true,
     	subTypeId = SubTypeIds.BattleframeCores,
 		all = true,
 		skips = {res = true, skipFrameCheck = true},
         sortID = 7
+    },
+    BATTLEFRAME_OS =
+    {
+    	isBattleframeGear = true,
+    	slotId = 129,
+		all = false,
+		skips = {res = true, skipFrameCheck = true},
+        sortID = 8
+    },
+    BATTLEFRAME_TORSO =
+    {
+    	isBattleframeGear = true,
+    	slotId = 116,
+		all = false,
+		skips = {res = true, skipFrameCheck = true},
+        sortID = 9
+    },
+    BATTLEFRAME_MEDICAL =
+    {
+    	isBattleframeGear = true,
+    	slotId = 123,
+		all = false,
+		skips = {res = true, skipFrameCheck = true},
+        sortID = 10
+    },
+    BATTLEFRAME_HEAD =
+    {
+    	isBattleframeGear = true,
+    	slotId = 124,
+		all = false,
+		skips = {res = true, skipFrameCheck = true},
+        sortID = 11
+    },
+    BATTLEFRAME_ARMS =
+    {
+    	isBattleframeGear = true,
+    	slotId = 126,
+		all = false,
+		skips = {res = true, skipFrameCheck = true},
+        sortID = 12
+    },
+    BATTLEFRAME_LEGS =
+    {
+    	isBattleframeGear = true,
+    	slotId = 127,
+		all = false,
+		skips = {res = true, skipFrameCheck = true},
+        sortID = 13
+    },
+    BATTLEFRAME_REACTOR =
+    {
+    	isBattleframeGear = true,
+    	slotId = 128,
+		all = false,
+		skips = {res = true, skipFrameCheck = true},
+        sortID = 14
+    },
+    BATTLEFRAME_GADGET =
+    {
+    	subTypeId = SubTypeIds.BattleframeCores,
+        skips = {res = true, skipFrameCheck = true},
+        sortID = 15
     },
     JUNK_SALVAGE =
     {
 		typeName = "salvage",
 		subTypeIds = {"3617"},
 		skips = {res = true, skipFrameCheck = true, skipRarityCheck = true, skipLevelCheck = true},
-        sortID = 8
+        sortID = 16
     },
     CONSUMABLE =
     {
 		typeName = "consumable",
 		subTypeIds = {"82"},
 		skips = {res = true, skipFrameCheck = true, skipRarityCheck = true, skipLevelCheck = true},
-        sortID = 9
+        sortID = 17
     }
 };
 

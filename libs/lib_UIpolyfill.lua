@@ -56,7 +56,7 @@ function DropDown.SetSelectedByValue(self, value)
 		end
 	end
 
-	if index <= 1 then
+	if index ~= 0 then
 		self.widget:SetSelectedByIndex(index)
 	end
 end

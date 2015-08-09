@@ -766,7 +766,11 @@ function CheckType(filter, itemInfo)
 	-- Some of this is a little messed up atm and inefficient but I want to play it safe instead of well noming on the wrong items
 	if (typeData.typeName == "salvage" and (itemInfo.subtitle == "Salvage" or itemInfo.rarity == "salvage" or TableHasValue(typeData.subTypeIds, itemInfo.subTypeId))) then -- Junk Salvage
 		return typeData.skips;
-	elseif ((filter.typeName == "BATTLEFRAME_CORE") and Game.IsItemOfType(itemInfo.itemTypeId, typeData.subTypeId) and typeData.all) then -- Battleframe Cores
+	elseif ((filter.typeName == "BATTLEFRAME_CORE") and Game.IsItemOfType(itemInfo.itemTypeId, typeData.subTypeId)) then -- Battleframe Cores and stuff
+		return typeData.skips;
+	elseif ((filter.typeName == "BATTLEFRAME_GADGET") and (Game.CanItemGoInSlot(itemInfo.itemTypeId, 130) or Game.CanItemGoInSlot(itemInfo.itemTypeId, 137))) then -- Battleframe Gadgets, the grind on the pts is stupid
+		return typeData.skips;
+	elseif ((typeData.isBattleframeGear) and (Game.CanItemGoInSlot(itemInfo.itemTypeId, typeData.slotId))) then -- Battleframe Cores and stuff
 		return typeData.skips;
 	elseif ((filter.typeName == "WEAPON_MODULE" or filter.typeName == "ABILITY_MODULE") and Game.IsItemOfType(itemInfo.itemTypeId, typeData.subTypeId) and typeData.module_location == itemInfo.module_location) then -- Modules
 		return typeData.skips;
