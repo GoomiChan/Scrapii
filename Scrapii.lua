@@ -145,6 +145,11 @@ function OnComponentLoad(args)
 			newFs.filters = {}
 
 			for _, value in ipairs(fs) do
+				-- TODO: Migrate weapon and ability modules to modules
+				-- TODO: TEST!!!!!
+				if value.typeName == "WEAPON_MODULE" or value.typeName == "ABILITY_MODULE" then
+					value.typeName = "MODULE"
+				end
 				table.insert(newFs.filters, value)
 			end
 
@@ -772,7 +777,7 @@ function CheckType(filter, itemInfo)
 		return typeData.skips;
 	elseif ((typeData.isBattleframeGear) and (Game.CanItemGoInSlot(itemInfo.itemTypeId, typeData.slotId))) then -- Battleframe Cores and stuff
 		return typeData.skips;
-	elseif ((filter.typeName == "WEAPON_MODULE" or filter.typeName == "ABILITY_MODULE") and Game.IsItemOfType(itemInfo.itemTypeId, typeData.subTypeId) and typeData.module_location == itemInfo.module_location) then -- Modules
+	elseif (filter.typeName == "MODULE" and Game.IsItemOfType(itemInfo.itemTypeId, typeData.subTypeId)) then -- Modules
 		return typeData.skips;
 	elseif ((filter.typeName == "ABILITY") and Game.IsItemOfType(itemInfo.itemTypeId, typeData.subTypeId)) then -- Abilitys
 		return typeData.skips;

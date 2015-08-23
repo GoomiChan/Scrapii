@@ -126,5 +126,6 @@ LANG =
 	BATTLEFRAME_ARMS				=	"Battleframe Arms",
 	BATTLEFRAME_LEGS				=	"Battleframe Legs",
 	BATTLEFRAME_REACTOR				=	"Battleframe Reactor",
-	BATTLEFRAME_GADGET				=	"Battleframe Gadget"
+	BATTLEFRAME_GADGET				=	"Battleframe Gadget",
+	MODULE 							= 	"Module"
 }

@@ -25,19 +25,11 @@ DD_TYPES =
         skips = {res = true, skipFrameCheck = false},
         sortID = 4
     },
-    WEAPON_MODULE =
+    MODULE =
     {
     	subTypeId = SubTypeIds.Modules,
-        module_location = "weapon",
         skips = {res = true, skipFrameCheck = true},
         sortID = 5
-    },
-    ABILITY_MODULE =
-    {
-    	subTypeId = SubTypeIds.Modules,
-        module_location = "ability_module",
-        skips = {res = true, skipFrameCheck = true},
-        sortID = 6
     },
     BATTLEFRAME_CORE =
     {
