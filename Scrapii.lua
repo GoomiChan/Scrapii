@@ -783,6 +783,8 @@ function CheckType(filter, itemInfo)
 		return typeData.skips;
 	elseif ((filter.typeName == "PRIMARY_WEAPON" or filter.typeName == "SECONDARY_WEAPON") and Game.IsItemOfType(itemInfo.itemTypeId, typeData.subTypeId)) then -- Weapon's
 		return typeData.skips;
+	elseif ((filter.typeName == "AUX_WEAPON") and Game.IsItemOfType(itemInfo.itemTypeId, typeData.subTypeId)) then -- Aux Weapon
+		return typeData.skips;
 	--[[elseif (filter.typeName == "ALL_TYPES" and itemInfo.flags and itemInfo.flags.is_salvageable == true) then -- Anything goes
 		return typeData.skips;]]
 	end

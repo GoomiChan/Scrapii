@@ -31,6 +31,12 @@ DD_TYPES =
         skips = {res = true, skipFrameCheck = true},
         sortID = 5
     },
+    AUX_WEAPON =
+    {
+    	subTypeId = SubTypeIds.AuxiliaryWeapons,
+        skips = {res = true, skipFrameCheck = true},
+        sortID = 6
+    },
     BATTLEFRAME_CORE =
     {
     	isBattleframeGear = true,
