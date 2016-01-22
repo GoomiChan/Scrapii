@@ -21,7 +21,10 @@ function DropDown.Create(parent)
 	for name, func in pairs(getmetatable(widget).__index) do
 		--log(name)
 		if name ~= "Clear" then
-			dropdown[name] = function(...) return func(widget, select(2, unpack(arg))) end
+			dropdown[name] = function(...)
+				local arg = {n=select('#',...),...}
+				return func(widget, select(2, unpack(arg)))
+			end
 		end
 	end
 
@@ -49,14 +52,19 @@ function DropDown.GetindexByLabel(self, label)
 end
 
 function DropDown.SetSelectedByValue(self, value)
+	Debug.Log("SetSelectedByValue: ", value)
+	Debug.Log("DropDownLookups[self.id]: ", DropDownLookups[self.id])
 	local index = 0
-	for i, val in ipairs(DropDownLookups[self.id]) do
+	for i, val in pairs(DropDownLookups[self.id]) do
 		if val.value == value then
 			index = val.index
 		end
 	end
 
+	Debug.Log("index: ", index)
+
 	if index ~= 0 then
+		self.wasSetSelectedByValue = true -- hacky
 		self.widget:SetSelectedByIndex(index)
 	end
 end

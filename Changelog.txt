@@ -1,3 +1,7 @@
+V 1.10
+--------------------------
+- Ported to the 1.6 update
+
 V 1.9
 --------------------------
 - Ported to the new UI widgets

@@ -324,8 +324,12 @@ function Private.CreateWidgets()
 	--Private.FilterSets = Component.CreateWidget('LibDropdown', Const.FILTER_SETS):GetChild("Dropdown");
 	Private.FilterSets = DropDown.Create(Const.FILTER_SETS)
 	Private.FilterSets:BindEvent("OnSelect", function()
-		local value = Private.FilterSets:GetValueByLabel(Private.FilterSets:GetSelected())
-		SetActiveFilterSet(value)
+		if not Private.FilterSets.wasSetSelectedByValue then
+			local value = Private.FilterSets:GetValueByLabel(Private.FilterSets:GetSelected())
+			SetActiveFilterSet(value)
+		else
+			Private.FilterSets.wasSetSelectedByValue = false
+		end
 	end);
 
 	Private.FilterSetRemove = Component.CreateWidget('LibButton', Const.FILTER_SET_REMOVE):GetChild("Button");
@@ -642,7 +646,10 @@ function Private.GetAddFilterData()
 		precentFull = Private.PercentPopup.GetPercent()
 	};
 
+	Debug.Log("Private.GetAddFilterData")
+	Debug.Divider()
 	Debug.Log(tostring(data))
+	Debug.Divider()
 
 	return data;
 end

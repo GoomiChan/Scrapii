@@ -401,9 +401,9 @@ function CreateNewFilter(data)
 	local sortOrder = Component.GetSetting("FilterSortOrder") or {key="FLT_TYPE", order=true}
 	SortFilterList(sortOrder.key, sortOrder.order)
 
-	Debug.Log("#FiltersData: ", idx)
+	--[[Debug.Log("#FiltersData: ", idx)
 	Debug.Log(unicode.format("Added new filter to filter set %s: %s", activeFilterSet, tostring(data) or "no data"))
-	Debug.Table(FiltersData.filters)
+	Debug.Table(FiltersData.filters)]]
 end
 
 function EditFilter(id, data)
@@ -1192,6 +1192,8 @@ function GetFiltersCount(tbl) -- ;^;
 end
 
 function DebugLogPrecisionTime(...)
+	local arg = {n=select('#',...),...}
+	
 	if uiOpts.debugLogTimes then
 		System.LogPrecisionTime(unpack(arg))
 	end
