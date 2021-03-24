@@ -803,7 +803,7 @@ function CheckFrame(filter, itemInfo)
 			end
 		end
 
-		return fasle;
+		return false;
     end
 end
 

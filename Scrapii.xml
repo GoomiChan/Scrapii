@@ -34,7 +34,7 @@ xsi:schemaLocation="http://www.red5studios.com/ ../../../../schemas/component.xs
         <Texture name="Divider" src="components\MainUI\Panels\Inventory\textures\HR.png" premultiplied="false"/>
         <Texture name="dash_lines" src="skins\textures\dashLineMask.png" premultiplied="false"/>
 
-        <Texture name="ScrapiiPanelBackDrop" src="skins/textures/PanelBackDrop.png" premultiplied="fasle">
+        <Texture name="ScrapiiPanelBackDrop" src="skins/textures/PanelBackDrop.png" premultiplied="false">
             <Region name="TL" top="0" bottom="6" left="0" right="6" />
             <Region name="TC" top="0" bottom="6" left="6" right="48" />
             <Region name="TR" top="0" bottom="6" left="48" right="54" />
